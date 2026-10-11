@@ -2,6 +2,13 @@
 
 One entry per sprint day, newest first. Claude Code writes it at the end of each day.
 
+## Day 4 (2026-10-14): the map, check-in and presence
+
+- Done: D4-01 to D4-06. Generated placeholder tileset, 27 character layer sheets and a manifest (`pnpm make:placeholders`); Tiled maps `hq` (16 desks and the feature zones), `field`, `home`; Phaser 3.90 map engine (fit to screen, pinch and wheel zoom, pan, zone highlights, characters with name tags and status bubbles, 30 fps cap, full cleanup on unmount); `/map` with branch switcher, live presence over the private `branch:<id>` channel (events sent by database triggers), character popover; check-in by office Wi-Fi IP (CIDR), rotating QR (kiosk page and token endpoint protected by a hashed kiosk key), field and home; auto check-out cron with confirmation; installable app (manifest and icons).
+- Tests: 154 passing, including token windows, constant-time compare, CIDR matching, lateness at the boundary minute in Cairo time, Egypt's summer-time change, one open session per user, `check_in` refused for users, and a requester refused on a branch channel.
+- Changes from the kit: avatars are created on Day 4 so the map can draw them; `my_open_session()` and `my_wfh_today()` support the check-in page; branch channels also exist for `branch:field` and `branch:home`.
+- Tomorrow starts with: D5-01 avatar compositor in React and the character creator.
+
 ## Day 3 (2026-10-13): department portal, approvals and notifications
 
 - Done: D3-01 to D3-06. Portal home with simplified statuses, strategic plan (many lines, deadline on the 25th, late flag) and urgent request forms, request page with progress, comments, files, confirmation step and edit-and-resubmit; performance input and intake actions; approval engine for requests (resolvers, no self-approval, fallbacks, skipped steps, same-approver merge, multi-candidate steps); one approvals inbox for requests and cards with inline image and video previews; notification bell with live unread count; emails through Resend (or a logged preview locally) in the recipient's language, sent right after the action with a 10-minute cron safety net; cron routes `due-soon` (hourly) and `daily`; Trello file import.

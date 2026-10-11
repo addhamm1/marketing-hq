@@ -51,6 +51,64 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"attendance_edits": {
+                  Row: {
+                    "created_at": string,"edited_by": string | null,"id": string,"new_in": string | null,"new_out": string | null,"old_in": string | null,"old_out": string | null,"reason": string,"session_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"edited_by"?: string | null,"id"?: string,"new_in"?: string | null,"new_out"?: string | null,"old_in"?: string | null,"old_out"?: string | null,"reason": string,"session_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"edited_by"?: string | null,"id"?: string,"new_in"?: string | null,"new_out"?: string | null,"old_in"?: string | null,"old_out"?: string | null,"reason"?: string,"session_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "attendance_edits_edited_by_fkey"
+      columns: ["edited_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "attendance_edits_session_id_fkey"
+      columns: ["session_id"]
+isOneToOne: false
+      referencedRelation: "attendance_sessions"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"attendance_sessions": {
+                  Row: {
+                    "auto_closed": boolean,"branch_id": string | null,"checked_in_at": string,"checked_out_at": string | null,"confirmed_at": string | null,"created_at": string,"field_card_id": string | null,"id": string,"is_late": boolean,"method": Database["public"]['Enums']["checkin_method"],"note": string | null,"user_id": string,"verify": NonNullable<Json>
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "auto_closed"?: boolean,"branch_id"?: string | null,"checked_in_at"?: string,"checked_out_at"?: string | null,"confirmed_at"?: string | null,"created_at"?: string,"field_card_id"?: string | null,"id"?: string,"is_late"?: boolean,"method": Database["public"]['Enums']["checkin_method"],"note"?: string | null,"user_id": string,"verify"?: NonNullable<Json>
+                  }
+                  Update: {
+                    "auto_closed"?: boolean,"branch_id"?: string | null,"checked_in_at"?: string,"checked_out_at"?: string | null,"confirmed_at"?: string | null,"created_at"?: string,"field_card_id"?: string | null,"id"?: string,"is_late"?: boolean,"method"?: Database["public"]['Enums']["checkin_method"],"note"?: string | null,"user_id"?: string,"verify"?: NonNullable<Json>
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "attendance_sessions_branch_id_fkey"
+      columns: ["branch_id"]
+isOneToOne: false
+      referencedRelation: "branches"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "attendance_sessions_field_card_id_fkey"
+      columns: ["field_card_id"]
+isOneToOne: false
+      referencedRelation: "cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "attendance_sessions_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"audit_log": {
                   Row: {
                     "action": string,"actor_id": string | null,"at": string,"id": string,"new_data": Json | null,"old_data": Json | null,"row_id": string | null,"table_name": string
@@ -64,6 +122,26 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"avatars": {
+                  Row: {
+                    "config": NonNullable<Json>,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "config": NonNullable<Json>,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "config"?: NonNullable<Json>,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "avatars_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: true
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"board_members": {
                   Row: {
@@ -429,6 +507,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"desks": {
+                  Row: {
+                    "assigned_user_id": string | null,"branch_id": string,"created_at": string,"id": string,"zone_name": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "assigned_user_id"?: string | null,"branch_id": string,"created_at"?: string,"id"?: string,"zone_name": string
+                  }
+                  Update: {
+                    "assigned_user_id"?: string | null,"branch_id"?: string,"created_at"?: string,"id"?: string,"zone_name"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "desks_assigned_user_id_fkey"
+      columns: ["assigned_user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "desks_branch_id_fkey"
+      columns: ["branch_id"]
+isOneToOne: false
+      referencedRelation: "branches"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"holidays": {
                   Row: {
                     "created_at": string,"day": string,"id": string,"is_half_day": boolean,"name_ar": string,"name_en": string
@@ -733,7 +837,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "_build_request_steps":
+            "_branch_topic":
+{ Args: { "p_branch_id": string,"p_method": Database["public"]['Enums']["checkin_method"] }; Returns: string
+                           },
+"_build_request_steps":
 { Args: { "p_chain": Json,"p_request_id": string,"p_requester": string }; Returns: boolean
                            },
 "_check_line":
@@ -747,6 +854,9 @@ isOneToOne: false
                            },
 "_finish_request":
 { Args: { "p_request_id": string,"p_status": Database["public"]['Enums']["request_status"] }; Returns: undefined
+                           },
+"_has_wfh_today":
+{ Args: { "p_user_id": string }; Returns: boolean
                            },
 "_insert_department_card":
 { Args: { "p_kind": Database["public"]['Enums']["card_request_kind"],"p_late": boolean,"p_line": Json,"p_plan": string }; Returns: string
@@ -762,6 +872,9 @@ isOneToOne: false
                            },
 "_set_card_stage":
 { Args: { "p_card_id": string,"p_data"?: Json,"p_stage_due"?: string,"p_to": Database["public"]['Enums']["card_stage"] }; Returns: undefined
+                           },
+"admin_edit_session":
+{ Args: { "p_new_in": string,"p_new_out": string,"p_reason": string,"p_session_id": string }; Returns: undefined
                            },
 "admin_revoke_sessions":
 { Args: { "p_user_id": string }; Returns: undefined
@@ -808,8 +921,20 @@ isOneToOne: false
 "card_visible":
 { Args: { "p_approver_id": string,"p_board_id": string,"p_department_id": string }; Returns: boolean
                            },
+"check_in":
+{ Args: { "p_branch_id": string,"p_card_id"?: string,"p_method": Database["public"]['Enums']["checkin_method"],"p_note"?: string,"p_now"?: string,"p_user_id": string,"p_verify"?: Json }; Returns: string
+                           },
+"check_out":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
+"confirm_auto_checkout":
+{ Args: { "p_actual_out": string,"p_session_id": string }; Returns: undefined
+                           },
 "create_internal_card":
 { Args: { "p_position": string,"p_title": string }; Returns: string
+                           },
+"cron_auto_checkout":
+{ Args: { "p_now"?: string }; Returns: number
                            },
 "cron_daily":
 { Args: Record<PropertyKey, never>; Returns: number
@@ -859,6 +984,14 @@ isOneToOne: false
 "my_department_id":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
+"my_open_session":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "branch_id": string,"checked_in_at": string,"id": string,"is_late": boolean,"method": Database["public"]['Enums']["checkin_method"]
+            }[]
+                           },
+"my_wfh_today":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
 "notify":
 { Args: { "p_body"?: string,"p_data"?: Json,"p_kind": string,"p_link": string,"p_title"?: string,"p_user_id": string }; Returns: undefined
                            },
@@ -890,6 +1023,11 @@ isOneToOne: false
                            },
 "try_uuid":
 { Args: { "t": string }; Returns: string
+                           },
+"who_is_in":
+{ Args: { "p_branch_id"?: string }; Returns: {
+              "branch_id": string,"checked_in_at": string,"field_card_id": string,"method": Database["public"]['Enums']["checkin_method"],"note": string,"user_id": string
+            }[]
                            },
 "working_days":
 { Args: { "p_from": string,"p_to": string }; Returns: number

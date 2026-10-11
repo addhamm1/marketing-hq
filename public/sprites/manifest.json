@@ -1,0 +1,285 @@
+{
+ "version": 1,
+ "frameWidth": 32,
+ "frameHeight": 32,
+ "directions": [
+  "down",
+  "left",
+  "right",
+  "up"
+ ],
+ "animations": {
+  "idle": {
+   "frames": [
+    0,
+    1
+   ],
+   "frameRate": 2
+  },
+  "walk": {
+   "frames": [
+    2,
+    3,
+    4,
+    5
+   ],
+   "frameRate": 8
+  }
+ },
+ "palettes": {
+  "skin": [
+   "#f6d7c3",
+   "#eac0a0",
+   "#d9a27a",
+   "#c68642",
+   "#8d5524",
+   "#5b3a24"
+  ],
+  "hair": [
+   "#1a1410",
+   "#2b1b10",
+   "#5a3825",
+   "#8a5a33",
+   "#c18f5a",
+   "#e3c27a",
+   "#9a9a9a",
+   "#7a2e2e"
+  ],
+  "clothing": [
+   "#0F4C5C",
+   "#111827",
+   "#374151",
+   "#9ca3af",
+   "#f3f4f6",
+   "#1e3a8a",
+   "#7c2d12",
+   "#b45309",
+   "#166534",
+   "#6b21a8",
+   "#be185d",
+   "#d6b98c"
+  ]
+ },
+ "layers": [
+  {
+   "key": "body",
+   "required": true,
+   "tint": "skin",
+   "options": [
+    {
+     "id": "b1",
+     "file": "body/b1.png",
+     "tintable": true
+    },
+    {
+     "id": "b2",
+     "file": "body/b2.png",
+     "tintable": true
+    }
+   ]
+  },
+  {
+   "key": "bottom",
+   "required": true,
+   "tint": "clothing",
+   "options": [
+    {
+     "id": "pants",
+     "file": "bottom/pants.png",
+     "tintable": true
+    },
+    {
+     "id": "skirt",
+     "file": "bottom/skirt.png",
+     "tintable": true
+    },
+    {
+     "id": "shorts",
+     "file": "bottom/shorts.png",
+     "tintable": true
+    }
+   ]
+  },
+  {
+   "key": "top",
+   "required": true,
+   "tint": "clothing",
+   "options": [
+    {
+     "id": "tshirt",
+     "file": "top/tshirt.png",
+     "tintable": true
+    },
+    {
+     "id": "hoodie-espaces",
+     "file": "top/hoodie-espaces.png",
+     "tintable": true,
+     "overlay": "top/hoodie-espaces.detail.png"
+    },
+    {
+     "id": "shirt",
+     "file": "top/shirt.png",
+     "tintable": true
+    },
+    {
+     "id": "blazer",
+     "file": "top/blazer.png",
+     "tintable": true
+    }
+   ]
+  },
+  {
+   "key": "shoes",
+   "required": true,
+   "tint": "clothing",
+   "options": [
+    {
+     "id": "sneakers",
+     "file": "shoes/sneakers.png",
+     "tintable": true
+    },
+    {
+     "id": "boots",
+     "file": "shoes/boots.png",
+     "tintable": true
+    }
+   ]
+  },
+  {
+   "key": "hair",
+   "required": false,
+   "tint": "hair",
+   "options": [
+    {
+     "id": "short",
+     "file": "hair/short.png",
+     "tintable": true
+    },
+    {
+     "id": "long",
+     "file": "hair/long.png",
+     "tintable": true
+    },
+    {
+     "id": "curly",
+     "file": "hair/curly.png",
+     "tintable": true
+    },
+    {
+     "id": "bun",
+     "file": "hair/bun.png",
+     "tintable": true
+    },
+    {
+     "id": "buzz",
+     "file": "hair/buzz.png",
+     "tintable": true
+    }
+   ]
+  },
+  {
+   "key": "facial_hair",
+   "required": false,
+   "tint": "hair",
+   "options": [
+    {
+     "id": "beard",
+     "file": "facial_hair/beard.png",
+     "tintable": true
+    },
+    {
+     "id": "mustache",
+     "file": "facial_hair/mustache.png",
+     "tintable": true
+    }
+   ]
+  },
+  {
+   "key": "headwear",
+   "required": false,
+   "tint": "clothing",
+   "options": [
+    {
+     "id": "cap",
+     "file": "headwear/cap.png",
+     "tintable": true
+    },
+    {
+     "id": "beanie",
+     "file": "headwear/beanie.png",
+     "tintable": true
+    },
+    {
+     "id": "hijab-classic",
+     "file": "headwear/hijab-classic.png",
+     "tintable": true,
+     "hides": [
+      "hair"
+     ]
+    },
+    {
+     "id": "hijab-wrap",
+     "file": "headwear/hijab-wrap.png",
+     "tintable": true,
+     "hides": [
+      "hair"
+     ]
+    },
+    {
+     "id": "hijab-sport",
+     "file": "headwear/hijab-sport.png",
+     "tintable": true,
+     "hides": [
+      "hair"
+     ]
+    }
+   ]
+  },
+  {
+   "key": "glasses",
+   "required": false,
+   "tint": null,
+   "options": [
+    {
+     "id": "round",
+     "file": "glasses/round.png",
+     "tintable": false
+    },
+    {
+     "id": "square",
+     "file": "glasses/square.png",
+     "tintable": false
+    }
+   ]
+  },
+  {
+   "key": "accessory",
+   "required": false,
+   "tint": null,
+   "options": [
+    {
+     "id": "headphones",
+     "file": "accessory/headphones.png",
+     "tintable": false
+    },
+    {
+     "id": "lanyard",
+     "file": "accessory/lanyard.png",
+     "tintable": false
+    }
+   ]
+  }
+ ],
+ "defaults": {
+  "body": "b1",
+  "skin": "#c68642",
+  "hair": "short",
+  "hairColor": "#2b1b10",
+  "top": "hoodie-espaces",
+  "topColor": "#0F4C5C",
+  "bottom": "pants",
+  "bottomColor": "#374151",
+  "shoes": "sneakers",
+  "shoesColor": "#111827"
+ }
+}
