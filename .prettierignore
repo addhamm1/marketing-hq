@@ -1,0 +1,6 @@
+pnpm-lock.yaml
+src/components/ui
+src/lib/supabase/database.types.ts
+public/maps
+.next
+supabase/.temp

@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      CRON_SECRET: ci-cron-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Start Supabase
+        run: pnpm supabase start -x imgproxy,supavisor,vector,logflare,mailpit,studio,edge-runtime
+      - name: Export Supabase keys
+        run: |
+          pnpm supabase status -o env > /tmp/sb.env
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$(grep '^PUBLISHABLE_KEY=' /tmp/sb.env | cut -d= -f2- | tr -d '"')" >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(grep '^SECRET_KEY=' /tmp/sb.env | cut -d= -f2- | tr -d '"')" >> $GITHUB_ENV
+      - run: pnpm supabase db reset
+      - name: Types are up to date
+        run: pnpm db:types && git diff --exit-code src/lib/supabase/database.types.ts
+      - run: pnpm next typegen
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+      - name: Security and performance advisors
+        run: pnpm supabase db lint --level warning || true
+      - name: End-to-end tests
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          pnpm supabase db reset
+          pnpm test:e2e --project=desktop
+        env:
+          CI: "true"
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+
+  deploy-staging-db:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: verify
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+      STAGING_PROJECT_REF: ${{ secrets.STAGING_PROJECT_REF }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Push migrations and seed test users to staging
+        if: env.STAGING_PROJECT_REF != ''
+        run: |
+          pnpm supabase link --project-ref "$STAGING_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+          pnpm supabase db push --include-seed --password "$SUPABASE_DB_PASSWORD"
