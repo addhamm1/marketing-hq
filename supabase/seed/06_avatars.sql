@@ -1,0 +1,9 @@
+-- Day 5 seed: varied characters for the test users (local and staging only).
+insert into public.avatars (user_id, config) values
+  ('00000000-0000-4000-8000-000000000001', '{"body":"b1","skin":"#c68642","hair":"short","hairColor":"#2b1b10","facial_hair":"beard","top":"hoodie-espaces","topColor":"#0F4C5C","bottom":"pants","bottomColor":"#374151","shoes":"sneakers","shoesColor":"#111827","glasses":"square"}'),
+  ('00000000-0000-4000-8000-000000000003', '{"body":"b2","skin":"#8d5524","headwear":"hijab-classic","headwearColor":"#7c2d12","top":"blazer","topColor":"#1e3a8a","bottom":"skirt","bottomColor":"#111827","shoes":"boots","shoesColor":"#111827"}'),
+  ('00000000-0000-4000-8000-000000000004', '{"body":"b1","skin":"#e0ac69","hair":"curly","hairColor":"#3b2219","top":"shirt","topColor":"#f8fafc","bottom":"pants","bottomColor":"#1f2937","shoes":"sneakers","shoesColor":"#f8fafc","accessory":"headphones"}'),
+  ('00000000-0000-4000-8000-000000000005', '{"body":"b1","skin":"#c68642","hair":"buzz","hairColor":"#111111","facial_hair":"mustache","top":"tshirt","topColor":"#047857","bottom":"shorts","bottomColor":"#374151","shoes":"sneakers","shoesColor":"#111827"}'),
+  ('00000000-0000-4000-8000-000000000006', '{"body":"b2","skin":"#f1c27d","hair":"long","hairColor":"#5b3a1e","top":"hoodie-espaces","topColor":"#be185d","bottom":"pants","bottomColor":"#111827","shoes":"sneakers","shoesColor":"#f8fafc","glasses":"round"}'),
+  ('00000000-0000-4000-8000-000000000007', '{"body":"b1","skin":"#8d5524","hair":"short","hairColor":"#111111","top":"tshirt","topColor":"#f59e0b","bottom":"pants","bottomColor":"#1e3a8a","shoes":"boots","shoesColor":"#3f2a14","accessory":"lanyard"}'),
+  ('00000000-0000-4000-8000-000000000008', '{"body":"b2","skin":"#e0ac69","headwear":"hijab-wrap","headwearColor":"#0F4C5C","top":"shirt","topColor":"#e2e8f0","bottom":"skirt","bottomColor":"#334155","shoes":"sneakers","shoesColor":"#111827"}');

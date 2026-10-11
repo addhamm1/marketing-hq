@@ -1,6 +1,6 @@
 "use client";
 
-import { KeyRound, MoreVertical, Pencil, RefreshCw } from "lucide-react";
+import { Armchair, KeyRound, MoreVertical, Pencil, RefreshCw } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -13,10 +13,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useMessage } from "@/hooks/use-message";
 import { BranchFormDialog, type BranchRow } from "./branch-form-dialog";
+import { DesksDialog } from "./desks-dialog";
 import { generateKioskKey, rotateQrSecret } from "./org-actions";
 import { SecretDialog } from "./secret-dialog";
 
-export function BranchesList({ branches }: { branches: BranchRow[] }) {
+type Desk = { branch_id: string; zone_name: string; assigned_user_id: string | null };
+
+export function BranchesList({ branches, desks, zonesByMap }: { branches: BranchRow[]; desks: Desk[]; zonesByMap: Record<string, string[]> }) {
   const t = useTranslations("admin");
   const tm = useTranslations("checkinMethod");
   const tc = useTranslations("common");
@@ -25,6 +28,8 @@ export function BranchesList({ branches }: { branches: BranchRow[] }) {
   const [editing, setEditing] = useState<BranchRow | null>(null);
   const [rotating, setRotating] = useState<BranchRow | null>(null);
   const [kioskUrl, setKioskUrl] = useState<string | null>(null);
+  const [deskBranch, setDeskBranch] = useState<BranchRow | null>(null);
+  const td = useTranslations("desks");
   const [, startTransition] = useTransition();
 
   if (!branches.length) return <EmptyState title={tc("emptyTitle")} />;
@@ -74,6 +79,9 @@ export function BranchesList({ branches }: { branches: BranchRow[] }) {
                 >
                   <KeyRound aria-hidden /> {t("generateKioskKey")}
                 </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setDeskBranch(b)}>
+                  <Armchair aria-hidden /> {td("title")}
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setRotating(b)}>
                   <RefreshCw aria-hidden /> {t("rotateQr")}
                 </DropdownMenuItem>
@@ -83,6 +91,14 @@ export function BranchesList({ branches }: { branches: BranchRow[] }) {
         ))}
       </ul>
       {editing ? <BranchFormDialog branch={editing} onClose={() => setEditing(null)} /> : null}
+      {deskBranch ? (
+        <DesksDialog
+          branch={{ id: deskBranch.id, name: locale === "ar" ? deskBranch.name_ar : deskBranch.name_en }}
+          zones={zonesByMap[deskBranch.map_key] ?? []}
+          desks={desks.filter((d) => d.branch_id === deskBranch.id)}
+          onClose={() => setDeskBranch(null)}
+        />
+      ) : null}
       <ConfirmDialog
         open={!!rotating}
         onOpenChange={(o) => !o && setRotating(null)}

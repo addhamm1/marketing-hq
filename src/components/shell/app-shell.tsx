@@ -5,6 +5,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { Logo } from "@/components/logo";
 import { PeopleProvider } from "@/components/people-context";
 import { fetchPeople } from "@/features/boards/queries";
+import type { AvatarConfig } from "@/game/avatar/types";
 import { Link } from "@/i18n/navigation";
 import type { Access } from "@/lib/auth/access";
 import { isGuestOnly } from "@/lib/auth/access";
@@ -15,6 +16,7 @@ import { NotificationBell } from "./notification-bell";
 import { PresencePicker, type Presence } from "./presence-picker";
 import { Sidebar } from "./sidebar";
 import { UserMenu } from "./user-menu";
+import { UserAvatar } from "@/components/user-avatar";
 
 async function branchName(access: Access, locale: string) {
   if (!access.home_branch_id) return null;
@@ -41,7 +43,12 @@ export async function AppShell({
 }) {
   const locale = await getLocale();
   const items = navFor(access, area);
-  const people = await fetchPeople(await createClient()).catch(() => []);
+  const supabase = await createClient();
+  const [people, { data: avatarRows }] = await Promise.all([
+    fetchPeople(supabase).catch(() => []),
+    supabase.from("avatars").select("user_id, config"),
+  ]);
+  const avatars = Object.fromEntries((avatarRows ?? []).map((a) => [a.user_id, a.config as unknown as AvatarConfig]));
   const branch = area === "team" && access.is_team_app ? await branchName(access, locale) : null;
   const inTeam = area === "team" && access.is_team_app;
   const switchTo =
@@ -52,7 +59,7 @@ export async function AppShell({
         : null;
 
   return (
-    <PeopleProvider people={people}>
+    <PeopleProvider people={people} avatars={avatars}>
     <div className="flex min-h-dvh">
       <Sidebar
         items={items}
@@ -84,7 +91,7 @@ export async function AppShell({
               email={access.email}
               showCharacter={inTeam && !isGuestOnly(access)}
               switchTo={switchTo}
-              avatar={avatar}
+              avatar={avatar ?? <UserAvatar userId={access.user_id} name={access.display_name || access.full_name} size={32} tooltip={false} />}
             />
           </div>
         </header>

@@ -903,6 +903,9 @@ isOneToOne: false
 "can_edit_card":
 { Args: { "p_card_id": string }; Returns: boolean
                            },
+"can_read_request_file":
+{ Args: { "p_name": string }; Returns: boolean
+                           },
 "can_view_board":
 { Args: { "p_board_id": string }; Returns: boolean
                            },
@@ -1020,6 +1023,11 @@ isOneToOne: false
                            },
 "submit_urgent_request":
 { Args: { "payload": Json }; Returns: string
+                           },
+"team_absences":
+{ Args: { "p_from": string,"p_to": string }; Returns: {
+              "category": string,"ends_on": string,"starts_on": string,"user_id": string
+            }[]
                            },
 "try_uuid":
 { Args: { "t": string }; Returns: string

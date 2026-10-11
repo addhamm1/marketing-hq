@@ -2,6 +2,13 @@
 
 One entry per sprint day, newest first. Claude Code writes it at the end of each day.
 
+## Day 5 (2026-10-15): characters, leaves and special requests
+
+- Done: D5-01 to D5-06. Pixel portraits everywhere a person appears (rendered once from the sprite compositor, cached by config hash); character creator with rotating preview, per-layer pickers with live previews, colour swatches, randomise and save (first sign-in lands there once); generic request form from each type's JSON schema with live working-day count and balance before and after; sick notes in the private `request-files` bucket (required after 2 days, enforced in `submit_request`); My requests with steps and cancel; HR admin (allowances per person, type and year, bulk set, holidays, CSV export with formula-injection protection); team calendar (Saturday-first month grid, mobile list, overlap warnings for leads and traffic); leave signs on the map; desk assignment per branch; People directory and profiles.
+- Tests: 161 passing (team calendar privacy, attachment rule, file access, avatars, balances; unit suite also passes under TZ=UTC as on Vercel).
+- Changes from the kit: request files live under `requests/<requester>/` and are listed in `requests.data.files` (so the attachment rule is checked by the database before the request exists).
+- Tomorrow starts with: D6-01 content calendar data and editor.
+
 ## Day 4 (2026-10-14): the map, check-in and presence
 
 - Done: D4-01 to D4-06. Generated placeholder tileset, 27 character layer sheets and a manifest (`pnpm make:placeholders`); Tiled maps `hq` (16 desks and the feature zones), `field`, `home`; Phaser 3.90 map engine (fit to screen, pinch and wheel zoom, pan, zone highlights, characters with name tags and status bubbles, 30 fps cap, full cleanup on unmount); `/map` with branch switcher, live presence over the private `branch:<id>` channel (events sent by database triggers), character popover; check-in by office Wi-Fi IP (CIDR), rotating QR (kiosk page and token endpoint protected by a hashed kiosk key), field and home; auto check-out cron with confirmation; installable app (manifest and icons).

@@ -96,3 +96,28 @@ export async function updateSetting(input: unknown): Promise<ActionResult> {
   revalidatePath("/[locale]/admin/settings", "page");
   return ok();
 }
+
+const deskSchema = z.object({
+  branch_id: z.uuid(),
+  zone_name: z.string().regex(/^desk-\d+$/),
+  user_id: z.uuid().nullable(),
+});
+
+/** Assign or free a desk (super_admin and traffic). One desk per person per branch. */
+export async function setDesk(input: unknown): Promise<ActionResult> {
+  const parsed = deskSchema.safeParse(input);
+  if (!parsed.success) return invalid(parsed.error);
+  const access = await actionAccess();
+  if (!access || !hasRole(access, "super_admin", "traffic_manager")) return fail("common.notAllowed");
+  const supabase = await createClient();
+  const { branch_id, zone_name, user_id } = parsed.data;
+  if (user_id) {
+    await supabase.from("desks").update({ assigned_user_id: null }).eq("branch_id", branch_id).eq("assigned_user_id", user_id);
+  }
+  const { error } = await supabase
+    .from("desks")
+    .upsert({ branch_id, zone_name, assigned_user_id: user_id }, { onConflict: "branch_id,zone_name" });
+  if (error) return fail("common.notAllowed");
+  revalidatePath("/[locale]/admin/branches", "page");
+  return ok();
+}

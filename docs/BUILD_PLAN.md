@@ -89,17 +89,17 @@ Each migration seeds only the tables it creates. Seed files are split per migrat
 
 ## Day 5: characters, leaves and special requests
 
-- [ ] **D5-01 (P0) Sprite manifest and compositor.** `public/sprites/manifest.json` per the spec; `src/game/avatar/` compositor that draws tinted layers into a canvas, used by Phaser (a generated texture per user) and by an `<Avatar>` React component (data URL cached by config hash).
+- [x] **D5-01 (P0) Sprite manifest and compositor.** `public/sprites/manifest.json` per the spec; `src/game/avatar/` compositor that draws tinted layers into a canvas, used by Phaser (a generated texture per user) and by an `<Avatar>` React component (data URL cached by config hash).
   - Check: the same config looks identical on the map and in the people list.
-- [ ] **D5-02 (P0) Character creator.** `/me/character` with live rotating preview, a picker per layer, colour swatches, randomise, save to `avatars`. Redirect there once after the first password change. Map characters update live after saving.
+- [x] **D5-02 (P0) Character creator.** `/me/character` with live rotating preview, a picker per layer, colour swatches, randomise, save to `avatars`. Redirect there once after the first password change. Map characters update live after saving.
   - Check: works one-handed on a phone; other viewers see the change on the map.
-- [ ] **D5-03 (P0) Requests and leave balances.** `leave_balances` and `holidays` with policies; bucket `request-files` with policies (sick-leave notes). Generic JSON-schema form renderer. `/requests/new`: choose a type, fill the form, see balance before and after, attach files where required, submit. `/requests`: my requests with status and steps, cancel while pending. Working-day counting that skips Fridays and holidays; final approval deducts the balance in the same transaction.
+- [x] **D5-03 (P0) Requests and leave balances.** `leave_balances` and `holidays` with policies; bucket `request-files` with policies (sick-leave notes). Generic JSON-schema form renderer. `/requests/new`: choose a type, fill the form, see balance before and after, attach files where required, submit. `/requests`: my requests with status and steps, cancel while pending. Working-day counting that skips Fridays and holidays; final approval deducts the balance in the same transaction.
   - Check: unit tests for day counting across a weekend and a holiday; a request above the balance shows a clear error; approve and cancel adjust `used` correctly.
-- [ ] **D5-04 (P0) HR admin.** `/admin/leave`: allowances per user, type and year (bulk set for everyone); holidays list. HR export: CSV of attendance sessions and approved leaves for a date range.
+- [x] **D5-04 (P0) HR admin.** `/admin/leave`: allowances per user, type and year (bulk set for everyone); holidays list. HR export: CSV of attendance sessions and approved leaves for a date range.
   - Check: hr can do all of this; a member cannot reach it.
-- [ ] **D5-05 (P0) Team calendar and leave on the map.** `team_absences()`; `/calendar` month view with overlap warnings for leads and traffic; a sign on the desk of anyone on approved leave today; approved work from home enables Home check-in.
+- [x] **D5-05 (P0) Team calendar and leave on the map.** `team_absences()`; `/calendar` month view with overlap warnings for leads and traffic; a sign on the desk of anyone on approved leave today; approved work from home enables Home check-in.
   - Check: a member sees a teammate's leave dates but not the reason; two overlapping leaves in one team show a warning to the team lead.
-- [ ] **D5-06 (P1) Desk assignment** in admin, or by clicking a free desk on the map as super_admin or traffic.
+- [x] **D5-06 (P1) Desk assignment** in admin, or by clicking a free desk on the map as super_admin or traffic.
 
 ## Day 6: content calendar and dashboards
 

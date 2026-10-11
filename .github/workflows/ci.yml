@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
+      TZ: UTC # same as Vercel; all business dates must go through src/lib/dates.ts
       NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
       NEXT_PUBLIC_APP_URL: http://localhost:3000
       CRON_SECRET: ci-cron-secret
