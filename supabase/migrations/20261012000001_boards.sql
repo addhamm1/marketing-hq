@@ -983,7 +983,12 @@ create policy workspaces_select on public.workspaces for select to authenticated
 create policy workspaces_write on public.workspaces for all to authenticated
   using ((select public.has_role('super_admin'))) with check ((select public.has_role('super_admin')));
 
-create policy boards_select on public.boards for select to authenticated using (public.can_view_board(id));
+-- From the row's own columns so INSERT ... RETURNING sees the new board.
+create policy boards_select on public.boards for select to authenticated
+  using ((select public.is_active_user()) and (
+    (visibility = 'marketing' and (select public.is_marketing()))
+    or (visibility = 'private' and (select public.has_role('super_admin')))
+    or public.is_board_member(id)));
 create policy boards_insert on public.boards for insert to authenticated
   with check ((select public.is_marketing_writer()) and created_by = (select auth.uid()) and not is_pipeline);
 create policy boards_update on public.boards for update to authenticated

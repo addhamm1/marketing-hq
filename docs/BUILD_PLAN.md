@@ -103,16 +103,16 @@ Each migration seeds only the tables it creates. Seed files are split per migrat
 
 ## Day 6: content calendar and dashboards
 
-- [ ] **D6-01 (P0) Content calendar data and editor.** `posts`, `post_media` with column grants and policies, bucket `post-media`, the status trigger, `decide_post`, `create_post_from_card`, `mark_post_published`; Realtime publication for `posts`. Post editor panel per `PRODUCT_SPEC.md` section 9: all fields, resumable media upload, browser-made thumbnails (image resize, video first-second frame), width, height and duration, reorderable carousel items, caption counters, aspect-ratio warnings.
+- [x] **D6-01 (P0) Content calendar data and editor.** `posts`, `post_media` with column grants and policies, bucket `post-media`, the status trigger, `decide_post`, `create_post_from_card`, `mark_post_published`; Realtime publication for `posts`. Post editor panel per `PRODUCT_SPEC.md` section 9: all fields, resumable media upload, browser-made thumbnails (image resize, video first-second frame), width, height and duration, reorderable carousel items, caption counters, aspect-ratio warnings.
   - Check: upload a 50 MB video and a 10-image carousel on a phone; thumbnails appear; a member's post goes to review and a lead approves it; dates show in Cairo time.
-- [ ] **D6-02 (P0) Month and week views.** `/content` month grid with thumbnail tiles, time, brand stripe, platform badges, status dot, "+N", highlighted empty days; week view with larger cards and caption preview; drag to reschedule in both; filters; per-brand counter against the monthly target; pillar mix bar. "Ready to schedule" side panel: drag a `ready_to_publish` card onto a day to create its post.
+- [x] **D6-02 (P0) Month and week views.** `/content` month grid with thumbnail tiles, time, brand stripe, platform badges, status dot, "+N", highlighted empty days; week view with larger cards and caption preview; drag to reschedule in both; filters; per-brand counter against the monthly target; pillar mix bar. "Ready to schedule" side panel: drag a `ready_to_publish` card onto a day to create its post.
   - Check: a post created from a card links both ways; rescheduling by drag updates other viewers live; the counter changes when a post is marked published.
-- [ ] **D6-03 (P0) Post preview and publishing by hand.** Format-aware preview (feed, carousel with swipe, reel and story 9:16 with caption overlay, playable video, Arabic right-to-left); copy caption per language, copy hashtags, download all media, mark as published with optional links. Cron `post-reminders` every 5 minutes: 30-minute reminder (once per post time, via `reminded_for`) and the 2-hour "not marked as published" alert (once, via `overdue_notified_at`).
+- [x] **D6-03 (P0) Post preview and publishing by hand.** Format-aware preview (feed, carousel with swipe, reel and story 9:16 with caption overlay, playable video, Arabic right-to-left); copy caption per language, copy hashtags, download all media, mark as published with optional links. Cron `post-reminders` every 5 minutes: 30-minute reminder (once per post time, via `reminded_for`) and the 2-hour "not marked as published" alert (once, via `overdue_notified_at`).
   - Check: marking published moves the linked card to `published`; each reminder fires exactly once, and again after a reschedule.
-- [ ] **D6-04 (P0) Dashboards.** The `security_invoker` views from `DATA_MODEL.md` section 12 with tests that a member sees only their own attendance rows. `/reports/workflow` with the measures in the spec, filters, and each number linking to its card list. `/reports/attendance` for the allowed roles and `/reports/me` for everyone.
+- [x] **D6-04 (P0) Dashboards.** The `security_invoker` views from `DATA_MODEL.md` section 12 with tests that a member sees only their own attendance rows. `/reports/workflow` with the measures in the spec, filters, and each number linking to its card list. `/reports/attendance` for the allowed roles and `/reports/me` for everyone.
   - Check: workflow numbers match a hand count on seeded data.
-- [ ] **D6-05 (P1) Feed preview and list views** of the content calendar, and print to PDF.
-- [ ] **D6-06 (P1) Department service dashboard.**
+- [x] **D6-05 (P1) Feed preview and list views** of the content calendar, and print to PDF.
+- [x] **D6-06 (P1) Department service dashboard.**
 
 ## Day 7: hardening and pilot
 

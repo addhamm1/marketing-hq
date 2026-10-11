@@ -2,6 +2,13 @@
 
 One entry per sprint day, newest first. Claude Code writes it at the end of each day.
 
+## Day 6 (2026-10-16): content calendar and dashboards
+
+- Done: D6-01 to D6-06. Posts and media (protected status changes through `submit_post`, `decide_post`, `create_post_from_card`, `mark_post_published`; approved posts become scheduled when they get a time); post editor with resumable uploads over 6 MB (TUS, tested with a 50 MB file), browser-made thumbnails, sizes and durations, aspect-ratio warnings, carousel reorder, caption counters per platform; month view (Saturday-first, "+N", empty days highlighted, brand stripe, platform badges, status dot) and week view, drag to reschedule (keeps the time), "Ready to schedule" panel (drag a ready card onto a day to create its post), per-brand counters and pillar mix; format-aware preview with Arabic and English captions, copy caption and hashtags, download media, mark as published (moves the card); reminders cron every 5 minutes; dashboards on `security_invoker` views: workflow (numbers open the cards behind them), attendance, my numbers, department service; feed preview and list (printable).
+- Tests: 178 passing; workflow numbers checked against a hand count in SQL (39 created, 5 delivered in 30 days).
+- Fixes found today: select policies that look a row up by id fail on INSERT ... RETURNING (the new row is invisible to the function), so `boards` and `posts` now check their own columns; a NULL publisher made the publish permission check pass (NULL in IF); dev logs printed server action arguments, now disabled (`logging.serverFunctions: false`).
+- Tomorrow starts with: D7-01 access audit.
+
 ## Day 5 (2026-10-15): characters, leaves and special requests
 
 - Done: D5-01 to D5-06. Pixel portraits everywhere a person appears (rendered once from the sprite compositor, cached by config hash); character creator with rotating preview, per-layer pickers with live previews, colour swatches, randomise and save (first sign-in lands there once); generic request form from each type's JSON schema with live working-day count and balance before and after; sick notes in the private `request-files` bucket (required after 2 days, enforced in `submit_request`); My requests with steps and cancel; HR admin (allowances per person, type and year, bulk set, holidays, CSV export with formula-injection protection); team calendar (Saturday-first month grid, mobile list, overlap warnings for leads and traffic); leave signs on the map; desk assignment per branch; People directory and profiles.

@@ -4,6 +4,17 @@ import {
 } from "./helpers";
 
 describe("boards and lists", () => {
+  it("a marketing member creates a board and gets it back", async () => {
+    const c = await as("member");
+    const { data, error } = await c
+      .from("boards")
+      .insert({ workspace_id: "50000000-0000-4000-8000-000000000002", name: "My board", created_by: U.member })
+      .select("id")
+      .single();
+    expect(error).toBeNull();
+    expect(data?.id).toBeTruthy();
+  });
+
   it("marketing users see the pipeline and shared boards", async () => {
     for (const user of ["member", "traffic", "leadership", "admin"] as const) {
       const ids = await visibleIds(await as(user), "boards");

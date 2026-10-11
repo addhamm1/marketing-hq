@@ -87,7 +87,7 @@ insert into seed_cards values
 insert into public.cards (
   id, board_id, list_id, position, title, description, objective, key_message, stage, request_kind,
   requesting_department_id, requester_id, vertical, brand_id, format, platforms, priority,
-  due_at, stage_entered_at, reviewer_id, approver_id, created_by, delivered_at, published_at
+  due_at, stage_entered_at, reviewer_id, approver_id, created_by, delivered_at, published_at, created_at
 )
 select
   ('80000000-0000-4000-8000-0000000000' || lpad(s.n::text, 2, '0'))::uuid,
@@ -114,7 +114,8 @@ select
        else '00000000-0000-4000-8000-000000000003'::uuid end,
   '00000000-0000-4000-8000-000000000003',
   case when s.stage in ('ready_to_publish', 'published', 'reported') then now() - interval '2 days' end,
-  case when s.stage in ('published', 'reported') then now() - interval '1 day' end
+  case when s.stage in ('published', 'reported') then now() - interval '1 day' end,
+  now() - (20 - s.n) * interval '1 day'
 from seed_cards s
 join public.lists l on l.board_id = '60000000-0000-4000-8000-000000000001' and l.stage = s.stage::public.card_stage;
 

@@ -6,6 +6,8 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 // Every route is per-user (session cookie), so Cache Components stays off.
 const nextConfig: NextConfig = {
+  // Dev logs would otherwise print server action arguments (passwords included).
+  logging: { serverFunctions: false },
   turbopack: {
     rules: {
       "*.css": {
