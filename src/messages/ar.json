@@ -221,7 +221,18 @@
     "table": "الجدول",
     "action": "الإجراء",
     "when": "الوقت",
-    "selfLockout": "لا يمكنك إزالة صلاحية الإدارة عن نفسك."
+    "selfLockout": "لا يمكنك إزالة صلاحية الإدارة عن نفسك.",
+    "organisation": "الهيكل",
+    "departments": "الأقسام",
+    "teams": "الفرق",
+    "defaultApprover": "المعتمد الافتراضي (يعتمد التسليمات)",
+    "approvalChain": "سلسلة الموافقات (JSON)",
+    "formSchema": "حقول النموذج (JSON)",
+    "attachmentAfter": "مستند داعم مطلوب بعد (أيام)",
+    "chainHint": "الخطوات بالترتيب، مثل [{\"resolve\":\"team_lead_of_requester\"},{\"resolve\":\"role:hr\"}]",
+    "teamColor": "لون اسم الشخصية",
+    "requestTypeSaved": "تم حفظ نوع الطلب",
+    "teamSaved": "تم حفظ الفريق"
   },
   "weekdays": {
     "0": "الأحد",
@@ -871,7 +882,8 @@
       "scroll": "صفحة",
       "pickBrand": "العلامة",
       "empty": "لا توجد منشورات قادمة لهذه العلامة"
-    }
+    },
+    "scheduleCard": "جدولة في تقويم المحتوى"
   },
   "reports": {
     "title": "التقارير",

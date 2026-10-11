@@ -56,8 +56,8 @@ export default async function MyWorkPage() {
       {open.size === 0 && toReview.length === 0 ? (
         <EmptyState icon={<ListTodo className="size-8" aria-hidden />} title={t("empty")} body={t("emptyBody")} />
       ) : (
-        <div className="grid gap-8 lg:grid-cols-[1fr_22rem]">
-          <div className="space-y-6">
+        <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="min-w-0 space-y-6">
             {DUE_GROUPS.filter((g) => groups[g].length).map((g) => (
               <section key={g}>
                 <h2 className={`mb-2 text-sm font-semibold ${g === "overdue" ? "text-destructive" : "text-muted-foreground"}`}>

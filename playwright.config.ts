@@ -1,4 +1,7 @@
+import { config } from "dotenv";
 import { defineConfig, devices } from "@playwright/test";
+
+config({ path: ".env.local", quiet: true });
 
 const port = Number(process.env.E2E_PORT ?? 3000);
 
@@ -17,8 +20,8 @@ export default defineConfig({
     timezoneId: "Africa/Cairo",
   },
   projects: [
-    { name: "desktop", use: { ...devices["Desktop Chrome"] } },
-    { name: "mobile", use: { ...devices["Pixel 7"] }, testMatch: /mobile\.spec\.ts/ },
+    { name: "desktop", use: { ...devices["Desktop Chrome"] }, testIgnore: /mobile\.spec\.ts/ },
+    { name: "mobile", use: { ...devices["Desktop Chrome"] }, testMatch: /mobile\.spec\.ts/ },
   ],
   webServer: {
     command: process.env.CI ? `pnpm start -p ${port}` : "pnpm dev",

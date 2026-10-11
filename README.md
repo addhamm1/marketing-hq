@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pixel HQ
 
-## Getting Started
+The internal portal for the Espaces marketing department: a pixel-art map of the branch where checked-in teammates appear as their own characters, Trello-style boards running the content cycle, a portal for other departments, leaves and special requests with approvals, a content calendar, and dashboards. English and Arabic (right-to-left).
 
-First, run the development server:
+## Run it locally
+
+Requirements: Node 20+, pnpm (Corepack), Docker (Docker Desktop, OrbStack or Colima).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm db:start          # local Supabase (first run downloads images)
+cp .env.example .env.local   # fill in the keys printed by `pnpm supabase status`
+pnpm db:reset          # migrations + seed (test users, demo data)
+pnpm dev               # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Test users (local and staging only) all use the password `Test1234!`: `admin@`, `traffic@`, `lead.creative@`, `lead.performance@`, `member@`, `member2@`, `community@`, `sales@`, `approver@`, `hr@`, `leadership@`, `guest@test.local`, plus `newhire@test.local` (forced password change).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm typecheck && pnpm lint && pnpm test && pnpm build
+pnpm test:e2e          # Playwright (smoke, golden paths, 375px pass in both languages)
+pnpm supabase db advisors --local --type all --level warn
+node scripts/perf-check.mjs http://localhost:3100   # against `pnpm start -p 3100`
+```
 
-## Learn More
+## Docs
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `CLAUDE.md`: conventions and rules for working on the code
+- `docs/PRODUCT_SPEC.md`, `docs/DATA_MODEL.md`, `docs/BUILD_PLAN.md`, `docs/DECISIONS.md`, `docs/SEED_DATA.md`
+- `docs/DEPLOYMENT.md`: staging and production setup
+- `docs/USER_GUIDE.md`, `docs/PILOT_CHECKLIST.md`: for the pilot
+- `docs/PROGRESS.md`: what was built each day

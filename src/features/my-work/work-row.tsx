@@ -24,7 +24,7 @@ export function WorkRow({ card, brandColor, overdue }: { card: WorkCard; brandCo
     <li>
       <Link
         href={`/boards/${card.board_id}?card=${card.id}`}
-        className="hover:bg-muted/40 flex items-center gap-3 px-4 py-3"
+        className="hover:bg-muted/40 flex min-w-0 items-center gap-3 px-4 py-3"
         style={brandColor ? { borderInlineStartWidth: 3, borderInlineStartColor: brandColor } : undefined}
       >
         <div className="min-w-0 flex-1">
@@ -32,6 +32,11 @@ export function WorkRow({ card, brandColor, overdue }: { card: WorkCard; brandCo
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs">
             {card.stage ? <StageBadge stage={card.stage} /> : null}
             <PriorityBadge priority={card.priority} />
+            {card.due_at ? (
+              <span className={`sm:hidden ${overdue ? "text-destructive font-medium" : "text-muted-foreground"}`} dir="ltr">
+                {formatCairo(card.due_at, "d MMM, HH:mm")}
+              </span>
+            ) : null}
             {card.revision_count ? (
               <span className="text-muted-foreground inline-flex items-center gap-0.5">
                 <RotateCcw className="size-3" aria-hidden /> {card.revision_count}
@@ -40,7 +45,7 @@ export function WorkRow({ card, brandColor, overdue }: { card: WorkCard; brandCo
           </div>
         </div>
         {card.due_at ? (
-          <span className={`text-xs whitespace-nowrap ${overdue ? "text-destructive font-medium" : "text-muted-foreground"}`} dir="ltr">
+          <span className={`hidden text-xs whitespace-nowrap sm:inline ${overdue ? "text-destructive font-medium" : "text-muted-foreground"}`} dir="ltr">
             {formatCairo(card.due_at, "EEE d MMM, HH:mm")}
           </span>
         ) : null}

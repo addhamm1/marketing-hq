@@ -15,6 +15,7 @@ import { StageMoveDialog, needsPayload, type StageMoveRequest } from "../stage-m
 import type { Stage } from "../types";
 import type { CardDetail } from "./detail-query";
 import { ReviewPanel } from "./review-panel";
+import { SchedulePost } from "./schedule-post";
 
 type Move = { to: Stage; label: string; back?: boolean; primary?: boolean };
 
@@ -89,6 +90,7 @@ export function StageActions({ card, perms, me, onChanged }: { card: CardDetail;
         <p className="text-muted-foreground text-sm">{ts(stage)}</p>
       ) : null}
 
+      {stage === "ready_to_publish" && (staff || perms.isCommunity || perms.isTeamLead) ? <SchedulePost cardId={card.id} /> : null}
       <div className="grid gap-3 sm:grid-cols-2">
         {(["reviewer_id", "approver_id"] as const).map((field) => (
           <div key={field} className="space-y-1">

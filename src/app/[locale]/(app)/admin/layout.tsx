@@ -12,8 +12,9 @@ export default async function AdminLayout({ children }: LayoutProps<"/[locale]/a
   const tabs = [
     { href: "/admin/users", label: t("users") },
     ...(isAdmin ? [{ href: "/admin/branches", label: t("branches") }] : []),
+    ...(isAdmin ? [{ href: "/admin/organisation", label: t("organisation") }] : []),
     { href: "/admin/leave", label: t("leave") },
-    ...(isAdmin ? [{ href: "/admin/request-types", label: t("requestTypes") }] : []),
+    { href: "/admin/request-types", label: t("requestTypes") },
     { href: "/admin/settings", label: t("settings") },
     ...(isAdmin ? [{ href: "/admin/import", label: tt("title") }] : []),
     ...(isAdmin ? [{ href: "/admin/audit", label: t("audit") }] : []),

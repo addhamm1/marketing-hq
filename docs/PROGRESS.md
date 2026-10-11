@@ -2,6 +2,19 @@
 
 One entry per sprint day, newest first. Claude Code writes it at the end of each day.
 
+## Sprint summary (2026-10-17)
+
+All seven days are built and tested locally: 41 of 42 tasks are done (every P0 and P1 except D7-05, which is prepared and waits for the cloud accounts). 178 Vitest tests (unit and database access rules), 13 Playwright tests (smoke, three golden paths across ten users, every route at 375px in English and Arabic), zero Supabase advisor warnings, production build passing.
+
+**Before the pilot (needs Adham):** create the GitHub repository, two Supabase projects, Vercel, Resend and Sentry (Day 0 list), then follow `docs/DEPLOYMENT.md` and `docs/PILOT_CHECKLIST.md`. Answer the open decisions in `docs/DECISIONS.md` (D-02 home branch, D-05 allowances, D-13 stage targets, D-17 password recovery) and review the Arabic copy.
+
+**Known limits:** placeholder art (an asset pack drops in through `public/sprites/manifest.json` and Tiled maps); stage timers use calendar hours (working hours is P1); the week view moves posts between days, not time slots; Lighthouse itself wasn't run (a Playwright check with mobile throttling measured LCP 0.2 to 0.6 s and CLS 0 on the key routes; the map loads about 1.4 MB of JavaScript, mostly Phaser, only on `/map`).
+
+## Day 7 (2026-10-17): hardening and pilot
+
+- Done: D7-01 access audit (advisors: 0 warnings after splitting 16 `for all` write policies; service role key only in `src/lib/supabase/admin.ts`, admin client only in server code; storage and Realtime policies tested as the wrong role), D7-02 mobile and right-to-left pass (Playwright checks every route at 375px in both languages; fixed My work overflow), D7-03 performance pass (see summary), D7-04 golden-path e2e tests, D7-06 user guide (English and Arabic) and pilot checklist, D7-07 bug bash. Added `/admin/request-types` (chains and form fields) and `/admin/organisation` (default approvers, teams), a "Schedule on the content calendar" action on ready cards, `/cards/[id]` stable links, the production seed and the first-admin script.
+- Not done: D7-05 production setup (needs the cloud accounts).
+
 ## Day 6 (2026-10-16): content calendar and dashboards
 
 - Done: D6-01 to D6-06. Posts and media (protected status changes through `submit_post`, `decide_post`, `create_post_from_card`, `mark_post_published`; approved posts become scheduled when they get a time); post editor with resumable uploads over 6 MB (TUS, tested with a 50 MB file), browser-made thumbnails, sizes and durations, aspect-ratio warnings, carousel reorder, caption counters per platform; month view (Saturday-first, "+N", empty days highlighted, brand stripe, platform badges, status dot) and week view, drag to reschedule (keeps the time), "Ready to schedule" panel (drag a ready card onto a day to create its post), per-brand counters and pillar mix; format-aware preview with Arabic and English captions, copy caption and hashtags, download media, mark as published (moves the card); reminders cron every 5 minutes; dashboards on `security_invoker` views: workflow (numbers open the cards behind them), attendance, my numbers, department service; feed preview and list (printable).

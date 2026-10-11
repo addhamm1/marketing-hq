@@ -221,7 +221,18 @@
     "table": "Table",
     "action": "Action",
     "when": "When",
-    "selfLockout": "You can't remove your own admin access."
+    "selfLockout": "You can't remove your own admin access.",
+    "organisation": "Organisation",
+    "departments": "Departments",
+    "teams": "Teams",
+    "defaultApprover": "Default approver (confirms deliverables)",
+    "approvalChain": "Approval chain (JSON)",
+    "formSchema": "Form fields (JSON)",
+    "attachmentAfter": "Supporting file required after (days)",
+    "chainHint": "Steps in order, for example [{\"resolve\":\"team_lead_of_requester\"},{\"resolve\":\"role:hr\"}]",
+    "teamColor": "Name-tag colour",
+    "requestTypeSaved": "Request type saved",
+    "teamSaved": "Team saved"
   },
   "weekdays": {
     "0": "Sun",
@@ -871,7 +882,8 @@
       "scroll": "Feed",
       "pickBrand": "Brand",
       "empty": "No upcoming posts for this brand"
-    }
+    },
+    "scheduleCard": "Schedule on the content calendar"
   },
   "reports": {
     "title": "Reports",

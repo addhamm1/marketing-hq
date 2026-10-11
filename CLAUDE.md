@@ -55,6 +55,11 @@ pnpm db:start            # supabase start (needs Docker running)
 pnpm db:reset            # supabase db reset: reapplies migrations and seed
 pnpm db:migration <name> # supabase migration new <name>
 pnpm db:types            # regenerate src/lib/supabase/database.types.ts
+pnpm make:placeholders   # regenerate placeholder tileset, maps and sprite sheets
+node scripts/i18n-add.mjs <file.json>   # merge new strings into both message files
+node scripts/perf-check.mjs <url>       # mobile performance check against a production build
+pnpm tsx scripts/create-admin.mts <email> "<name>"   # first super admin on a fresh project
+pnpm supabase db advisors --local --type all --level warn
 ```
 
 Create these scripts on Day 1 if they do not exist.

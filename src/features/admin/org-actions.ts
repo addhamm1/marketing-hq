@@ -121,3 +121,91 @@ export async function setDesk(input: unknown): Promise<ActionResult> {
   revalidatePath("/[locale]/admin/branches", "page");
   return ok();
 }
+
+const chainSchema = z.array(
+  z.object({ resolve: z.string().regex(/^(team_lead_of_requester|role:[a-z_]+|user:[0-9a-f-]{36})$/) }).strict(),
+).max(6);
+const fieldSchema = z.object({
+  name: z.string().regex(/^[a-z_]+$/),
+  type: z.enum(["date", "text", "textarea", "number", "select", "card", "time"]),
+  required: z.boolean().optional(),
+  label_en: z.string().min(1).max(80),
+  label_ar: z.string().min(1).max(80),
+  options: z.array(z.string().regex(/^[a-z_]+$/)).optional(),
+  min: z.number().optional(),
+  max: z.number().optional(),
+});
+
+const requestTypeSchema = z.object({
+  id: z.uuid(),
+  name_en: z.string().trim().min(1, "validation.required").max(80),
+  name_ar: z.string().trim().min(1, "validation.required").max(80),
+  is_active: z.boolean(),
+  requires_attachment_after_days: z.number().int().min(0).max(60).nullable(),
+  approval_chain: z.string(),
+  form_schema: z.string(),
+});
+
+/** super_admin edits every type; hr edits leave types (row policies enforce it). */
+export async function updateRequestType(input: unknown): Promise<ActionResult> {
+  const parsed = requestTypeSchema.safeParse(input);
+  if (!parsed.success) return invalid(parsed.error);
+  const access = await actionAccess();
+  if (!access || !hasRole(access, "super_admin", "hr")) return fail("common.notAllowed");
+  let chain: unknown;
+  let form: unknown;
+  try {
+    chain = chainSchema.parse(JSON.parse(parsed.data.approval_chain));
+  } catch {
+    return fail("admin.invalidJson", { approval_chain: "admin.invalidJson" });
+  }
+  try {
+    form = z.object({ fields: z.array(fieldSchema).max(20) }).parse(JSON.parse(parsed.data.form_schema));
+  } catch {
+    return fail("admin.invalidJson", { form_schema: "admin.invalidJson" });
+  }
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("request_types")
+    .update({
+      name_en: parsed.data.name_en,
+      name_ar: parsed.data.name_ar,
+      is_active: parsed.data.is_active,
+      requires_attachment_after_days: parsed.data.requires_attachment_after_days,
+      approval_chain: chain as never,
+      form_schema: form as never,
+    })
+    .eq("id", parsed.data.id)
+    .select("id");
+  if (!data?.length) return fail("common.notAllowed");
+  revalidatePath("/[locale]/admin/request-types", "page");
+  return ok();
+}
+
+export async function setDefaultApprover(input: unknown): Promise<ActionResult> {
+  const parsed = z.object({ department_id: z.uuid(), user_id: z.uuid().nullable() }).safeParse(input);
+  if (!parsed.success) return invalid(parsed.error);
+  if (!(await superAdmin())) return fail("common.notAllowed");
+  const supabase = await createClient();
+  const { data } = await supabase.from("departments").update({ default_approver_id: parsed.data.user_id }).eq("id", parsed.data.department_id).select("id");
+  if (!data?.length) return fail("common.notAllowed");
+  revalidatePath("/[locale]/admin/organisation", "page");
+  return ok();
+}
+
+export async function updateTeam(input: unknown): Promise<ActionResult> {
+  const parsed = z.object({
+    id: z.uuid(),
+    name_en: z.string().trim().min(1).max(80),
+    name_ar: z.string().trim().min(1).max(80),
+    color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
+  }).safeParse(input);
+  if (!parsed.success) return invalid(parsed.error);
+  if (!(await superAdmin())) return fail("common.notAllowed");
+  const supabase = await createClient();
+  const { id, ...patch } = parsed.data;
+  const { data } = await supabase.from("teams").update(patch).eq("id", id).select("id");
+  if (!data?.length) return fail("common.notAllowed");
+  revalidatePath("/[locale]/admin/organisation", "page");
+  return ok();
+}
