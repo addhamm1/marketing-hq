@@ -94,3 +94,62 @@ export async function visibleIds(client: Client, table: string, column = "id"): 
   if (error) throw error;
   return (data ?? []).map((r) => (r as Record<string, string>)[column]);
 }
+
+export const PIPELINE = "60000000-0000-4000-8000-000000000001";
+export const SPRINT = "60000000-0000-4000-8000-000000000003";
+export const BRAND_ESPACES = "40000000-0000-4000-8000-000000000001";
+
+type Stage = Database["public"]["Enums"]["card_stage"];
+
+/** Insert a pipeline card directly (service role) for a test. */
+export async function makePipelineCard(stage: Stage, overrides: Record<string, unknown> = {}) {
+  const svc = service();
+  const { data: list } = await svc.from("lists").select("id").eq("board_id", PIPELINE).eq("stage", stage).single();
+  const { data, error } = await svc
+    .from("cards")
+    .insert({
+      board_id: PIPELINE,
+      list_id: list!.id,
+      position: "a0" + String(Math.floor(Math.random() * 9e5) + 1e5).replace(/0/g, "5"),
+      title: `Test card ${Date.now()}`,
+      objective: "Leads",
+      vertical: "Offices",
+      brand_id: BRAND_ESPACES,
+      format: "static",
+      platforms: ["instagram"],
+      due_at: new Date(Date.now() + 86400000 * 5).toISOString(),
+      stage,
+      request_kind: "strategic",
+      requesting_department_id: DEPT.sales,
+      requester_id: U.sales,
+      reviewer_id: U.leadCreative,
+      approver_id: U.approver,
+      created_by: U.traffic,
+      ...overrides,
+    })
+    .select("*")
+    .single();
+  if (error) throw error;
+  return data!;
+}
+
+export async function assign(cardId: string, userId: string, role: Database["public"]["Enums"]["assignee_role"] = "design") {
+  const { error } = await service().from("card_assignees").insert({ card_id: cardId, user_id: userId, role });
+  if (error) throw error;
+}
+
+export async function cardStage(cardId: string) {
+  const { data } = await service().from("cards").select("stage, revision_count, delivered_at, list_id").eq("id", cardId).single();
+  return data!;
+}
+
+export async function activeStep(cardId: string) {
+  const { data } = await service()
+    .from("approval_steps")
+    .select("id, approver_id, card_stage, status")
+    .eq("subject_type", "card")
+    .eq("subject_id", cardId)
+    .eq("status", "active")
+    .maybeSingle();
+  return data;
+}

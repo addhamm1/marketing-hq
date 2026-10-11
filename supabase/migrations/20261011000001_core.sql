@@ -279,10 +279,11 @@ language sql stable security definer set search_path = public as $$
     'avatar_seen', p.avatar_seen,
     'department_id', p.department_id,
     'team_id', p.team_id,
+    'team_slug', (select slug from teams where id = p.team_id),
     'home_branch_id', p.home_branch_id,
     'roles', coalesce((
-      select jsonb_agg(jsonb_build_object('role', ur.role, 'team_id', ur.team_id))
-      from user_roles ur where ur.user_id = p.id
+      select jsonb_agg(jsonb_build_object('role', ur.role, 'team_id', ur.team_id, 'team_slug', t.slug))
+      from user_roles ur left join teams t on t.id = ur.team_id where ur.user_id = p.id
     ), '[]'::jsonb),
     'is_marketing', public.is_marketing(),
     'is_team_app', public.is_team_app_user(),

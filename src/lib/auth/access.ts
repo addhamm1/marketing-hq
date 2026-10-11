@@ -14,8 +14,9 @@ export type Access = {
   avatar_seen: boolean;
   department_id: string | null;
   team_id: string | null;
+  team_slug: string | null;
   home_branch_id: string | null;
-  roles: { role: AppRole; team_id: string | null }[];
+  roles: { role: AppRole; team_id: string | null; team_slug?: string | null }[];
   is_marketing: boolean;
   is_team_app: boolean;
   is_portal: boolean;

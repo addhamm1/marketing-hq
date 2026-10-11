@@ -50,3 +50,17 @@ export function countWorkingDays(
 export function formatCairo(instant: Date | string, pattern: string): string {
   return format(nowInCairo(new Date(instant)), pattern);
 }
+
+/** ISO instant → value for <input type="datetime-local"> in Cairo time. */
+export function toCairoInput(iso: string | null | undefined): string {
+  if (!iso) return "";
+  return format(nowInCairo(new Date(iso)), "yyyy-MM-dd'T'HH:mm");
+}
+
+/** <input type="datetime-local"> value read as Cairo time → ISO instant. */
+export function fromCairoInput(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const [date, time] = value.split("T");
+  if (!date || !time) return null;
+  return cairoInstant(date, time.slice(0, 5)).toISOString();
+}

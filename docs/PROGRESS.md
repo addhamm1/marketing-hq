@@ -2,6 +2,14 @@
 
 One entry per sprint day, newest first. Claude Code writes it at the end of each day.
 
+## Day 2 (2026-10-12): boards and the content cycle
+
+- Done: D2-01 to D2-06. Boards, lists, cards and approvals schema with policies, column grants and storage; Content Pipeline with its ten fixed stage lists; `move_card_stage` with the transition table and required fields; `decide_step` for card review and confirmation (same-approver merge); Kanban with dnd-kit (touch, keyboard, fractional positions, optimistic moves with rollback), live updates through Postgres Changes; card detail sheet addressable by `?card=` (fields, assignees, labels, checklists, comments with @mentions, attachments with signed URLs, activity); table view with sorting and combined filters; My work; workload view with the WIP limit.
+- Tests: 105 passing (access tests for boards and cards, every allowed and forbidden transition, review and confirmation, revisions, mentions, notifications).
+- Changes from the kit: `can_edit_card` also lets the card creator and anyone who may add cards edit cards on shared free-form boards (Trello-like); `card_events` gained `update`, `approval`, `attachment` and `created` kinds so every field change shows in the activity feed; cards carry `stage_entered_at` for the stage timer.
+- Decisions used with defaults: D-13 (stage targets, calendar hours in v1), D-16 (performance input can be skipped with "No input").
+- Tomorrow starts with: D3-01 department portal.
+
 ## Day 1 (2026-10-12): foundation
 
 - Versions: Next.js 16.4.0, React 19.3.0, next-intl 4.14.9, @supabase/supabase-js 2.117.3, @supabase/ssr 0.12.7, Supabase CLI 2.120.0, Phaser 3.90.0, Tailwind CSS 4.3.3, Zod 4.6.5, Vitest 5.0.3, Playwright 1.64.0, @sentry/nextjs 11.6.0, Node 24, pnpm 12.

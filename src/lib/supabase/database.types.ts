@@ -5,7 +5,53 @@ export type Database = {
   
   "public": {
           Tables: {
-            "audit_log": {
+            "approval_steps": {
+                  Row: {
+                    "approver_id": string,"card_stage": Database["public"]['Enums']["card_stage"] | null,"comment": string | null,"created_at": string,"decided_at": string | null,"id": string,"revision_reason": Database["public"]['Enums']["revision_reason"] | null,"status": Database["public"]['Enums']["step_status"],"step_index": number,"subject_id": string,"subject_type": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "approver_id": string,"card_stage"?: Database["public"]['Enums']["card_stage"] | null,"comment"?: string | null,"created_at"?: string,"decided_at"?: string | null,"id"?: string,"revision_reason"?: Database["public"]['Enums']["revision_reason"] | null,"status": Database["public"]['Enums']["step_status"],"step_index": number,"subject_id": string,"subject_type": string
+                  }
+                  Update: {
+                    "approver_id"?: string,"card_stage"?: Database["public"]['Enums']["card_stage"] | null,"comment"?: string | null,"created_at"?: string,"decided_at"?: string | null,"id"?: string,"revision_reason"?: Database["public"]['Enums']["revision_reason"] | null,"status"?: Database["public"]['Enums']["step_status"],"step_index"?: number,"subject_id"?: string,"subject_type"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "approval_steps_approver_id_fkey"
+      columns: ["approver_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"attachments": {
+                  Row: {
+                    "card_id": string,"created_at": string,"id": string,"kind": string,"mime": string | null,"name": string,"size": number | null,"storage_path": string | null,"uploaded_by": string,"url": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "card_id": string,"created_at"?: string,"id"?: string,"kind": string,"mime"?: string | null,"name": string,"size"?: number | null,"storage_path"?: string | null,"uploaded_by": string,"url"?: string | null
+                  }
+                  Update: {
+                    "card_id"?: string,"created_at"?: string,"id"?: string,"kind"?: string,"mime"?: string | null,"name"?: string,"size"?: number | null,"storage_path"?: string | null,"uploaded_by"?: string,"url"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "attachments_card_id_fkey"
+      columns: ["card_id"]
+isOneToOne: false
+      referencedRelation: "cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "attachments_uploaded_by_fkey"
+      columns: ["uploaded_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"audit_log": {
                   Row: {
                     "action": string,"actor_id": string | null,"at": string,"id": string,"new_data": Json | null,"old_data": Json | null,"row_id": string | null,"table_name": string
                   }
@@ -18,6 +64,58 @@ export type Database = {
                   }
                   Relationships: [
                     
+                  ]
+                },"board_members": {
+                  Row: {
+                    "board_id": string,"created_at": string,"id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "board_id": string,"created_at"?: string,"id"?: string,"user_id": string
+                  }
+                  Update: {
+                    "board_id"?: string,"created_at"?: string,"id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "board_members_board_id_fkey"
+      columns: ["board_id"]
+isOneToOne: false
+      referencedRelation: "boards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "board_members_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"boards": {
+                  Row: {
+                    "archived_at": string | null,"created_at": string,"created_by": string | null,"description": string,"id": string,"is_pipeline": boolean,"name": string,"updated_at": string,"visibility": string,"workspace_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"description"?: string,"id"?: string,"is_pipeline"?: boolean,"name": string,"updated_at"?: string,"visibility"?: string,"workspace_id": string
+                  }
+                  Update: {
+                    "archived_at"?: string | null,"created_at"?: string,"created_by"?: string | null,"description"?: string,"id"?: string,"is_pipeline"?: boolean,"name"?: string,"updated_at"?: string,"visibility"?: string,"workspace_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "boards_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "boards_workspace_id_fkey"
+      columns: ["workspace_id"]
+isOneToOne: false
+      referencedRelation: "workspaces"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"branch_secrets": {
                   Row: {
@@ -53,6 +151,264 @@ isOneToOne: true
                   Relationships: [
                     
                   ]
+                },"brands": {
+                  Row: {
+                    "color": string,"created_at": string,"id": string,"name": string,"slug": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "color"?: string,"created_at"?: string,"id"?: string,"name": string,"slug": string
+                  }
+                  Update: {
+                    "color"?: string,"created_at"?: string,"id"?: string,"name"?: string,"slug"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"card_assignees": {
+                  Row: {
+                    "card_id": string,"created_at": string,"id": string,"role": Database["public"]['Enums']["assignee_role"],"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "card_id": string,"created_at"?: string,"id"?: string,"role"?: Database["public"]['Enums']["assignee_role"],"user_id": string
+                  }
+                  Update: {
+                    "card_id"?: string,"created_at"?: string,"id"?: string,"role"?: Database["public"]['Enums']["assignee_role"],"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "card_assignees_card_id_fkey"
+      columns: ["card_id"]
+isOneToOne: false
+      referencedRelation: "cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "card_assignees_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"card_events": {
+                  Row: {
+                    "actor_id": string | null,"card_id": string,"created_at": string,"data": NonNullable<Json>,"from_stage": Database["public"]['Enums']["card_stage"] | null,"id": string,"kind": string,"to_stage": Database["public"]['Enums']["card_stage"] | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "actor_id"?: string | null,"card_id": string,"created_at"?: string,"data"?: NonNullable<Json>,"from_stage"?: Database["public"]['Enums']["card_stage"] | null,"id"?: string,"kind": string,"to_stage"?: Database["public"]['Enums']["card_stage"] | null
+                  }
+                  Update: {
+                    "actor_id"?: string | null,"card_id"?: string,"created_at"?: string,"data"?: NonNullable<Json>,"from_stage"?: Database["public"]['Enums']["card_stage"] | null,"id"?: string,"kind"?: string,"to_stage"?: Database["public"]['Enums']["card_stage"] | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "card_events_actor_id_fkey"
+      columns: ["actor_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "card_events_card_id_fkey"
+      columns: ["card_id"]
+isOneToOne: false
+      referencedRelation: "cards"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"card_labels": {
+                  Row: {
+                    "card_id": string,"id": string,"label_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "card_id": string,"id"?: string,"label_id": string
+                  }
+                  Update: {
+                    "card_id"?: string,"id"?: string,"label_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "card_labels_card_id_fkey"
+      columns: ["card_id"]
+isOneToOne: false
+      referencedRelation: "cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "card_labels_label_id_fkey"
+      columns: ["label_id"]
+isOneToOne: false
+      referencedRelation: "labels"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"card_stage_periods": {
+                  Row: {
+                    "card_id": string,"entered_at": string,"id": string,"left_at": string | null,"stage": Database["public"]['Enums']["card_stage"]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "card_id": string,"entered_at"?: string,"id"?: string,"left_at"?: string | null,"stage": Database["public"]['Enums']["card_stage"]
+                  }
+                  Update: {
+                    "card_id"?: string,"entered_at"?: string,"id"?: string,"left_at"?: string | null,"stage"?: Database["public"]['Enums']["card_stage"]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "card_stage_periods_card_id_fkey"
+      columns: ["card_id"]
+isOneToOne: false
+      referencedRelation: "cards"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"cards": {
+                  Row: {
+                    "approver_id": string | null,"archived_at": string | null,"board_id": string,"branch_id": string | null,"brand_id": string | null,"budget_note": string | null,"created_at": string,"created_by": string | null,"delivered_at": string | null,"description": string,"due_at": string | null,"due_notified_for": string | null,"format": string | null,"id": string,"is_late_submission": boolean,"key_message": string | null,"list_id": string,"missing_items": (string)[],"objective": string | null,"performance_notes": string | null,"platforms": (string)[],"position": string,"priority": Database["public"]['Enums']["card_priority"],"published_at": string | null,"reference_links": NonNullable<Json>,"request_kind": Database["public"]['Enums']["card_request_kind"] | null,"requester_id": string | null,"requesting_department_id": string | null,"returned_reason": string | null,"reviewer_id": string | null,"revision_count": number,"stage": Database["public"]['Enums']["card_stage"] | null,"stage_due_at": string | null,"stage_entered_at": string | null,"strategic_plan_id": string | null,"title": string,"updated_at": string,"urgent_reason": string | null,"vertical": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "approver_id"?: string | null,"archived_at"?: string | null,"board_id": string,"branch_id"?: string | null,"brand_id"?: string | null,"budget_note"?: string | null,"created_at"?: string,"created_by"?: string | null,"delivered_at"?: string | null,"description"?: string,"due_at"?: string | null,"due_notified_for"?: string | null,"format"?: string | null,"id"?: string,"is_late_submission"?: boolean,"key_message"?: string | null,"list_id": string,"missing_items"?: (string)[],"objective"?: string | null,"performance_notes"?: string | null,"platforms"?: (string)[],"position": string,"priority"?: Database["public"]['Enums']["card_priority"],"published_at"?: string | null,"reference_links"?: NonNullable<Json>,"request_kind"?: Database["public"]['Enums']["card_request_kind"] | null,"requester_id"?: string | null,"requesting_department_id"?: string | null,"returned_reason"?: string | null,"reviewer_id"?: string | null,"revision_count"?: number,"stage"?: Database["public"]['Enums']["card_stage"] | null,"stage_due_at"?: string | null,"stage_entered_at"?: string | null,"strategic_plan_id"?: string | null,"title": string,"updated_at"?: string,"urgent_reason"?: string | null,"vertical"?: string | null
+                  }
+                  Update: {
+                    "approver_id"?: string | null,"archived_at"?: string | null,"board_id"?: string,"branch_id"?: string | null,"brand_id"?: string | null,"budget_note"?: string | null,"created_at"?: string,"created_by"?: string | null,"delivered_at"?: string | null,"description"?: string,"due_at"?: string | null,"due_notified_for"?: string | null,"format"?: string | null,"id"?: string,"is_late_submission"?: boolean,"key_message"?: string | null,"list_id"?: string,"missing_items"?: (string)[],"objective"?: string | null,"performance_notes"?: string | null,"platforms"?: (string)[],"position"?: string,"priority"?: Database["public"]['Enums']["card_priority"],"published_at"?: string | null,"reference_links"?: NonNullable<Json>,"request_kind"?: Database["public"]['Enums']["card_request_kind"] | null,"requester_id"?: string | null,"requesting_department_id"?: string | null,"returned_reason"?: string | null,"reviewer_id"?: string | null,"revision_count"?: number,"stage"?: Database["public"]['Enums']["card_stage"] | null,"stage_due_at"?: string | null,"stage_entered_at"?: string | null,"strategic_plan_id"?: string | null,"title"?: string,"updated_at"?: string,"urgent_reason"?: string | null,"vertical"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "cards_approver_id_fkey"
+      columns: ["approver_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cards_board_id_fkey"
+      columns: ["board_id"]
+isOneToOne: false
+      referencedRelation: "boards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cards_branch_id_fkey"
+      columns: ["branch_id"]
+isOneToOne: false
+      referencedRelation: "branches"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cards_brand_id_fkey"
+      columns: ["brand_id"]
+isOneToOne: false
+      referencedRelation: "brands"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cards_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cards_list_id_fkey"
+      columns: ["list_id"]
+isOneToOne: false
+      referencedRelation: "lists"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cards_requester_id_fkey"
+      columns: ["requester_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cards_requesting_department_id_fkey"
+      columns: ["requesting_department_id"]
+isOneToOne: false
+      referencedRelation: "departments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cards_reviewer_id_fkey"
+      columns: ["reviewer_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "cards_strategic_plan_id_fkey"
+      columns: ["strategic_plan_id"]
+isOneToOne: false
+      referencedRelation: "strategic_plans"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"checklist_items": {
+                  Row: {
+                    "assignee_id": string | null,"checklist_id": string,"created_at": string,"done": boolean,"due_at": string | null,"id": string,"position": string,"text": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "assignee_id"?: string | null,"checklist_id": string,"created_at"?: string,"done"?: boolean,"due_at"?: string | null,"id"?: string,"position"?: string,"text": string
+                  }
+                  Update: {
+                    "assignee_id"?: string | null,"checklist_id"?: string,"created_at"?: string,"done"?: boolean,"due_at"?: string | null,"id"?: string,"position"?: string,"text"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "checklist_items_assignee_id_fkey"
+      columns: ["assignee_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "checklist_items_checklist_id_fkey"
+      columns: ["checklist_id"]
+isOneToOne: false
+      referencedRelation: "checklists"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"checklists": {
+                  Row: {
+                    "card_id": string,"created_at": string,"id": string,"position": string,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "card_id": string,"created_at"?: string,"id"?: string,"position"?: string,"title": string
+                  }
+                  Update: {
+                    "card_id"?: string,"created_at"?: string,"id"?: string,"position"?: string,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "checklists_card_id_fkey"
+      columns: ["card_id"]
+isOneToOne: false
+      referencedRelation: "cards"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"comments": {
+                  Row: {
+                    "author_id": string,"body": string,"card_id": string,"created_at": string,"edited_at": string | null,"id": string,"mentions": (string)[]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "author_id": string,"body": string,"card_id": string,"created_at"?: string,"edited_at"?: string | null,"id"?: string,"mentions"?: (string)[]
+                  }
+                  Update: {
+                    "author_id"?: string,"body"?: string,"card_id"?: string,"created_at"?: string,"edited_at"?: string | null,"id"?: string,"mentions"?: (string)[]
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "comments_author_id_fkey"
+      columns: ["author_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "comments_card_id_fkey"
+      columns: ["card_id"]
+isOneToOne: false
+      referencedRelation: "cards"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"departments": {
                   Row: {
                     "created_at": string,"default_approver_id": string | null,"id": string,"is_marketing": boolean,"name_ar": string,"name_en": string,"slug": string
@@ -68,6 +424,66 @@ isOneToOne: true
                     {
       foreignKeyName: "departments_default_approver_fk"
       columns: ["default_approver_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"labels": {
+                  Row: {
+                    "board_id": string,"color": string,"created_at": string,"id": string,"name": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "board_id": string,"color"?: string,"created_at"?: string,"id"?: string,"name": string
+                  }
+                  Update: {
+                    "board_id"?: string,"color"?: string,"created_at"?: string,"id"?: string,"name"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "labels_board_id_fkey"
+      columns: ["board_id"]
+isOneToOne: false
+      referencedRelation: "boards"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"lists": {
+                  Row: {
+                    "archived_at": string | null,"board_id": string,"created_at": string,"id": string,"name": string,"position": string,"stage": Database["public"]['Enums']["card_stage"] | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "archived_at"?: string | null,"board_id": string,"created_at"?: string,"id"?: string,"name": string,"position": string,"stage"?: Database["public"]['Enums']["card_stage"] | null
+                  }
+                  Update: {
+                    "archived_at"?: string | null,"board_id"?: string,"created_at"?: string,"id"?: string,"name"?: string,"position"?: string,"stage"?: Database["public"]['Enums']["card_stage"] | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lists_board_id_fkey"
+      columns: ["board_id"]
+isOneToOne: false
+      referencedRelation: "boards"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"notifications": {
+                  Row: {
+                    "body": string,"created_at": string,"data": NonNullable<Json>,"id": string,"kind": string,"link": string | null,"read_at": string | null,"title": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body"?: string,"created_at"?: string,"data"?: NonNullable<Json>,"id"?: string,"kind": string,"link"?: string | null,"read_at"?: string | null,"title"?: string,"user_id": string
+                  }
+                  Update: {
+                    "body"?: string,"created_at"?: string,"data"?: NonNullable<Json>,"id"?: string,"kind"?: string,"link"?: string | null,"read_at"?: string | null,"title"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "notifications_user_id_fkey"
+      columns: ["user_id"]
 isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
@@ -105,6 +521,46 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"request_types": {
+                  Row: {
+                    "approval_chain": NonNullable<Json>,"category": string,"counts_working_days": boolean,"created_at": string,"form_schema": NonNullable<Json>,"id": string,"is_active": boolean,"is_leave": boolean,"key": string,"name_ar": string,"name_en": string,"requires_attachment_after_days": number | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "approval_chain"?: NonNullable<Json>,"category": string,"counts_working_days"?: boolean,"created_at"?: string,"form_schema"?: NonNullable<Json>,"id"?: string,"is_active"?: boolean,"is_leave"?: boolean,"key": string,"name_ar": string,"name_en": string,"requires_attachment_after_days"?: number | null
+                  }
+                  Update: {
+                    "approval_chain"?: NonNullable<Json>,"category"?: string,"counts_working_days"?: boolean,"created_at"?: string,"form_schema"?: NonNullable<Json>,"id"?: string,"is_active"?: boolean,"is_leave"?: boolean,"key"?: string,"name_ar"?: string,"name_en"?: string,"requires_attachment_after_days"?: number | null
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"requests": {
+                  Row: {
+                    "created_at": string,"data": NonNullable<Json>,"days": number | null,"decided_at": string | null,"ends_on": string | null,"id": string,"requester_id": string,"starts_on": string | null,"status": Database["public"]['Enums']["request_status"],"submitted_at": string,"type_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"data"?: NonNullable<Json>,"days"?: number | null,"decided_at"?: string | null,"ends_on"?: string | null,"id"?: string,"requester_id": string,"starts_on"?: string | null,"status"?: Database["public"]['Enums']["request_status"],"submitted_at"?: string,"type_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"data"?: NonNullable<Json>,"days"?: number | null,"decided_at"?: string | null,"ends_on"?: string | null,"id"?: string,"requester_id"?: string,"starts_on"?: string | null,"status"?: Database["public"]['Enums']["request_status"],"submitted_at"?: string,"type_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "requests_requester_id_fkey"
+      columns: ["requester_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "requests_type_id_fkey"
+      columns: ["type_id"]
+isOneToOne: false
+      referencedRelation: "request_types"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"schedules": {
                   Row: {
                     "end_time": string,"id": string,"start_time": string,"timezone": string,"updated_at": string,"user_id": string,"workdays": (number)[]
@@ -138,6 +594,32 @@ isOneToOne: true
                   }
                   Relationships: [
                     
+                  ]
+                },"strategic_plans": {
+                  Row: {
+                    "created_at": string,"department_id": string,"for_month": string,"id": string,"is_late": boolean,"submitted_at": string,"submitted_by": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"department_id": string,"for_month": string,"id"?: string,"is_late"?: boolean,"submitted_at"?: string,"submitted_by": string
+                  }
+                  Update: {
+                    "created_at"?: string,"department_id"?: string,"for_month"?: string,"id"?: string,"is_late"?: boolean,"submitted_at"?: string,"submitted_by"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "strategic_plans_department_id_fkey"
+      columns: ["department_id"]
+isOneToOne: false
+      referencedRelation: "departments"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "strategic_plans_submitted_by_fkey"
+      columns: ["submitted_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"teams": {
                   Row: {
@@ -185,13 +667,39 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"workspaces": {
+                  Row: {
+                    "created_at": string,"id": string,"name_ar": string,"name_en": string,"position": number,"slug": string,"team_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"name_ar": string,"name_en": string,"position"?: number,"slug": string,"team_id"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"name_ar"?: string,"name_en"?: string,"position"?: number,"slug"?: string,"team_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "workspaces_team_id_fkey"
+      columns: ["team_id"]
+isOneToOne: false
+      referencedRelation: "teams"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
             [_ in never]: never
           }
           Functions: {
-            "admin_revoke_sessions":
+            "_create_card_step":
+{ Args: { "p_card_id": string,"p_stage": Database["public"]['Enums']["card_stage"] }; Returns: string
+                           },
+"_set_card_stage":
+{ Args: { "p_card_id": string,"p_data"?: Json,"p_stage_due"?: string,"p_to": Database["public"]['Enums']["card_stage"] }; Returns: undefined
+                           },
+"admin_revoke_sessions":
 { Args: { "p_user_id": string }; Returns: undefined
                            },
 "admin_rotate_qr_secret":
@@ -206,6 +714,36 @@ isOneToOne: false
 "admin_update_profile":
 { Args: { "p_user_id": string,"patch": Json }; Returns: undefined
                            },
+"can_add_to_board":
+{ Args: { "p_board_id": string }; Returns: boolean
+                           },
+"can_edit_board":
+{ Args: { "p_board_id": string }; Returns: boolean
+                           },
+"can_edit_card":
+{ Args: { "p_card_id": string }; Returns: boolean
+                           },
+"can_view_board":
+{ Args: { "p_board_id": string }; Returns: boolean
+                           },
+"can_view_card":
+{ Args: { "p_card_id": string }; Returns: boolean
+                           },
+"can_view_request":
+{ Args: { "p_request_id": string }; Returns: boolean
+                           },
+"card_link":
+{ Args: { "p_card_id": string }; Returns: string
+                           },
+"card_visible":
+{ Args: { "p_approver_id": string,"p_board_id": string,"p_department_id": string }; Returns: boolean
+                           },
+"create_internal_card":
+{ Args: { "p_position": string,"p_title": string }; Returns: string
+                           },
+"decide_step":
+{ Args: { "p_comment"?: string,"p_decision": Database["public"]['Enums']["step_status"],"p_reason"?: Database["public"]['Enums']["revision_reason"],"p_step_id": string }; Returns: undefined
+                           },
 "has_any_role":
 { Args: { "rs": (Database["public"]['Enums']["app_role"])[] }; Returns: boolean
                            },
@@ -218,7 +756,13 @@ isOneToOne: false
 "is_active_user":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
+"is_board_member":
+{ Args: { "p_board_id": string }; Returns: boolean
+                           },
 "is_marketing":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"is_marketing_writer":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
 "is_portal_user":
@@ -230,8 +774,17 @@ isOneToOne: false
 "is_team_lead_of":
 { Args: { "target": string }; Returns: boolean
                            },
+"move_card_stage":
+{ Args: { "p_card_id": string,"p_payload"?: Json,"p_to": Database["public"]['Enums']["card_stage"] }; Returns: undefined
+                           },
 "my_access":
 { Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"my_department_id":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           },
+"notify":
+{ Args: { "p_body"?: string,"p_data"?: Json,"p_kind": string,"p_link": string,"p_title"?: string,"p_user_id": string }; Returns: undefined
                            },
 "public_profiles":
 { Args: Record<PropertyKey, never>; Returns: {
@@ -240,6 +793,12 @@ isOneToOne: false
                            },
 "require_password_change":
 { Args: { "p_user_id": string }; Returns: undefined
+                           },
+"set_card_reviewers":
+{ Args: { "p_approver": string,"p_card_id": string,"p_reviewer": string }; Returns: undefined
+                           },
+"try_uuid":
+{ Args: { "t": string }; Returns: string
                            }
           }
           Enums: {

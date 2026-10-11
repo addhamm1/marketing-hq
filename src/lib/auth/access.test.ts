@@ -13,6 +13,7 @@ const base: Access = {
   avatar_seen: true,
   department_id: null,
   team_id: null,
+  team_slug: null,
   home_branch_id: null,
   roles: [{ role: "member", team_id: null }],
   is_marketing: true,

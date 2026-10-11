@@ -42,7 +42,7 @@ export function useActionForm<TValues extends FieldValues, TData = undefined, TO
             fields.forEach(([name, key]) =>
               form.setError(name as Path<TValues>, { type: "server", message: key }),
             );
-            if (!fields.length || result.error !== "validation.invalid") toast.error(message(result.error));
+            if (!fields.length || result.error !== "validation.invalid") toast.error(message(result.error, result.params));
           }
         } finally {
           resolve();
