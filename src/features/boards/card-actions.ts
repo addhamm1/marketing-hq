@@ -1,7 +1,9 @@
 "use server";
 
+import { after } from "next/server";
 import { fail, invalid, ok, stageError, type ActionResult } from "@/lib/actions";
 import { actionAccess } from "@/lib/auth/session";
+import { flushEmailQueue } from "@/lib/email/queue";
 import { createClient } from "@/lib/supabase/server";
 import {
   assigneesSchema, cardLabelsSchema, createCardSchema, createLabelSchema, decideSchema, idSchema,
@@ -61,6 +63,7 @@ export async function moveCardStage(input: unknown): Promise<ActionResult> {
     p_payload: parsed.data.payload,
   });
   if (error) return stageError(error);
+  after(() => flushEmailQueue());
   if (parsed.data.position) {
     await c.supabase.from("cards").update({ position: parsed.data.position }).eq("id", parsed.data.id);
   }
@@ -167,5 +170,7 @@ export async function decideStep(input: unknown): Promise<ActionResult> {
     p_comment: comment ?? undefined,
     p_reason: (reason as never) ?? undefined,
   });
-  return error ? stageError(error) : ok();
+  if (error) return stageError(error);
+  after(() => flushEmailQueue());
+  return ok();
 }

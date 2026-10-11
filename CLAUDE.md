@@ -95,7 +95,7 @@ docs/                  the files listed above
 ### Security
 1. Every new table gets row-level security enabled and its policies in the same migration. No table ships without policies and at least one access test per role that touches it.
 2. Read `DATA_MODEL.md` section 0 before any migration. Row policies alone are not enough: protect columns with column grants, put multi-step rules in `security definer` functions, and never create plain (definer) views. Use the helper functions (`has_role`, `is_team_lead_of`, and so on) inside policies instead of repeating logic.
-3. Every `security definer` function sets `search_path = public`, checks the caller itself, and has its `execute` grant set explicitly (revoked from `public` and `anon`).
+3. Every `security definer` function sets `search_path = public`, checks the caller itself, and has its `execute` grant set explicitly (revoked from `public` and `anon`). Internal helpers (prefixed `_`, `notify`, `cron_*`) are also revoked from `authenticated`. End every migration with `revoke execute on all functions in schema public from public, anon;` (Supabase's schema defaults otherwise grant new functions to clients).
 4. The service role key is used only in `src/lib/supabase/admin.ts`, only in server code, and only for cron jobs, check-in and admin tasks that truly need it (creating accounts, resetting passwords, banning deactivated users, clearing `must_change_password`). Never import it into a client component.
 5. Validate every server action input with Zod, then check the caller's permission on the server. Hiding a button is not a permission check.
 6. Storage buckets are private. Files are served through signed URLs that expire.

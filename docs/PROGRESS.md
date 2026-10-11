@@ -2,6 +2,14 @@
 
 One entry per sprint day, newest first. Claude Code writes it at the end of each day.
 
+## Day 3 (2026-10-13): department portal, approvals and notifications
+
+- Done: D3-01 to D3-06. Portal home with simplified statuses, strategic plan (many lines, deadline on the 25th, late flag) and urgent request forms, request page with progress, comments, files, confirmation step and edit-and-resubmit; performance input and intake actions; approval engine for requests (resolvers, no self-approval, fallbacks, skipped steps, same-approver merge, multi-candidate steps); one approvals inbox for requests and cards with inline image and video previews; notification bell with live unread count; emails through Resend (or a logged preview locally) in the recipient's language, sent right after the action with a 10-minute cron safety net; cron routes `due-soon` (hourly) and `daily`; Trello file import.
+- Tests: 128 passing.
+- Changes from the kit: `leave_balances` and `holidays` are created in this migration because `submit_request` needs them (screens on Day 5). Notifications store `kind` + `data` and are rendered in the reader's language; `emailed_at` makes email sending idempotent.
+- Security fix: function EXECUTE was still granted to PUBLIC by the global default; now revoked globally and at the end of each migration, with a test that internal helpers are refused.
+- Tomorrow starts with: D4-01 placeholder art and maps (in progress in parallel), then the map page and check-in.
+
 ## Day 2 (2026-10-12): boards and the content cycle
 
 - Done: D2-01 to D2-06. Boards, lists, cards and approvals schema with policies, column grants and storage; Content Pipeline with its ten fixed stage lists; `move_card_stage` with the transition table and required fields; `decide_step` for card review and confirmation (same-approver merge); Kanban with dnd-kit (touch, keyboard, fractional positions, optimistic moves with rollback), live updates through Postgres Changes; card detail sheet addressable by `?card=` (fields, assignees, labels, checklists, comments with @mentions, attachments with signed URLs, activity); table view with sorting and combined filters; My work; workload view with the WIP limit.

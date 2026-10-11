@@ -429,6 +429,20 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"holidays": {
+                  Row: {
+                    "created_at": string,"day": string,"id": string,"is_half_day": boolean,"name_ar": string,"name_en": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"day": string,"id"?: string,"is_half_day"?: boolean,"name_ar": string,"name_en": string
+                  }
+                  Update: {
+                    "created_at"?: string,"day"?: string,"id"?: string,"is_half_day"?: boolean,"name_ar"?: string,"name_en"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"labels": {
                   Row: {
                     "board_id": string,"color": string,"created_at": string,"id": string,"name": string
@@ -446,6 +460,32 @@ isOneToOne: false
       columns: ["board_id"]
 isOneToOne: false
       referencedRelation: "boards"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"leave_balances": {
+                  Row: {
+                    "allowance": number,"id": string,"type_id": string,"updated_at": string,"used": number,"user_id": string,"year": number
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "allowance"?: number,"id"?: string,"type_id": string,"updated_at"?: string,"used"?: number,"user_id": string,"year": number
+                  }
+                  Update: {
+                    "allowance"?: number,"id"?: string,"type_id"?: string,"updated_at"?: string,"used"?: number,"user_id"?: string,"year"?: number
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "leave_balances_type_id_fkey"
+      columns: ["type_id"]
+isOneToOne: false
+      referencedRelation: "request_types"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "leave_balances_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
                   ]
@@ -471,14 +511,14 @@ isOneToOne: false
                   ]
                 },"notifications": {
                   Row: {
-                    "body": string,"created_at": string,"data": NonNullable<Json>,"id": string,"kind": string,"link": string | null,"read_at": string | null,"title": string,"user_id": string
+                    "body": string,"created_at": string,"data": NonNullable<Json>,"emailed_at": string | null,"id": string,"kind": string,"link": string | null,"read_at": string | null,"title": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "body"?: string,"created_at"?: string,"data"?: NonNullable<Json>,"id"?: string,"kind": string,"link"?: string | null,"read_at"?: string | null,"title"?: string,"user_id": string
+                    "body"?: string,"created_at"?: string,"data"?: NonNullable<Json>,"emailed_at"?: string | null,"id"?: string,"kind": string,"link"?: string | null,"read_at"?: string | null,"title"?: string,"user_id": string
                   }
                   Update: {
-                    "body"?: string,"created_at"?: string,"data"?: NonNullable<Json>,"id"?: string,"kind"?: string,"link"?: string | null,"read_at"?: string | null,"title"?: string,"user_id"?: string
+                    "body"?: string,"created_at"?: string,"data"?: NonNullable<Json>,"emailed_at"?: string | null,"id"?: string,"kind"?: string,"link"?: string | null,"read_at"?: string | null,"title"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -693,8 +733,32 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "_create_card_step":
+            "_build_request_steps":
+{ Args: { "p_chain": Json,"p_request_id": string,"p_requester": string }; Returns: boolean
+                           },
+"_check_line":
+{ Args: { "p_line": Json,"p_strict": boolean }; Returns: undefined
+                           },
+"_create_card_step":
 { Args: { "p_card_id": string,"p_stage": Database["public"]['Enums']["card_stage"] }; Returns: string
+                           },
+"_creative_lead":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           },
+"_finish_request":
+{ Args: { "p_request_id": string,"p_status": Database["public"]['Enums']["request_status"] }; Returns: undefined
+                           },
+"_insert_department_card":
+{ Args: { "p_kind": Database["public"]['Enums']["card_request_kind"],"p_late": boolean,"p_line": Json,"p_plan": string }; Returns: string
+                           },
+"_notify_role":
+{ Args: { "p_data": Json,"p_kind": string,"p_link": string,"p_role": Database["public"]['Enums']["app_role"],"p_team"?: string }; Returns: undefined
+                           },
+"_require_requester":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
+"_resolve_approvers":
+{ Args: { "p_requester": string,"p_resolver": string }; Returns: (string)[]
                            },
 "_set_card_stage":
 { Args: { "p_card_id": string,"p_data"?: Json,"p_stage_due"?: string,"p_to": Database["public"]['Enums']["card_stage"] }; Returns: undefined
@@ -714,6 +778,9 @@ isOneToOne: false
 "admin_update_profile":
 { Args: { "p_user_id": string,"patch": Json }; Returns: undefined
                            },
+"cairo_today":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           },
 "can_add_to_board":
 { Args: { "p_board_id": string }; Returns: boolean
                            },
@@ -732,6 +799,9 @@ isOneToOne: false
 "can_view_request":
 { Args: { "p_request_id": string }; Returns: boolean
                            },
+"cancel_request":
+{ Args: { "p_request_id": string }; Returns: undefined
+                           },
 "card_link":
 { Args: { "p_card_id": string }; Returns: string
                            },
@@ -740,6 +810,12 @@ isOneToOne: false
                            },
 "create_internal_card":
 { Args: { "p_position": string,"p_title": string }; Returns: string
+                           },
+"cron_daily":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"cron_due_soon":
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "decide_step":
 { Args: { "p_comment"?: string,"p_decision": Database["public"]['Enums']["step_status"],"p_reason"?: Database["public"]['Enums']["revision_reason"],"p_step_id": string }; Returns: undefined
@@ -794,11 +870,29 @@ isOneToOne: false
 "require_password_change":
 { Args: { "p_user_id": string }; Returns: undefined
                            },
+"resubmit_request":
+{ Args: { "p_card_id": string,"payload": Json }; Returns: undefined
+                           },
 "set_card_reviewers":
 { Args: { "p_approver": string,"p_card_id": string,"p_reviewer": string }; Returns: undefined
                            },
+"strategic_is_late":
+{ Args: { "p_at": string,"p_for_month": string }; Returns: boolean
+                           },
+"submit_request":
+{ Args: { "data": Json,"type_key": string }; Returns: string
+                           },
+"submit_strategic_plan":
+{ Args: { "payload": Json }; Returns: string
+                           },
+"submit_urgent_request":
+{ Args: { "payload": Json }; Returns: string
+                           },
 "try_uuid":
 { Args: { "t": string }; Returns: string
+                           },
+"working_days":
+{ Args: { "p_from": string,"p_to": string }; Returns: number
                            }
           }
           Enums: {

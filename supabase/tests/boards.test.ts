@@ -233,3 +233,16 @@ describe("notifications", () => {
     expect(ok.error).toBeNull();
   });
 });
+
+describe("internal functions", () => {
+  it("clients cannot call internal helpers", async () => {
+    const member = await as("member");
+    const card = await makePipelineCard("production");
+    const n = await member.rpc("notify" as never, { p_user_id: U.member2, p_kind: "x", p_link: "/" } as never);
+    expect(n.error).not.toBeNull();
+    const s = await member.rpc("_set_card_stage" as never, { p_card_id: card.id, p_to: "published" } as never);
+    expect(s.error).not.toBeNull();
+    const step = await member.rpc("_create_card_step" as never, { p_card_id: card.id, p_stage: "creative_review" } as never);
+    expect(step.error).not.toBeNull();
+  });
+});

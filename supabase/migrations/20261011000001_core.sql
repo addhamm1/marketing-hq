@@ -6,6 +6,8 @@
 alter default privileges for role postgres in schema public revoke all on tables from anon;
 alter default privileges for role postgres in schema public revoke all on sequences from anon;
 alter default privileges for role postgres in schema public revoke execute on functions from public, anon;
+-- Per-schema defaults cannot remove the global PUBLIC grant on functions; revoke it globally too.
+alter default privileges for role postgres revoke execute on functions from public;
 
 -- ---------------------------------------------------------------------------
 -- Enums (all of them, so later migrations only add tables)

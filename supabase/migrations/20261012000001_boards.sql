@@ -1100,3 +1100,6 @@ create policy card_attachments_delete on storage.objects for delete to authentic
 -- ---------------------------------------------------------------------------
 alter publication supabase_realtime add table public.cards, public.lists, public.card_assignees,
   public.comments, public.notifications;
+
+-- Belt and braces: nothing in public is executable by PUBLIC or anon.
+revoke execute on all functions in schema public from public, anon;

@@ -3,6 +3,8 @@ import { getLocale } from "next-intl/server";
 import { Suspense, type ReactNode } from "react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Logo } from "@/components/logo";
+import { PeopleProvider } from "@/components/people-context";
+import { fetchPeople } from "@/features/boards/queries";
 import { Link } from "@/i18n/navigation";
 import type { Access } from "@/lib/auth/access";
 import { isGuestOnly } from "@/lib/auth/access";
@@ -39,6 +41,7 @@ export async function AppShell({
 }) {
   const locale = await getLocale();
   const items = navFor(access, area);
+  const people = await fetchPeople(await createClient()).catch(() => []);
   const branch = area === "team" && access.is_team_app ? await branchName(access, locale) : null;
   const inTeam = area === "team" && access.is_team_app;
   const switchTo =
@@ -49,6 +52,7 @@ export async function AppShell({
         : null;
 
   return (
+    <PeopleProvider people={people}>
     <div className="flex min-h-dvh">
       <Sidebar
         items={items}
@@ -71,7 +75,7 @@ export async function AppShell({
           ) : null}
           <div className="ms-auto flex items-center gap-1">
             {inTeam && !isGuestOnly(access) ? <PresencePicker value={access.presence as Presence} /> : null}
-            <NotificationBell />
+            <NotificationBell userId={access.user_id} teamApp={access.is_team_app} />
             <Suspense>
               <LanguageSwitcher />
             </Suspense>
@@ -90,5 +94,6 @@ export async function AppShell({
       </div>
       <BottomBar items={items} />
     </div>
+    </PeopleProvider>
   );
 }
