@@ -12,7 +12,7 @@ export async function fetchMapData(supabase: Client, locale: string): Promise<Ma
     supabase.from("branches").select("id, name_en, name_ar, map_key").eq("is_active", true).order("name_en"),
     supabase.rpc("who_is_in", {}),
     supabase.from("profiles").select("id, full_name, display_name, title, team_id, presence, home_branch_id").eq("status", "active"),
-    supabase.from("teams").select("id, color"),
+    supabase.from("teams").select("id, slug, color"),
     supabase.from("desks").select("branch_id, zone_name, assigned_user_id"),
     supabase.from("avatars").select("user_id, config"),
     supabase
@@ -46,6 +46,7 @@ export async function fetchMapData(supabase: Client, locale: string): Promise<Ma
       }),
     ),
     teamColors: Object.fromEntries((teams.data ?? []).map((t) => [t.id, t.color])),
+    teamAccents: Object.fromEntries((teams.data ?? []).map((t) => [t.slug, t.color])),
     desks: desks.data ?? [],
     avatars: Object.fromEntries((avatars.data ?? []).map((a) => [a.user_id, a.config as unknown as AvatarConfig])),
     currentCards,

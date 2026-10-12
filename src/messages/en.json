@@ -689,11 +689,26 @@
       "notice-board": "Notice board",
       "studio": "Studio",
       "cafe": "Cafe",
-      "trophy-shelf": "Trophy shelf"
+      "trophy-shelf": "Trophy shelf",
+      "lounge": "Lounge",
+      "phone-booth": "Phone booth"
     },
     "announcementsSoon": "Announcements are coming soon.",
     "takingBreak": "Enjoy your break ☕",
-    "fieldPlace": "Field day: {place}"
+    "fieldPlace": "Field day: {place}",
+    "signs": {
+      "reception": "Reception",
+      "cafe": "Kitchen & coffee",
+      "meeting-room": "Meeting room",
+      "studio": "Shoot studio",
+      "kanban-wall": "Kanban wall",
+      "phone-booth": "Phone booth",
+      "lounge": "Lounge",
+      "pod-traffic": "Traffic",
+      "pod-creative": "Creative",
+      "pod-performance": "Performance",
+      "pod-community": "Community"
+    }
   },
   "character": {
     "title": "My character",

@@ -57,6 +57,27 @@ export type TileName = (typeof TILES)[number][0];
 
 export const TILE_NAMES: readonly TileName[] = TILES.map(([name]) => name);
 
+/**
+ * Custom Tiled tile properties read by the map's pathfinding: tiles on the
+ * walls and furniture layers block unless `walkable`; `seat` tiles are where
+ * people sit (chairs, sofas).
+ */
+export const TILE_PROPS: Partial<Record<TileName, { walkable?: boolean; seat?: boolean }>> = {
+  door: { walkable: true },
+  chair: { walkable: true, seat: true },
+  sofa: { walkable: true, seat: true },
+  couch: { walkable: true, seat: true },
+  bench: { walkable: true, seat: true },
+};
+
+/** Tiled `tiles` entries carrying TILE_PROPS (local tile ids, gid - 1). */
+export function tileProperties() {
+  return (Object.entries(TILE_PROPS) as [TileName, { walkable?: boolean; seat?: boolean }][]).map(([name, props]) => ({
+    id: TILE_NAMES.indexOf(name),
+    properties: Object.entries(props).map(([key, value]) => ({ name: key, type: "bool", value })),
+  }));
+}
+
 export function gid(name: TileName): number {
   return TILE_NAMES.indexOf(name) + 1;
 }

@@ -689,11 +689,26 @@
       "notice-board": "لوحة الإعلانات",
       "studio": "الاستوديو",
       "cafe": "الكافيه",
-      "trophy-shelf": "رف الجوائز"
+      "trophy-shelf": "رف الجوائز",
+      "lounge": "الاستراحة",
+      "phone-booth": "كابينة المكالمات"
     },
     "announcementsSoon": "الإعلانات قريبًا.",
     "takingBreak": "استمتع باستراحتك ☕",
-    "fieldPlace": "يوم ميداني: {place}"
+    "fieldPlace": "يوم ميداني: {place}",
+    "signs": {
+      "reception": "الاستقبال",
+      "cafe": "المطبخ والقهوة",
+      "meeting-room": "غرفة الاجتماعات",
+      "studio": "استوديو التصوير",
+      "kanban-wall": "لوحة الكانبان",
+      "phone-booth": "كابينة المكالمات",
+      "lounge": "الاستراحة",
+      "pod-traffic": "التنسيق",
+      "pod-creative": "الإبداع",
+      "pod-performance": "الأداء",
+      "pod-community": "إدارة المجتمع"
+    }
   },
   "character": {
     "title": "شخصيتي",
