@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
+import { Montserrat, Nunito_Sans, Tajawal } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -7,11 +7,12 @@ import { Providers } from "@/components/providers";
 import { isRtl, routing } from "@/i18n/routing";
 import "../globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const plexArabic = IBM_Plex_Sans_Arabic({
+const body = Nunito_Sans({ subsets: ["latin"], variable: "--font-body", display: "swap" });
+const montserrat = Montserrat({ subsets: ["latin"], weight: ["500", "600", "700", "800"], variable: "--font-montserrat", display: "swap" });
+const arabic = Tajawal({
   subsets: ["arabic"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-plex-arabic",
+  weight: ["400", "500", "700", "800"],
+  variable: "--font-arabic",
   display: "swap",
 });
 
@@ -26,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#1f3b45",
+  themeColor: "#040707",
   width: "device-width",
   initialScale: 1,
 };
@@ -45,7 +46,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
     <html
       lang={locale}
       dir={dir}
-      className={`${inter.variable} ${plexArabic.variable} h-full antialiased`}
+      className={`${body.variable} ${montserrat.variable} ${arabic.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="bg-background text-foreground min-h-full">

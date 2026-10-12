@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Pixel HQ",
+    "appName": "Marketing HQ",
     "save": "Save",
     "saving": "Saving…",
     "cancel": "Cancel",
@@ -52,7 +52,10 @@
     "comingSoon": "Coming soon",
     "notFoundTitle": "Page not found",
     "notFoundBody": "This page doesn't exist or you don't have access to it.",
-    "goHome": "Go to home"
+    "goHome": "Go to home",
+    "tagline": "Give yourself a space",
+    "brandLine": "The Espaces marketing department, in one place: the team map, boards, requests, approvals and the content calendar.",
+    "byEspaces": "by Espaces"
   },
   "validation": {
     "required": "This field is required",
@@ -65,7 +68,7 @@
     "uuid": "Choose a value from the list"
   },
   "auth": {
-    "signInTitle": "Sign in to Pixel HQ",
+    "signInTitle": "Sign in to Marketing HQ",
     "signInSubtitle": "Use the email and password your admin gave you.",
     "email": "Work email",
     "password": "Password",
@@ -565,13 +568,13 @@
   "email": {
     "greeting": "Hi {name},",
     "approvalWaitingSubject": "An approval is waiting for you",
-    "approvalWaitingBody": "Something needs your decision in Pixel HQ.",
+    "approvalWaitingBody": "Something needs your decision in Marketing HQ.",
     "requestDecidedSubject": "Your request was {status}",
     "requestDecidedBody": "Your {type} request was {status}.",
     "cardReturnedSubject": "Your request was returned",
     "cardReturnedBody": "“{title}” was returned by the marketing team: {reason}",
-    "open": "Open Pixel HQ",
-    "footer": "You're receiving this because you use Pixel HQ at Espaces."
+    "open": "Open Marketing HQ",
+    "footer": "You're receiving this because you use Marketing HQ at Espaces."
   },
   "requestStatus": {
     "pending": "Pending",
@@ -633,7 +636,7 @@
     "subtitle": "Open your phone camera and scan this code.",
     "refreshes": "The code refreshes every minute.",
     "invalid": "This kiosk link is not valid. Ask an admin for a new one.",
-    "offline": "Can't reach Pixel HQ. Retrying…"
+    "offline": "Can't reach Marketing HQ. Retrying…"
   },
   "map": {
     "title": "Map",
@@ -665,7 +668,7 @@
   "character": {
     "title": "My character",
     "intro": "This is you on the map. Pick a look that feels like you.",
-    "welcome": "Welcome to Pixel HQ! Create your character before you start.",
+    "welcome": "Welcome to Marketing HQ! Create your character before you start.",
     "randomise": "Randomise",
     "save": "Save character",
     "saved": "Character saved",

@@ -68,7 +68,7 @@ export function TeamCalendar({ month, monthLabel, prev, next, today, grid, absen
       <ul className="bg-card divide-y rounded-xl border md:hidden">
         {inMonth.filter((c) => absencesOn(c.date, absences).length).map((c) => (
           <li key={c.date} className="flex gap-3 px-4 py-3">
-            <span className={cn("w-10 shrink-0 text-center text-sm font-semibold tabular-nums", c.date === today && "text-primary")}>{Number(c.date.slice(8))}</span>
+            <span className={cn("w-10 shrink-0 text-center text-sm font-semibold tabular-nums", c.date === today && "text-primary-ink")}>{Number(c.date.slice(8))}</span>
             <div className="flex flex-wrap gap-1">
               {absencesOn(c.date, absences).map((a, j) => <span key={j} className={cn("rounded px-1.5 py-0.5 text-xs", COLOR[a.category])}>{name(a.user_id)} · {t(a.category)}</span>)}
             </div>

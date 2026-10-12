@@ -2,13 +2,13 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Pixel HQ",
-    short_name: "Pixel HQ",
-    description: "Espaces marketing portal",
+    name: "Marketing HQ · Espaces",
+    short_name: "Marketing HQ · Espaces",
+    description: "The Espaces marketing department portal",
     start_url: "/",
     display: "standalone",
-    background_color: "#f6f8f9",
-    theme_color: "#1f3b45",
+    background_color: "#040707",
+    theme_color: "#040707",
     orientation: "portrait",
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

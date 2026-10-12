@@ -144,7 +144,7 @@ export function BoardView({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-2">
-        {isPipeline ? <Workflow className="text-primary size-5" aria-hidden /> : null}
+        {isPipeline ? <Workflow className="text-primary-ink size-5" aria-hidden /> : null}
         <h1 className="text-xl font-semibold tracking-tight">{data.board.name}</h1>
         {isPipeline ? <Badge variant="secondary">{t("pipelineBadge")}</Badge> : null}
         {data.board.visibility === "private" ? (

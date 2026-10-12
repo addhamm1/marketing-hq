@@ -33,7 +33,7 @@ function DayCell({ date, inMonth, today, posts, brandColor, canDrag, onOpen }: {
       <div className="space-y-1">
         {shown.map((p) => <PostTile key={p.id} post={p} brandColor={brandColor(p.brand_id)} draggable={canDrag && p.status !== "published"} onOpen={onOpen} />)}
         {posts.length > 3 && !expanded ? (
-          <button type="button" onClick={() => setExpanded(true)} className="text-primary text-[11px] font-medium">
+          <button type="button" onClick={() => setExpanded(true)} className="text-primary-ink text-[11px] font-medium">
             {t("more", { count: posts.length - 3 })}
           </button>
         ) : null}

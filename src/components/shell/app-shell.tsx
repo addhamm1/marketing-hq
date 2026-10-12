@@ -2,7 +2,7 @@ import { MapPin } from "lucide-react";
 import { getLocale } from "next-intl/server";
 import { Suspense, type ReactNode } from "react";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { Logo } from "@/components/logo";
+import { EspacesWordmark, Logo } from "@/components/logo";
 import { PeopleProvider } from "@/components/people-context";
 import { fetchPeople } from "@/features/boards/queries";
 import type { AvatarConfig } from "@/game/avatar/types";
@@ -65,9 +65,10 @@ export async function AppShell({
         items={items}
         header={
           <Link href="/">
-            <Logo />
+            <Logo tone="dark" />
           </Link>
         }
+        footer={<EspacesWordmark tone="dark" tagline className="w-28 opacity-70" />}
       />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="bg-background/90 sticky top-0 z-30 flex h-14 items-center gap-2 border-b px-3 backdrop-blur sm:px-5">

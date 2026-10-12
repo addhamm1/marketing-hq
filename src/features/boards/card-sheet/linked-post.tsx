@@ -23,7 +23,7 @@ export function LinkedPost({ cardId }: { cardId: string }) {
     <section className="space-y-2">
       <h3 className="text-sm font-semibold">{t("linkedPost")}</h3>
       <Link href={`/content?${month ? `month=${month}&` : ""}post=${post.id}`} className="hover:bg-muted/50 flex items-center gap-2 rounded-lg border p-2 text-sm">
-        <CalendarRange className="text-primary size-4" aria-hidden />
+        <CalendarRange className="text-primary-ink size-4" aria-hidden />
         <span className="flex-1" dir="ltr">{post.scheduled_at ? formatCairo(post.scheduled_at, "d MMM, HH:mm") : "—"}</span>
         <span className="inline-flex items-center gap-1 text-xs"><span className={cn("size-2 rounded-full", STATUS_DOT[post.status as PostStatus])} />{tc(`status.${post.status as PostStatus}`)}</span>
       </Link>

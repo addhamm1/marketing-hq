@@ -1,4 +1,4 @@
-# Pixel HQ
+# Marketing HQ
 
 The internal portal for the Espaces marketing department: a pixel-art map of the branch where checked-in teammates appear as their own characters, Trello-style boards running the content cycle, a portal for other departments, leaves and special requests with approvals, a content calendar, and dashboards. English and Arabic (right-to-left).
 

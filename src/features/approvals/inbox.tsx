@@ -26,7 +26,7 @@ function MediaPreview({ item }: { item: Extract<InboxItem, { kind: "card" }> }) 
         )}
       </div>
       {item.links.map((l) => (
-        <a key={l.id} href={l.url} target="_blank" rel="noreferrer" className="text-primary flex items-center gap-1 text-sm hover:underline">
+        <a key={l.id} href={l.url} target="_blank" rel="noreferrer" className="text-primary-ink flex items-center gap-1 text-sm hover:underline">
           <ExternalLink className="size-3.5" aria-hidden /> {l.name}
         </a>
       ))}
@@ -50,7 +50,7 @@ export function ApprovalsInbox({ items, cardLinkBase }: { items: InboxItem[]; ca
           {item.kind === "card" ? (
             <>
               <div className="flex flex-wrap items-start gap-2">
-                <Palette className="text-primary mt-0.5 size-4" aria-hidden />
+                <Palette className="text-primary-ink mt-0.5 size-4" aria-hidden />
                 <div className="min-w-0 flex-1">
                   <p className="font-medium">{item.card.title}</p>
                   <div className="text-muted-foreground mt-1 flex flex-wrap items-center gap-2 text-xs">
@@ -60,7 +60,7 @@ export function ApprovalsInbox({ items, cardLinkBase }: { items: InboxItem[]; ca
                 </div>
                 <Link
                   href={cardLinkBase === "team" ? `/boards/${item.card.board_id}?card=${item.card.id}` : `/portal/requests/${item.card.id}`}
-                  className="text-primary text-sm hover:underline"
+                  className="text-primary-ink text-sm hover:underline"
                 >
                   {t("openCard")}
                 </Link>

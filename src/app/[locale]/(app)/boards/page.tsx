@@ -57,7 +57,7 @@ export default async function BoardsPage() {
                     <Link href={`/boards/${b.id}`} className="absolute inset-0 rounded-xl" aria-label={b.name} />
                     <div className="flex items-start gap-2">
                       {b.is_pipeline ? (
-                        <Workflow className="text-primary mt-0.5 size-4 shrink-0" aria-hidden />
+                        <Workflow className="text-primary-ink mt-0.5 size-4 shrink-0" aria-hidden />
                       ) : (
                         <KanbanSquare className="text-muted-foreground mt-0.5 size-4 shrink-0" aria-hidden />
                       )}

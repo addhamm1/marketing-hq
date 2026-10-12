@@ -15,7 +15,7 @@ function DayColumn({ date, label, today, posts, brandColor, canDrag, onOpen }: {
   const { setNodeRef, isOver } = useDroppable({ id: `day:${date}`, data: { type: "day", date } });
   return (
     <section ref={setNodeRef} className={cn("bg-card flex min-h-64 w-[80vw] shrink-0 flex-col rounded-xl border sm:w-auto", isOver && "ring-primary ring-2", posts.length === 0 && "bg-accent/30")}>
-      <header className={cn("border-b px-3 py-2 text-sm font-medium", today && "text-primary")}>
+      <header className={cn("border-b px-3 py-2 text-sm font-medium", today && "text-primary-ink")}>
         {label} <span className="text-muted-foreground tabular-nums">{date.slice(8)}</span>
       </header>
       <div className="flex-1 space-y-2 p-2">

@@ -18,7 +18,7 @@ function Body({ text }: { text: string }) {
   const parts = text.split(/(@[\p{L}\p{N}_.-]+(?:\s[\p{L}\p{N}_.-]+)?)/u);
   return (
     <p className="text-sm break-words whitespace-pre-wrap">
-      {parts.map((p, i) => (p.startsWith("@") ? <span key={i} className="text-primary font-medium">{p}</span> : p))}
+      {parts.map((p, i) => (p.startsWith("@") ? <span key={i} className="text-primary-ink font-medium">{p}</span> : p))}
     </p>
   );
 }

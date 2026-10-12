@@ -20,7 +20,7 @@ export function BottomBar({ items }: { items: NavItem[] }) {
   const tab = (active: boolean) =>
     cn(
       "flex min-w-0 flex-1 flex-col items-center gap-1 py-2 text-[11px] leading-none",
-      active ? "text-primary font-medium" : "text-muted-foreground",
+      active ? "text-foreground font-semibold" : "text-muted-foreground",
     );
 
   return (
@@ -53,7 +53,7 @@ export function BottomBar({ items }: { items: NavItem[] }) {
                     onClick={() => setOpen(false)}
                     className={cn(
                       "flex flex-col items-center gap-2 rounded-lg border p-3 text-center text-xs",
-                      isActive(pathname, item.href) && "border-primary text-primary",
+                      isActive(pathname, item.href) && "border-primary text-foreground font-semibold",
                     )}
                   >
                     <NavIcon name={item.key} className="size-5" />

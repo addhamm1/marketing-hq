@@ -16,7 +16,7 @@ Adham: fill in the Answer column. An answer here overrides the default.
 | D-08 | Default interface language | English, with Arabic one tap away and saved per person | |
 | D-09 | Digits in the Arabic interface | Latin digits (0 to 9) in both languages | |
 | D-10 | Can other departments see the map? | No. The portal has no map in the sprint | |
-| D-11 | Product name | "Pixel HQ" | |
+| D-11 | Product name | "Marketing HQ" | |
 | D-12 | Who confirms deliverables per department (stage 7)? | `departments.default_approver_id`, set in admin; overridable per card | |
 | D-13 | Stage target hours (amber and red timers) | request 0, performance_input 24, intake 8, brief_schedule 16, production 40, creative_review 8, confirmation 24, ready_to_publish 24, published 0. Tune with the Traffic Manager | |
 | D-14 | Work week | Saturday to Thursday, 10:00 to 18:00, per-person override in schedules | |

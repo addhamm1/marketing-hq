@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Pixel HQ",
+    "appName": "Marketing HQ",
     "save": "حفظ",
     "saving": "جارٍ الحفظ…",
     "cancel": "إلغاء",
@@ -52,7 +52,10 @@
     "comingSoon": "قريبًا",
     "notFoundTitle": "الصفحة غير موجودة",
     "notFoundBody": "هذه الصفحة غير موجودة أو ليس لديك صلاحية لفتحها.",
-    "goHome": "العودة للرئيسية"
+    "goHome": "العودة للرئيسية",
+    "tagline": "ادّي نفسك مساحة",
+    "brandLine": "قسم التسويق في إسبيسز في مكان واحد: خريطة الفريق، والبوردات، والطلبات، والموافقات، وتقويم المحتوى.",
+    "byEspaces": "من إسبيسز"
   },
   "validation": {
     "required": "هذا الحقل مطلوب",
@@ -65,7 +68,7 @@
     "uuid": "اختر قيمة من القائمة"
   },
   "auth": {
-    "signInTitle": "تسجيل الدخول إلى Pixel HQ",
+    "signInTitle": "تسجيل الدخول إلى Marketing HQ",
     "signInSubtitle": "استخدم البريد وكلمة المرور التي أعطاها لك المسؤول.",
     "email": "بريد العمل",
     "password": "كلمة المرور",
@@ -565,13 +568,13 @@
   "email": {
     "greeting": "أهلًا {name}،",
     "approvalWaitingSubject": "هناك موافقة في انتظارك",
-    "approvalWaitingBody": "هناك ما يحتاج قرارك على Pixel HQ.",
+    "approvalWaitingBody": "هناك ما يحتاج قرارك على Marketing HQ.",
     "requestDecidedSubject": "تم {status} طلبك",
     "requestDecidedBody": "تم {status} طلب {type} الخاص بك.",
     "cardReturnedSubject": "أُعيد طلبك",
     "cardReturnedBody": "أعاد فريق التسويق الطلب “{title}”: {reason}",
-    "open": "افتح Pixel HQ",
-    "footer": "تصلك هذه الرسالة لأنك تستخدم Pixel HQ في إسبيسز."
+    "open": "افتح Marketing HQ",
+    "footer": "تصلك هذه الرسالة لأنك تستخدم Marketing HQ في إسبيسز."
   },
   "requestStatus": {
     "pending": "قيد الانتظار",
@@ -633,7 +636,7 @@
     "subtitle": "افتح كاميرا هاتفك وامسح هذا الرمز.",
     "refreshes": "يتجدد الرمز كل دقيقة.",
     "invalid": "رابط شاشة الاستقبال غير صالح. اطلب رابطًا جديدًا من المسؤول.",
-    "offline": "تعذّر الاتصال بـ Pixel HQ. جارٍ إعادة المحاولة…"
+    "offline": "تعذّر الاتصال بـ Marketing HQ. جارٍ إعادة المحاولة…"
   },
   "map": {
     "title": "الخريطة",
@@ -665,7 +668,7 @@
   "character": {
     "title": "شخصيتي",
     "intro": "هذا أنت على الخريطة. اختر الشكل الذي يشبهك.",
-    "welcome": "أهلًا بك في Pixel HQ! أنشئ شخصيتك قبل أن تبدأ.",
+    "welcome": "أهلًا بك في Marketing HQ! أنشئ شخصيتك قبل أن تبدأ.",
     "randomise": "عشوائي",
     "save": "حفظ الشخصية",
     "saved": "تم حفظ الشخصية",
