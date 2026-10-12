@@ -978,5 +978,52 @@
     "team": "Team",
     "anyTeam": "All teams",
     "anyBrand": "All brands"
+  },
+  "media": {
+    "title": "Brief media",
+    "count": "{count, plural, one {# item} other {# items}}",
+    "empty": "No media yet. Drop references, screenshots or footage above, or add a link.",
+    "referenceMedia": "Reference media",
+    "dropTitle": "Drag files here or <browse>browse</browse>",
+    "dropHint": "Paste screenshots with Ctrl/⌘+V · images, video, PDF and documents up to {max} each",
+    "dropToAttach": "Drop to attach",
+    "camera": "Take a photo or video",
+    "uploads": "Uploads",
+    "progress": "Upload progress for {name}",
+    "percent": "{percent}%",
+    "status": {
+      "queued": "Waiting…",
+      "uploading": "Uploading…",
+      "done": "Uploaded",
+      "error": "Upload failed",
+      "canceled": "Canceled"
+    },
+    "cancel": "Cancel upload of {name}",
+    "retry": "Retry {name}",
+    "remove": "Remove {name}",
+    "addedToBrief": "{count, plural, one {Uploading # file to brief media} other {Uploading # files to brief media}}",
+    "waitForUploads": "Finishing uploads…",
+    "someFailed": "{count, plural, one {# file could not be attached. Add it again from the request page.} other {# files could not be attached. Add them again from the request page.}}",
+    "linkLabel": "Reference link",
+    "linkPlaceholder": "Paste a Drive, WeTransfer or any link",
+    "addLink": "Add link",
+    "linkInvalid": "That doesn't look like a link. Paste a full address, for example https://drive.google.com/…",
+    "removeLink": "Remove {url}",
+    "links": "Links",
+    "gallery": "Brief media gallery",
+    "preview": "Preview {name}",
+    "lightboxHint": "Use the arrow keys to move between files.",
+    "previous": "Previous file",
+    "next": "Next file",
+    "open": "Open",
+    "download": "Download",
+    "loadError": "Couldn't load previews.",
+    "tryAgain": "Try again",
+    "errors": {
+      "tooBig": "{name} is larger than {max}. Share big files as a Drive or WeTransfer link instead.",
+      "badType": "{name} can't be uploaded: use images, video, PDF or office documents.",
+      "empty": "{name} is empty.",
+      "tooMany": "You can add up to {max} files at a time."
+    }
   }
 }

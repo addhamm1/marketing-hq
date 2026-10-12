@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { DropTarget } from "@/components/file-dropzone/drop-target";
 import { usePersonName } from "@/components/people-context";
 import { EmptyState, ErrorState } from "@/components/states/states";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +32,7 @@ import { fetchCardDetail } from "./detail-query";
 import { LabelsEditor } from "./labels-editor";
 import { LinkedPost } from "./linked-post";
 import { StageActions } from "./stage-actions";
+import { useCardUploads } from "./use-card-uploads";
 
 type Option = { id: string; name_en: string; name_ar: string };
 
@@ -66,6 +68,13 @@ export function CardSheet(props: {
     queryClient.invalidateQueries({ queryKey: ["card", cardId] });
     onChanged();
   }, [queryClient, cardId, onChanged]);
+  // Files dropped or pasted anywhere on the open card go to its brief media.
+  const uploads = useCardUploads(cardId, onChanged);
+  const tm = useTranslations("media");
+  const dropAnywhere = (files: File[]) => {
+    const count = uploads.add(files);
+    if (count) toast.info(tm("addedToBrief", { count }));
+  };
 
   useRealtimeRefresh(
     `card:${cardId}`,
@@ -136,7 +145,7 @@ export function CardSheet(props: {
               </Button>
             </header>
 
-            <div className="grid gap-6 px-4 py-5 sm:px-6 lg:grid-cols-[1fr_15rem]">
+            <DropTarget onFiles={dropAnywhere} className="grid gap-6 px-4 py-5 sm:px-6 lg:grid-cols-[1fr_15rem]">
               <div className="min-w-0 space-y-6">
                 {card.stage ? <StageActions card={card} perms={perms} me={me} onChanged={changed} /> : null}
                 {card.stage === "request" && card.returned_reason ? (
@@ -154,7 +163,7 @@ export function CardSheet(props: {
                 ) : null}
                 <CardFieldsForm card={card} canEdit={canEdit} brands={props.brands} branches={props.branches} settings={props.settings} onSaved={changed} />
                 <ChecklistsSection card={card} canEdit={canEdit} onChanged={changed} />
-                <AttachmentsSection card={card} me={me} canEdit={canEdit} onChanged={changed} />
+                <AttachmentsSection card={card} me={me} canEdit={canEdit} onChanged={changed} queue={uploads} />
                 <CommentsSection card={card} me={me} onChanged={changed} />
               </div>
               <aside className="space-y-6">
@@ -163,7 +172,7 @@ export function CardSheet(props: {
                 {card.stage ? <LinkedPost cardId={card.id} /> : null}
                 <ActivityFeed events={card.events} />
               </aside>
-            </div>
+            </DropTarget>
             <ConfirmDialog
               open={archiving}
               onOpenChange={setArchiving}

@@ -110,10 +110,15 @@ export const editCommentSchema = z.object({
   mentions: z.array(id).max(20).default([]),
 });
 
-export const uploadUrlSchema = z.object({
-  card_id: id,
-  file_name: z.string().trim().min(1).max(200),
+export const fileMetaSchema = z.object({
+  file_name: z.string().trim().min(1).max(255),
+  mime: z.string().max(120),
+  size: z.number().int().nonnegative(),
 });
+export const uploadUrlSchema = fileMetaSchema.extend({ card_id: id });
+export const attachmentUrlSchema = z.object({ id, download: z.boolean().optional() });
+export const cardIdSchema = z.object({ card_id: id });
+export const draftPathSchema = z.object({ path: z.string().min(1).max(300) });
 export const registerAttachmentSchema = z.object({
   card_id: id,
   path: z.string().min(1).max(500),
