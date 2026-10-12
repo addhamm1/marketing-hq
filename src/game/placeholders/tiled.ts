@@ -1,4 +1,4 @@
-import { TILE_MARGIN, TILE_SIZE, TILE_SPACING, type TileName, gid, tilesetDimensions } from "./tileset";
+import { TILE_MARGIN, TILE_SIZE, TILE_SPACING, type TileName, gid, tileProperties, tilesetDimensions } from "./tileset";
 
 /** Minimal builder for Tiled 1.10 JSON maps (orthogonal, embedded tileset, finite). */
 
@@ -27,6 +27,20 @@ type ZoneObjectJson = {
   visible: true;
 };
 
+type SignObjectJson = {
+  id: number;
+  name: string;
+  type: "sign";
+  x: number;
+  y: number;
+  width: 0;
+  height: 0;
+  point: true;
+  rotation: 0;
+  visible: true;
+  properties?: { name: string; type: "string"; value: string }[];
+};
+
 type ObjectLayerJson = {
   id: number;
   name: string;
@@ -34,7 +48,7 @@ type ObjectLayerJson = {
   draworder: "topdown";
   x: 0;
   y: 0;
-  objects: ZoneObjectJson[];
+  objects: (ZoneObjectJson | SignObjectJson)[];
   opacity: 1;
   visible: true;
 };
@@ -44,6 +58,7 @@ export type LayerName = "floor" | "walls" | "furniture";
 export class TiledMapBuilder {
   private readonly layers: Record<LayerName, number[]>;
   private readonly zones: ZoneObjectJson[] = [];
+  private readonly signs: SignObjectJson[] = [];
 
   constructor(
     readonly width: number,
@@ -83,6 +98,28 @@ export class TiledMapBuilder {
     return this;
   }
 
+  /**
+   * Add a sign (point object in the `signs` layer) centred at tile coordinates
+   * (fractions allowed). `name` is the translation key of its label; `accent`
+   * is a colour (`#rrggbb`) or `team:<slug>` for a team's colour.
+   */
+  sign(name: string, x: number, y: number, accent?: string): this {
+    this.signs.push({
+      id: 0,
+      name,
+      type: "sign",
+      x: Math.round(x * TILE_SIZE),
+      y: Math.round(y * TILE_SIZE),
+      width: 0,
+      height: 0,
+      point: true,
+      rotation: 0,
+      visible: true,
+      ...(accent ? { properties: [{ name: "accent", type: "string" as const, value: accent }] } : {}),
+    });
+    return this;
+  }
+
   zoneNames(): string[] {
     return this.zones.map((z) => z.name);
   }
@@ -112,6 +149,12 @@ export class TiledMapBuilder {
       opacity: 1,
       visible: true,
     };
+    const signLayer: ObjectLayerJson = {
+      ...zoneLayer,
+      id: names.length + 2,
+      name: "signs",
+      objects: this.signs.map((s, i) => ({ ...s, id: this.zones.length + i + 1 })),
+    };
     const dims = tilesetDimensions();
     return {
       compressionlevel: -1,
@@ -125,9 +168,9 @@ export class TiledMapBuilder {
       type: "map",
       tilewidth: TILE_SIZE,
       tileheight: TILE_SIZE,
-      nextlayerid: names.length + 2,
-      nextobjectid: this.zones.length + 1,
-      layers: [...tileLayers, zoneLayer],
+      nextlayerid: names.length + 3,
+      nextobjectid: this.zones.length + this.signs.length + 1,
+      layers: [...tileLayers, zoneLayer, ...(this.signs.length ? [signLayer] : [])],
       tilesets: [
         {
           firstgid: 1,
@@ -141,6 +184,7 @@ export class TiledMapBuilder {
           tileheight: TILE_SIZE,
           margin: TILE_MARGIN,
           spacing: TILE_SPACING,
+          tiles: tileProperties(),
         },
       ],
     };

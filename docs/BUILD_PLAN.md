@@ -1,4 +1,4 @@
-# Pixel HQ: 7-day build plan
+# Marketing HQ: 7-day build plan
 
 Goal: a working MVP the marketing team uses from day 8. Work through tasks in order. Each task lists what to build and how to check it. Tick the box when the task meets the definition of done in `CLAUDE.md`.
 
@@ -129,7 +129,7 @@ Each migration seeds only the tables it creates. Seed files are split per migrat
 ## Backlog: weeks 2 to 4 (not in this sprint)
 
 Week 2
-- Meetings inside Pixel HQ (requests, accept and decline, room, status "In a meeting"), without calendar sync
+- Meetings inside Marketing HQ (requests, accept and decline, room, status "In a meeting"), without calendar sync
 - KPI scorecards per role with auto-filled measures and monthly acknowledgement
 - Department service dashboard; monthly snapshot and executive PDF emailed on the 1st
 - Delegation of approvals; daily digest email; push notifications

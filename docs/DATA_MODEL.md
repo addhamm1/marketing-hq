@@ -1,4 +1,4 @@
-# Pixel HQ: data model and access rules
+# Marketing HQ: data model and access rules
 
 Postgres on Supabase. Every table has `id uuid primary key default gen_random_uuid()` unless noted, `created_at timestamptz default now()`, and where rows change, `updated_at timestamptz` maintained by a trigger. Columns listed here are the required ones; add indexes on every foreign key and on columns used in filters.
 

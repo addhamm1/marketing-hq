@@ -10,7 +10,7 @@
  "type": "map",
  "tilewidth": 32,
  "tileheight": 32,
- "nextlayerid": 5,
+ "nextlayerid": 6,
  "nextobjectid": 9,
  "layers": [
   {
@@ -645,7 +645,79 @@
    "tilewidth": 32,
    "tileheight": 32,
    "margin": 1,
-   "spacing": 2
+   "spacing": 2,
+   "tiles": [
+    {
+     "id": 7,
+     "properties": [
+      {
+       "name": "walkable",
+       "type": "bool",
+       "value": true
+      }
+     ]
+    },
+    {
+     "id": 9,
+     "properties": [
+      {
+       "name": "walkable",
+       "type": "bool",
+       "value": true
+      },
+      {
+       "name": "seat",
+       "type": "bool",
+       "value": true
+      }
+     ]
+    },
+    {
+     "id": 12,
+     "properties": [
+      {
+       "name": "walkable",
+       "type": "bool",
+       "value": true
+      },
+      {
+       "name": "seat",
+       "type": "bool",
+       "value": true
+      }
+     ]
+    },
+    {
+     "id": 28,
+     "properties": [
+      {
+       "name": "walkable",
+       "type": "bool",
+       "value": true
+      },
+      {
+       "name": "seat",
+       "type": "bool",
+       "value": true
+      }
+     ]
+    },
+    {
+     "id": 37,
+     "properties": [
+      {
+       "name": "walkable",
+       "type": "bool",
+       "value": true
+      },
+      {
+       "name": "seat",
+       "type": "bool",
+       "value": true
+      }
+     ]
+    }
+   ]
   }
  ]
 }

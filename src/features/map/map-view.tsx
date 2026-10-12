@@ -2,7 +2,7 @@
 
 import { Loader2, Users } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,9 +10,11 @@ import { setPresence } from "@/features/presence/actions";
 import type { CharacterStatus } from "@/game";
 import type { AvatarConfig } from "@/game/avatar/types";
 import { useRouter } from "@/i18n/navigation";
+import { isRtl } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/browser";
 import { CharacterPopover } from "./character-popover";
 import { placeCharacters } from "./place";
+import { SIGN_KEYS } from "./signs";
 import type { MapData, MapSelection, MapSession } from "./types";
 import { useAvatarSheets } from "./use-avatar-sheets";
 
@@ -29,6 +31,7 @@ const ZONE_ROUTES: Record<string, string> = {
 
 export function MapView({ initial, defaultSelection }: { initial: MapData; defaultSelection: MapSelection }) {
   const t = useTranslations("map");
+  const locale = useLocale();
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [selection, setSelection] = useState<MapSelection>(defaultSelection);
@@ -49,6 +52,14 @@ export function MapView({ initial, defaultSelection }: { initial: MapData; defau
   const sheets = useAvatarSheets(placed.map((p) => p.userId), avatars);
   const characters = useMemo(() => placed.map(({ checkedInAt: _c, ...c }) => ({ ...c, sheet: sheets[c.userId] })), [placed, sheets]);
   const here = placed.filter((p) => !p.onLeave).length;
+  const signage = useMemo(
+    () => ({
+      labels: Object.fromEntries(SIGN_KEYS.map((key) => [key, t(`signs.${key}`)])),
+      teamColors: initial.teamAccents,
+      rtl: isRtl(locale),
+    }),
+    [t, initial.teamAccents, locale],
+  );
 
   const refetchSessions = useCallback(async () => {
     const { data } = await createClient().rpc("who_is_in", {});
@@ -85,7 +96,7 @@ export function MapView({ initial, defaultSelection }: { initial: MapData; defau
   }, [selection, refetchSessions]);
 
   function onZoneClick(zone: string) {
-    if (zone === "cafe") {
+    if (zone === "cafe" || zone === "lounge") {
       startTransition(async () => {
         const r = await setPresence("break");
         if (r.ok) toast.success(t("takingBreak"));
@@ -129,6 +140,8 @@ export function MapView({ initial, defaultSelection }: { initial: MapData; defau
         <MapCanvas
           mapKey={mapKey}
           characters={characters}
+          signage={signage}
+          focusId={popover?.userId ?? null}
           onZoneClick={onZoneClick}
           onCharacterClick={(userId, at) => setPopover({ userId, ...at })}
           onZones={setZones}

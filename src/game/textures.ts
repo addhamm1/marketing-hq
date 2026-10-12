@@ -30,7 +30,7 @@ export function statusKey(status: CharacterStatus): string {
   return `pixel:status:${status}`;
 }
 
-function canvasTexture(scene: Phaser.Scene, key: string, w: number, h: number, draw: (ctx: CanvasRenderingContext2D) => void): void {
+export function canvasTexture(scene: Phaser.Scene, key: string, w: number, h: number, draw: (ctx: CanvasRenderingContext2D) => void): void {
   if (scene.textures.exists(key)) return;
   const tex = scene.textures.createCanvas(key, w, h);
   if (!tex) return;
@@ -38,7 +38,7 @@ function canvasTexture(scene: Phaser.Scene, key: string, w: number, h: number, d
   tex.refresh();
 }
 
-function px(ctx: CanvasRenderingContext2D, color: string, x: number, y: number, w = 1, h = 1): void {
+export function px(ctx: CanvasRenderingContext2D, color: string, x: number, y: number, w = 1, h = 1): void {
   ctx.fillStyle = color;
   ctx.fillRect(x, y, w, h);
 }

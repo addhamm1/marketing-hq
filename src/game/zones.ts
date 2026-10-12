@@ -1,10 +1,12 @@
 import Phaser from "phaser";
 
-export type ZoneRect = { name: string; x: number; y: number; width: number; height: number };
+import type { Rect } from "./life/grid";
 
-/** Desk and standing-spot zones are where characters stand, not navigation targets. */
+export type ZoneRect = Rect;
+
+/** Desk and standing-spot zones are where characters stand, and team pods only carry a sign: none is a navigation target. */
 export function isFeatureZone(name: string): boolean {
-  return !/^(desk|spot)-\d+$/.test(name);
+  return !/^(desk|spot)-\d+$/.test(name) && !name.startsWith("pod-");
 }
 
 /** Read rectangles from the `zones` object layer. */

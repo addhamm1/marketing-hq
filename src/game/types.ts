@@ -16,6 +16,14 @@ export type MapCharacter = {
   onLeave?: boolean;
 };
 
+/** Translated sign labels by key (`meeting-room`, `pod-creative`, ...) and team colours by team slug. */
+export type MapSignage = {
+  labels: Record<string, string>;
+  teamColors: Record<string, string>;
+  /** Right-to-left labels (Arabic): the accent strip moves to the right. */
+  rtl: boolean;
+};
+
 export type PixelGameOptions = {
   /** "hq" | "field" | "home" | other branch maps later; loads `/maps/<mapKey>.json`. */
   mapKey: string;
@@ -32,6 +40,10 @@ export type PixelGameOptions = {
 export interface PixelGameController {
   /** Add, update or remove characters by userId, smoothly. */
   setCharacters(characters: MapCharacter[]): void;
+  /** Room and team signs; kept across map switches. */
+  setSignage(signage: MapSignage): void;
+  /** Hold one character still (its popover is open), or release with null. */
+  setFocus(userId: string | null): void;
   /** Switch map (branch switcher). Current characters are re-applied to the new map. */
   setMap(mapKey: string): void;
   /** Names of the zone objects in the current map (empty until the map has loaded). */

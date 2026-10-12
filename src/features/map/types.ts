@@ -10,6 +10,8 @@ export type MapData = {
   sessions: MapSession[];
   people: MapPerson[];
   teamColors: Record<string, string>;
+  /** Team colour by team slug, for the team pod signs on the map. */
+  teamAccents: Record<string, string>;
   desks: MapDesk[];
   avatars: Record<string, AvatarConfig>;
   currentCards: Record<string, { id: string; title: string; board_id: string }>;

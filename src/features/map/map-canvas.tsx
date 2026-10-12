@@ -1,18 +1,21 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { createPixelGame, type MapCharacter, type PixelGameController } from "@/game";
+import { createPixelGame, type MapCharacter, type MapSignage, type PixelGameController } from "@/game";
 
 type Props = {
   mapKey: string;
   characters: MapCharacter[];
+  signage: MapSignage;
+  /** Character held still while its popover is open. */
+  focusId: string | null;
   onZoneClick: (zone: string) => void;
   onCharacterClick: (userId: string, at: { x: number; y: number }) => void;
   onZones: (zones: string[]) => void;
 };
 
 /** Hosts the Phaser game; destroys it on unmount (no leaks across navigations). */
-export default function MapCanvas({ mapKey, characters, onZoneClick, onCharacterClick, onZones }: Props) {
+export default function MapCanvas({ mapKey, characters, signage, focusId, onZoneClick, onCharacterClick, onZones }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const game = useRef<PixelGameController | null>(null);
   const handlers = useRef({ onZoneClick, onCharacterClick, onZones });
@@ -64,6 +67,14 @@ export default function MapCanvas({ mapKey, characters, onZoneClick, onCharacter
   useEffect(() => {
     game.current?.setCharacters(characters);
   }, [characters]);
+
+  useEffect(() => {
+    game.current?.setSignage(signage);
+  }, [signage]);
+
+  useEffect(() => {
+    game.current?.setFocus(focusId);
+  }, [focusId]);
 
   return <div ref={ref} className="absolute inset-0 touch-none" data-testid="pixel-map" />;
 }

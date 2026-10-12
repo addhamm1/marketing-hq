@@ -8,6 +8,9 @@ import { TiledMapBuilder } from "./tiled";
  *   x 25-30   video studio (top-right)     x 10-19 open desk clusters (16 desks)
  *   x 1-8     reception + mailbox by the entrance (bottom-left), trophy shelf on the left wall
  *   x 22-30   lounge with sofas and bookshelves (bottom-right)
+ *   x 21-23   glass phone booth next to the studio
+ *
+ * Signs (the `signs` object layer) label every room and the four team pods.
  */
 export function buildHqMap(): TiledMapBuilder {
   const m = new TiledMapBuilder(32, 20);
@@ -54,6 +57,13 @@ export function buildHqMap(): TiledMapBuilder {
   m.fill("furniture", 10, 5, 5, 1, "chair");
   m.put("furniture", 15, 2, "plant").put("furniture", 9, 7, "plant");
 
+  // Phone booth between the kanban wall and the studio: glass on three sides, door at the bottom
+  m.fill("walls", 20, 3, 4, 1, "glass-h");
+  m.fill("walls", 20, 4, 1, 4, "glass-v");
+  m.fill("walls", 20, 8, 4, 1, "glass-h");
+  m.put("walls", 22, 8, null);
+  m.put("furniture", 23, 4, "plant");
+
   // Kanban wall and notice board hang on the top wall
   m.fill("furniture", 18, 1, 3, 1, "kanban");
   m.fill("furniture", 22, 1, 2, 1, "notice-board");
@@ -87,7 +97,7 @@ export function buildHqMap(): TiledMapBuilder {
   m.put("furniture", 1, 12, "bookshelf");
 
   // Lounge
-  m.fill("furniture", 26, 9, 4, 1, "bookshelf");
+  m.fill("furniture", 28, 9, 3, 1, "bookshelf"); // clear of the studio door at (27, 8)
   m.fill("furniture", 24, 11, 5, 1, "sofa");
   m.fill("furniture", 24, 16, 5, 1, "sofa");
   m.put("furniture", 26, 13, "cafe-table");
@@ -102,5 +112,26 @@ export function buildHqMap(): TiledMapBuilder {
   m.zone("mailbox", 8, 16, 1, 2, "feature");
   m.zone("cafe", 1, 2, 7, 6, "feature");
   m.zone("trophy-shelf", 1, 10, 1, 2, "feature");
+  m.zone("lounge", 22, 9, 9, 9, "feature");
+  m.zone("phone-booth", 21, 4, 3, 4, "feature");
+
+  // Team pods: signage only (desks inside keep their own zones)
+  m.zone("pod-traffic", 10, 10, 4, 2, "area");
+  m.zone("pod-creative", 16, 10, 4, 2, "area");
+  m.zone("pod-performance", 10, 14, 4, 2, "area");
+  m.zone("pod-community", 16, 14, 4, 2, "area");
+
+  // Signs: black plates with Espaces yellow lettering; the accent strip is a brand or team colour
+  m.sign("reception", 4, 13.5, "#F7D139");
+  m.sign("cafe", 4.5, 1.5, "#FAA41A");
+  m.sign("meeting-room", 12.5, 1.5, "#2D6372");
+  m.sign("studio", 28, 1.5, "#D62C27");
+  m.sign("kanban-wall", 19.5, 2.55, "#F7D139");
+  m.sign("phone-booth", 22.5, 3.5, "#2D6372");
+  m.sign("lounge", 26.5, 10.5, "#FAA41A");
+  m.sign("pod-traffic", 12, 9.45, "team:traffic");
+  m.sign("pod-creative", 18, 9.45, "team:creative");
+  m.sign("pod-performance", 12, 13.45, "team:performance");
+  m.sign("pod-community", 18, 13.45, "team:community");
   return m;
 }
