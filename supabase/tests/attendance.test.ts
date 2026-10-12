@@ -11,15 +11,23 @@ async function closeOpen(userId: string) {
   }
 }
 
-async function checkIn(userId: string, method: "wifi" | "qr" | "field" | "home", at?: string) {
+// The hq test branch point (supabase/seed/01_core.sql) and its 150 m radius.
+const HQ = { lat: 30.096, lng: 31.326 };
+const at = (lat: number, lng: number, accuracy = 10) => ({ p_lat: lat, p_lng: lng, p_accuracy_m: accuracy });
+
+async function checkIn(userId: string, method: "wifi" | "qr" | "field" | "home", when?: string) {
   return svc.rpc("check_in", {
     p_user_id: userId,
     p_method: method,
-    p_branch_id: method === "wifi" || method === "qr" ? BRANCH_HQ : (null as unknown as string),
+    ...(method === "wifi" || method === "qr" ? { p_branch_id: BRANCH_HQ } : {}),
+    ...(method === "field" ? at(HQ.lat + 0.1, HQ.lng) : {}),
     p_verify: { test: true },
-    ...(at ? { p_now: at } : {}),
+    ...(when ? { p_now: when } : {}),
   });
 }
+
+const gps = (userId: string, lat: number, lng: number, accuracy = 10) =>
+  svc.rpc("check_in", { p_user_id: userId, p_method: "gps", ...at(lat, lng, accuracy) });
 
 describe("check-in", () => {
   beforeEach(async () => {
@@ -34,7 +42,7 @@ describe("check-in", () => {
 
   it("allows one open session per user", async () => {
     expect((await checkIn(U.member, "wifi")).error).toBeNull();
-    const second = await checkIn(U.member, "qr");
+    const second = await gps(U.member, HQ.lat, HQ.lng);
     expect(second.error?.message).toContain("already_checked_in");
   });
 
@@ -64,11 +72,86 @@ describe("check-in", () => {
     expect((await checkIn(U.member, "home")).error).toBeNull();
   });
 
-  it("field check-in needs no verification; check_out closes it", async () => {
-    expect((await checkIn(U.member, "field")).error).toBeNull();
+  it("field check-in records the location and place; check_out closes it", async () => {
+    const r = await svc.rpc("check_in", {
+      p_user_id: U.member, p_method: "field", ...at(30.0444, 31.2357, 35), p_place: "  Client office – Zayed  ",
+    });
+    expect(r.error).toBeNull();
+    const { data: s } = await svc.from("attendance_sessions").select("branch_id, checkin_lat, checkin_accuracy_m, checkin_place").eq("id", r.data!).single();
+    expect(s).toEqual({ branch_id: null, checkin_lat: 30.0444, checkin_accuracy_m: 35, checkin_place: "Client office – Zayed" });
     expect((await (await as("member")).rpc("check_out")).error).toBeNull();
     const { data } = await svc.from("attendance_sessions").select("id").eq("user_id", U.member).is("checked_out_at", null);
     expect(data).toEqual([]);
+  });
+
+  it("field check-in requires a location", async () => {
+    const r = await svc.rpc("check_in", { p_user_id: U.member, p_method: "field", p_place: "Studio" });
+    expect(r.error?.message).toContain("location_required");
+  });
+
+  it("the retired QR method is refused", async () => {
+    expect((await checkIn(U.member, "qr")).error?.message).toContain("method_not_allowed");
+  });
+});
+
+describe("location (gps) check-in", () => {
+  beforeEach(async () => {
+    await closeOpen(U.member);
+  });
+
+  it("checks in at the nearest branch inside its geofence and records distance", async () => {
+    // About 100 m north of hq.
+    const r = await gps(U.member, HQ.lat + 0.0009, HQ.lng);
+    expect(r.error).toBeNull();
+    const { data } = await svc.from("attendance_sessions").select("branch_id, method, distance_m, checkin_accuracy_m").eq("id", r.data!).single();
+    expect(data?.branch_id).toBe(BRANCH_HQ);
+    expect(data?.method).toBe("gps");
+    expect(data?.distance_m).toBeGreaterThan(90);
+    expect(data?.distance_m).toBeLessThan(110);
+  });
+
+  it("refuses a position out of range and reports the distance", async () => {
+    // About 500 m north of hq (no other branch is closer than that).
+    const r = await gps(U.member, HQ.lat + 0.0045, HQ.lng);
+    expect(r.error?.message).toMatch(/out_of_range:\d+/);
+  });
+
+  it("allows for accuracy, capped at 100 m", async () => {
+    // About 220 m away: outside 150 m, inside 150 + 80.
+    expect((await gps(U.member, HQ.lat + 0.002, HQ.lng, 10)).error?.message).toContain("out_of_range");
+    expect((await gps(U.member, HQ.lat + 0.002, HQ.lng, 80)).error).toBeNull();
+    await closeOpen(U.member);
+    // About 280 m away: even 190 m accuracy only adds 100 m.
+    expect((await gps(U.member, HQ.lat + 0.0025, HQ.lng, 190)).error?.message).toContain("out_of_range");
+  });
+
+  it("refuses accuracy worse than 200 m and a missing location", async () => {
+    expect((await gps(U.member, HQ.lat, HQ.lng, 250)).error?.message).toContain("low_accuracy");
+    const r = await svc.rpc("check_in", { p_user_id: U.member, p_method: "gps" });
+    expect(r.error?.message).toContain("location_required");
+  });
+
+  it("checks out with the location; members cannot read others' coordinates", async () => {
+    expect((await gps(U.member, HQ.lat, HQ.lng)).error).toBeNull();
+    const out = await (await as("member")).rpc("check_out", { p_lat: HQ.lat, p_lng: HQ.lng + 0.001, p_accuracy_m: 12 });
+    expect(out.error).toBeNull();
+    const coords = async (u: Parameters<typeof as>[0]) =>
+      (await (await as(u)).from("attendance_sessions").select("checkin_lat, checkout_lng").eq("user_id", U.member).eq("method", "gps")).data ?? [];
+    expect((await coords("member")).some((s) => s.checkin_lat === HQ.lat && s.checkout_lng !== null)).toBe(true);
+    expect((await coords("hr")).length).toBeGreaterThan(0);
+    expect((await coords("admin")).length).toBeGreaterThan(0);
+    expect((await coords("leadCreative")).length).toBeGreaterThan(0);
+    expect(await coords("member2")).toEqual([]);
+    expect(await coords("traffic")).toEqual([]);
+  });
+
+  it("who_is_in shows branch, method and place but never coordinates", async () => {
+    expect((await gps(U.member, HQ.lat, HQ.lng)).error).toBeNull();
+    const { data } = await (await as("member2")).rpc("who_is_in", {});
+    const row = data!.find((s) => s.user_id === U.member)!;
+    expect(row.method).toBe("gps");
+    expect(row.branch_id).toBe(BRANCH_HQ);
+    for (const key of Object.keys(row)) expect(key).not.toMatch(/lat|lng|accuracy|distance/);
   });
 });
 

@@ -1,29 +1,32 @@
 "use client";
 
-import { Building2, Home, LogIn, LogOut, MapPinned, QrCode } from "lucide-react";
+import { AlertCircle, Loader2, LocateFixed, MapPinOff, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { useMessage } from "@/hooks/use-message";
 import { useRouter } from "@/i18n/navigation";
-import { formatCairo } from "@/lib/dates";
-import { checkIn, checkOut } from "./actions";
+import { checkIn } from "./actions";
+import { CheckinAlternatives } from "./alternatives";
+import { CheckedInCard, type OpenSession } from "./checked-in-card";
+import type { FieldValues } from "./field-form";
+import { geolocate, type GeoErrorKind } from "./geolocate";
+import type { CheckInInput, Location } from "./schemas";
 
 type Branch = { id: string; name: string; methods: string[] };
-type Open = { id: string; branch_id: string | null; method: string; checked_in_at: string; is_late: boolean };
+type Phase =
+  | { k: "idle" }
+  | { k: "geoError"; kind: GeoErrorKind; accuracy?: number }
+  | { k: "outside"; branch: string; distance: number; location: Location }
+  | { k: "error"; message: string };
 
-export function CheckinPanel({ open, branches, homeBranchId, wfhToday, cards, qr, canCheckIn }: {
-  open: Open | null;
+export function CheckinPanel({ open, branches, homeBranchId, wfhToday, cards, canCheckIn }: {
+  open: OpenSession | null;
   branches: Branch[];
   homeBranchId: string | null;
   wfhToday: boolean;
   cards: { id: string; title: string }[];
-  qr: { branchId: string; token: string } | null;
   canCheckIn: boolean;
 }) {
   const t = useTranslations("checkin");
@@ -31,105 +34,102 @@ export function CheckinPanel({ open, branches, homeBranchId, wfhToday, cards, qr
   const message = useMessage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [branchId, setBranchId] = useState(homeBranchId ?? branches[0]?.id ?? "");
-  const [cardId, setCardId] = useState("none");
-  const [note, setNote] = useState("");
-  const branchName = (id: string | null) => branches.find((b) => b.id === id)?.name ?? "";
+  const [locating, setLocating] = useState(false);
+  const [phase, setPhase] = useState<Phase>({ k: "idle" });
 
-  function run(input: Parameters<typeof checkIn>[0] | "out") {
+  if (open) return <CheckedInCard open={open} branchName={branches.find((b) => b.id === open.branch_id)?.name ?? ""} />;
+  if (!canCheckIn) return <p className="text-muted-foreground text-sm">{tc("notAllowed")}</p>;
+
+  const busy = pending || locating;
+  const distanceText = (m: number) => (m >= 1000 ? t("kilometers", { n: (m / 1000).toFixed(1) }) : t("meters", { n: m }));
+
+  async function submit(input: CheckInInput, location?: Location) {
+    const r = await checkIn(input);
+    if (r.ok) {
+      toast.success(r.data.branch ? t("checkedInAtBranch", { branch: r.data.branch }) : t("checkedIn"));
+      setPhase({ k: "idle" });
+      router.refresh();
+    } else if (r.error === "checkin.errors.out_of_range" && location && r.params) {
+      setPhase({ k: "outside", branch: String(r.params.branch), distance: Number(r.params.distance), location });
+    } else setPhase({ k: "error", message: message(r.error, r.params) });
+  }
+
+  async function locate(strict: boolean) {
+    setLocating(true);
+    try {
+      return await geolocate({ strict });
+    } finally {
+      setLocating(false);
+    }
+  }
+
+  function gps() {
     startTransition(async () => {
-      const r = input === "out" ? await checkOut() : await checkIn(input);
-      if (r.ok) {
-        toast.success(input === "out" ? t("checkedOut") : t("checkedIn"));
-        router.replace("/checkin");
-        router.refresh();
-      } else toast.error(message(r.error, r.params));
+      const geo = await locate(true);
+      if (!geo.ok) return setPhase({ k: "geoError", kind: geo.kind, accuracy: geo.accuracy });
+      await submit({ method: "gps", location: geo.location }, geo.location);
     });
   }
 
-  const big = "h-14 w-full text-base";
-
-  if (open) {
-    const time = formatCairo(open.checked_in_at, "HH:mm");
-    return (
-      <div className="bg-card space-y-5 rounded-2xl border p-6 text-center">
-        <div className="bg-emerald-50 text-emerald-700 mx-auto flex size-14 items-center justify-center rounded-full">
-          {open.method === "home" ? <Home className="size-7" /> : open.method === "field" ? <MapPinned className="size-7" /> : <Building2 className="size-7" />}
-        </div>
-        <p className="text-lg font-medium">
-          {open.method === "home" ? t("checkedInHome", { time }) : open.method === "field" ? t("checkedInField", { time }) : t("checkedInAt", { branch: branchName(open.branch_id), time })}
-        </p>
-        {open.is_late ? <p className="text-muted-foreground text-sm">{t("late")}</p> : null}
-        <Button size="lg" variant="outline" className={big} disabled={pending} onClick={() => run("out")}>
-          <LogOut aria-hidden /> {t("checkOut")}
-        </Button>
-      </div>
-    );
+  function field(v: FieldValues) {
+    startTransition(async () => {
+      let location = phase.k === "outside" ? phase.location : null;
+      if (!location) {
+        const geo = await locate(false);
+        if (!geo.ok) return setPhase({ k: "geoError", kind: geo.kind, accuracy: geo.accuracy });
+        location = geo.location;
+      }
+      await submit({ method: "field", location, place: v.place || undefined, card_id: v.card_id, note: v.note || undefined });
+    });
   }
 
-  if (!canCheckIn) return <p className="text-muted-foreground text-sm">{tc("notAllowed")}</p>;
-
-  if (qr) {
-    return (
-      <div className="bg-card space-y-5 rounded-2xl border p-6 text-center">
-        <QrCode className="text-primary mx-auto size-10" aria-hidden />
-        <p className="text-muted-foreground text-sm">{t("qrHint")}</p>
-        <Button size="lg" className={big} disabled={pending} onClick={() => run({ method: "qr", branch_id: qr.branchId, token: qr.token })}>
-          <LogIn aria-hidden /> {t("atBranch", { branch: branchName(qr.branchId) })}
-        </Button>
-      </div>
-    );
-  }
+  const status =
+    phase.k === "geoError" ? (
+      <Notice icon={MapPinOff} text={t(`geo.${phase.kind}`, { accuracy: phase.accuracy ?? 0 })} />
+    ) : phase.k === "outside" ? (
+      <Notice icon={MapPinOff} title={t("outsideTitle")} text={t("outside", { distance: distanceText(phase.distance), branch: phase.branch })} />
+    ) : phase.k === "error" ? (
+      <Notice icon={AlertCircle} text={phase.message} />
+    ) : null;
 
   return (
-    <div className="bg-card rounded-2xl border p-5">
-      <p className="mb-4 text-center font-medium">{t("notCheckedIn")}</p>
-      <Tabs defaultValue="office">
-        <TabsList className="w-full">
-          <TabsTrigger value="office" className="flex-1">{t("methodOffice")}</TabsTrigger>
-          <TabsTrigger value="field" className="flex-1">{t("methodField")}</TabsTrigger>
-          <TabsTrigger value="home" className="flex-1">{t("methodHome")}</TabsTrigger>
-        </TabsList>
-        <TabsContent value="office" className="mt-4 space-y-4">
-          <p className="text-muted-foreground text-sm">{t("officeHint")}</p>
-          <div className="space-y-2">
-            <Label htmlFor="checkin-branch">{t("branch")}</Label>
-            <Select value={branchId} onValueChange={setBranchId}>
-              <SelectTrigger id="checkin-branch" className="w-full"><SelectValue /></SelectTrigger>
-              <SelectContent>{branches.map((b) => <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>)}</SelectContent>
-            </Select>
-          </div>
-          <Button size="lg" className={big} disabled={pending || !branchId} onClick={() => run({ method: "wifi", branch_id: branchId })}>
-            <LogIn aria-hidden /> {t("checkIn")}
-          </Button>
-        </TabsContent>
-        <TabsContent value="field" className="mt-4 space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="checkin-card">{t("fieldCard")}</Label>
-            <Select value={cardId} onValueChange={setCardId}>
-              <SelectTrigger id="checkin-card" className="w-full"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{tc("none")}</SelectItem>
-                {cards.map((c) => <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="checkin-note">{t("fieldNote")}</Label>
-            <Textarea id="checkin-note" rows={2} maxLength={300} value={note} onChange={(e) => setNote(e.target.value)} />
-          </div>
-          <Button size="lg" className={big} disabled={pending}
-            onClick={() => run({ method: "field", card_id: cardId === "none" ? null : cardId, note: note || undefined })}>
-            <LogIn aria-hidden /> {t("checkIn")}
-          </Button>
-        </TabsContent>
-        <TabsContent value="home" className="mt-4 space-y-4">
-          <p className="text-muted-foreground text-sm">{wfhToday ? t("homeHint") : t("homeUnavailable")}</p>
-          <Button size="lg" className={big} disabled={pending || !wfhToday} onClick={() => run({ method: "home" })}>
-            <LogIn aria-hidden /> {t("checkIn")}
-          </Button>
-        </TabsContent>
-      </Tabs>
+    <div className="space-y-5">
+      <div className="bg-card space-y-4 rounded-2xl border p-5 text-center">
+        <p className="font-medium">{t("notCheckedIn")}</p>
+        {status}
+        <Button size="lg" className="h-14 w-full text-base" disabled={busy} onClick={gps}>
+          {busy ? <Loader2 className="animate-spin" aria-hidden /> : phase.k === "idle" ? <LocateFixed aria-hidden /> : <RotateCcw aria-hidden />}
+          {locating ? t("locating") : phase.k === "idle" ? t("checkIn") : t("tryAgain")}
+        </Button>
+        <p className="text-muted-foreground text-xs" aria-live="polite">{locating ? t("locating") : t("checkInHint")}</p>
+      </div>
+      <section className="space-y-2">
+        <h2 className="text-muted-foreground px-1 text-sm font-medium">{t("notAtBranch")}</h2>
+        <CheckinAlternatives
+          key={phase.k}
+          branches={branches}
+          homeBranchId={homeBranchId}
+          wfhToday={wfhToday}
+          cards={cards}
+          pending={busy}
+          initial={phase.k === "outside" ? "field" : null}
+          onField={field}
+          onHome={() => startTransition(() => submit({ method: "home" }))}
+          onWifi={(branch_id) => startTransition(() => submit({ method: "wifi", branch_id, location: phase.k === "outside" ? phase.location : null }))}
+        />
+      </section>
+    </div>
+  );
+}
+
+function Notice({ icon: Icon, title, text }: { icon: typeof AlertCircle; title?: string; text: string }) {
+  return (
+    <div role="alert" className="bg-muted/60 flex items-start gap-3 rounded-xl p-3 text-start text-sm">
+      <Icon className="text-muted-foreground mt-0.5 size-5 shrink-0" aria-hidden />
+      <div>
+        {title ? <p className="font-medium">{title}</p> : null}
+        <p className="text-muted-foreground">{text}</p>
+      </div>
     </div>
   );
 }

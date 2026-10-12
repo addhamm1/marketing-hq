@@ -24,7 +24,7 @@ Do not create plain (definer) views: the Supabase security advisor flags them, a
 app_role:          super_admin, leadership, team_lead, traffic_manager, member, requester, final_approver, hr, guest
 profile_status:    active, inactive
 presence_status:   available, focus, meeting, shoot, break, away
-checkin_method:    wifi, qr, field, home, manual
+checkin_method:    gps, wifi, qr, field, home, manual   -- qr retired (M-02): kept for old rows, refused by check_in
 card_stage:        request, performance_input, intake, brief_schedule, production, creative_review, confirmation, ready_to_publish, published, reported
 card_request_kind: strategic, urgent, internal      -- internal = created by marketing for itself, starts at intake
 card_priority:     low, normal, high, urgent
@@ -51,8 +51,7 @@ Defined once, used by routing and policies:
 | --- | --- | --- |
 | `departments` | name_en, name_ar, slug unique, is_marketing bool, default_approver_id null | `default_approver_id` is copied to new cards from this department (DECISIONS D-12) |
 | `teams` | department_id, name_en, name_ar, slug unique, color | `color` is the name-tag colour on the map |
-| `branches` | name_en, name_ar, slug unique, area, map_key, public_ips cidr[], checkin_methods checkin_method[], is_active | Readable by every active user |
-| `branch_secrets` | branch_id primary key, hmac_secret text, kiosk_key_hash text | No client access at all (no grants, no policies). The server reads it with the admin client; super_admin changes it through `admin_rotate_qr_secret` and `admin_set_kiosk_key_hash` |
+| `branches` | name_en, name_ar, slug unique, area, map_key, public_ips cidr[], checkin_methods checkin_method[] default {gps,wifi,field,home} (never `qr`), latitude, longitude (both or neither), geofence_radius_m int default 150 (25 to 2000), is_active | Readable by every active user; written by super_admin |
 | `profiles` | id = auth.users.id (primary key), email, full_name, display_name, phone, department_id, team_id, home_branch_id, title, locale ('en' or 'ar'), status profile_status default 'active', must_change_password bool default true, presence presence_status default 'available', presence_updated_at, avatar_seen bool default false | Column grants: users may update only `display_name, phone, locale, presence, presence_updated_at, avatar_seen` on their own row. `email` mirrors `auth.users.email` and changes only through admin. `must_change_password` is cleared only by the server (admin client) after a successful password change. Everything else through `admin_update_profile` |
 | `user_roles` | user_id, role app_role, team_id null, unique(user_id, role, team_id) | `team_id` required when role is `team_lead` (check constraint) |
 | `schedules` | user_id unique, workdays int[] default {6,0,1,2,3,4} (0 = Sunday, 6 = Saturday), start_time time default '10:00', end_time time default '18:00', timezone default 'Africa/Cairo' | |
@@ -65,7 +64,7 @@ Accounts are created only by a super_admin (public sign-up is disabled in Supaba
 | Table | Columns | Notes |
 | --- | --- | --- |
 | `desks` | branch_id, zone_name (matches the Tiled object name, for example `desk-4`), assigned_user_id null, unique(branch_id, zone_name) | |
-| `attendance_sessions` | user_id, branch_id null (null for field and home), method checkin_method, checked_in_at, checked_out_at null, is_late bool, auto_closed bool default false, confirmed_at null, field_card_id null, note, verify jsonb | `verify` holds the verification result, for example `{ "ipMatched": "41.x.x.0/24" }`. Never a location. Partial unique index: one open session per user (`unique (user_id) where checked_out_at is null`). No direct writes from clients |
+| `attendance_sessions` | user_id, branch_id null (null for field and home), method checkin_method, checked_in_at, checked_out_at null, is_late bool, auto_closed bool default false, confirmed_at null, field_card_id null, note, verify jsonb, checkin_lat, checkin_lng, checkin_accuracy_m int, checkin_place text (field only, up to 120), checkout_lat, checkout_lng, checkout_accuracy_m int, distance_m int (from the branch at check-in) | `verify` holds the verification result, for example `{ "ipMatched": "41.x.x.0/24" }` or `{ "geofence": { "radius_m": 150, "distance_m": 40 } }`. Locations live in their own columns, are recorded only at check-in and check-out, and never for `home`. Readable only by the row policy below (the person, their team lead, hr, super_admin, leadership); `who_is_in()` never returns them. Partial unique index: one open session per user (`unique (user_id) where checked_out_at is null`). No direct writes from clients |
 | `attendance_edits` | session_id, edited_by, old_in, new_in, old_out, new_out, reason | Through `confirm_auto_checkout` or `admin_edit_session` |
 | `avatars` | user_id primary key, config jsonb, updated_at | Own row writable |
 
@@ -141,7 +140,7 @@ No platform integrations: platforms are plain labels (`facebook`, `instagram`, `
 
 | Table | Columns | Notes |
 | --- | --- | --- |
-| `audit_log` | actor_id, table_name, row_id, action ('insert', 'update', 'delete'), old_data jsonb, new_data jsonb, at | Written by a generic trigger on `user_roles`, `profiles` (status, department, team changes), `attendance_sessions` (updates, deletes), `attendance_edits`, `approval_steps` (updates), `requests` (status changes), `cards` (deletes, archive), `leave_balances`, `branch_secrets` (without the secret values). No updates or deletes allowed; super_admin reads |
+| `audit_log` | actor_id, table_name, row_id, action ('insert', 'update', 'delete'), old_data jsonb, new_data jsonb, at | Written by a generic trigger on `user_roles`, `profiles` (status, department, team changes), `attendance_sessions` (updates, deletes), `attendance_edits`, `approval_steps` (updates), `requests` (status changes), `cards` (deletes, archive), `leave_balances`. No updates or deletes allowed; super_admin reads |
 
 ## 9. Functions
 
@@ -163,7 +162,7 @@ can_add_to_board(board_id uuid)  -- marketing members on non-private non-pipelin
 ### Narrow read functions (`security definer`, return sets)
 
 ```sql
-who_is_in(branch_id uuid)        -- open sessions: user_id, branch_id, method, checked_in_at; marketing users only; no lateness
+who_is_in(branch_id uuid)        -- open sessions: user_id, branch_id, method, checked_in_at, field_card_id, note, checkin_place; marketing users only; no lateness, no coordinates
 public_profiles()                -- id, display_name, title, team_id, department_id; for requesters and guests
 my_access()                      -- the caller's status, flags, roles and is_marketing / is_team_app / is_portal, for guards and the shell
 team_absences(from date, to date)-- user_id, category ('leave', 'wfh', 'field'), starts_on, ends_on; no reasons or form data.
@@ -177,8 +176,6 @@ admin_update_profile(user_id, patch jsonb)       -- super_admin (hr may set sche
 admin_set_roles(user_id, roles jsonb)            -- super_admin
 require_password_change(user_id)                 -- super_admin; sets must_change_password (used by Reset password)
 admin_revoke_sessions(user_id)                   -- service_role ONLY; deletes the user's auth sessions (reset password, deactivate)
-admin_rotate_qr_secret(branch_id)                -- super_admin
-admin_set_kiosk_key_hash(branch_id, sha256_hex)  -- super_admin; the key itself is generated by the server and shown once
 move_card_stage(card_id, to_stage, payload jsonb)
   -- validates transition, permission and required fields; payload may carry stage_due_at, assignees, performance_notes, return reason and missing_items.
   -- Refuses manual moves OUT of creative_review and confirmation: only decide_step does that.
@@ -192,10 +189,13 @@ decide_step(step_id, decision step_status, comment text, reason revision_reason 
   -- confirmation to ready_to_publish; changes_requested moves back to production and adds a revision.
   -- For leave requests: final approval deducts the balance in the same transaction.
 cancel_request(request_id)                       -- requester while pending; hr for approved requests (refunds balance)
-check_in(p_user_id uuid, method, branch_id, verify jsonb, card_id, note)
-  -- service_role ONLY (execute revoked from authenticated). Called by the server action after it verified IP or QR token.
-  -- Enforces one open session, home check-in only with approved work_from_home today, lateness from schedule and grace.
+check_in(p_user_id uuid, method, branch_id, verify jsonb, card_id, note, now, lat, lng, accuracy_m, place)
+  -- service_role ONLY (execute revoked from authenticated). Called by the server action after it validated the input
+  -- (nearest branch for gps, IP for wifi). gps: needs a location with accuracy <= 200 m inside the branch geofence
+  -- (radius + least(accuracy, 100)), via _distance_m (haversine). field: needs a location; place optional. qr and manual refused.
+  -- Enforces one open session, home check-in only with approved work_from_home today (no location stored), lateness from schedule and grace.
 check_out()                                      -- authenticated; closes the caller's own open session
+check_out(lat, lng, accuracy_m)                  -- authenticated; same, recording where (nulls allowed; never stored for home)
 confirm_auto_checkout(session_id, actual_out timestamptz)  -- owner of an auto-closed session; writes attendance_edits, sets confirmed_at
 admin_edit_session(session_id, new_in, new_out, reason)    -- super_admin, hr
 decide_post(post_id, approve bool, comment text) -- in_review to approved (or scheduled when it has a time), or back to draft with a comment
@@ -212,7 +212,6 @@ mark_post_published(post_id, links jsonb)        -- links optional; sets publish
 | profiles | R: own row always; marketing users, hr, super_admin, leadership read all. Requesters and guests use `public_profiles()`. W: own row, granted columns only |
 | user_roles | R: own; marketing users; hr. W: through `admin_set_roles` |
 | teams, departments, branches, brands, request_types, holidays | R: all active. W: super_admin; hr also for leave request types and holidays |
-| branch_secrets | No client access. Server reads with the admin client; writes through the two admin functions |
 | settings | R: all active. W: super_admin; hr for `lateness_grace_minutes` |
 | schedules | R: own, team lead of the user, hr, super_admin. W: super_admin, hr |
 | desks | R: marketing. W: super_admin, traffic_manager |

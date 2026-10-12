@@ -38,6 +38,7 @@ export default async function PersonPage({ params }: PageProps<"/[locale]/people
       phone={profile?.phone ?? null}
       presence={profile?.presence ?? null}
       checkedIn={(sessions ?? []).some((s) => s.user_id === id)}
+      fieldPlace={(sessions ?? []).find((s) => s.user_id === id && s.method === "field")?.checkin_place ?? null}
       openCards={count ?? 0}
       labels={{ team: t("team"), department: t("department"), branch: t("branch"), contact: t("contact"), checkedIn: t("checkedIn"), notCheckedIn: t("notCheckedIn"), openCards: t("openCards") }}
     />

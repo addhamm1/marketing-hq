@@ -138,6 +138,7 @@ export function MapView({ initial, defaultSelection }: { initial: MapData; defau
             person={popoverPerson}
             at={popover}
             checkedInAt={popoverPlaced?.checkedInAt || null}
+            place={sessions.find((s) => s.user_id === popover.userId && s.method === "field")?.checkin_place ?? null}
             onLeave={!!popoverPlaced?.onLeave}
             card={initial.currentCards[popover.userId]}
             onClose={() => setPopover(null)}

@@ -44,7 +44,7 @@ export function homePath(access: Access): string {
   return "/no-access";
 }
 
-const PUBLIC_PREFIXES = ["/sign-in", "/kiosk"];
+const PUBLIC_PREFIXES = ["/sign-in"];
 const ANY_SIGNED_IN = ["/change-password", "/me/account", "/no-access"];
 
 function matches(path: string, prefix: string) {
@@ -62,7 +62,6 @@ export type RouteDecision =
  */
 export function decideRoute(path: string, signedIn: boolean, access: Access | null): RouteDecision {
   const isPublic = PUBLIC_PREFIXES.some((p) => matches(path, p));
-  if (matches(path, "/kiosk")) return { kind: "allow" };
 
   if (!signedIn || !access) {
     if (isPublic) return { kind: "allow" };

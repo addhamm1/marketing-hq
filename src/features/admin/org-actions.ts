@@ -1,13 +1,10 @@
 "use server";
 
-import { getLocale } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { fail, invalid, ok, type ActionResult } from "@/lib/actions";
 import { hasRole } from "@/lib/auth/access";
 import { actionAccess } from "@/lib/auth/session";
-import { randomKey, sha256Hex } from "@/lib/crypto";
-import { env } from "@/lib/env";
 import { parseIp } from "@/lib/ip";
 import { createClient } from "@/lib/supabase/server";
 import { branchSchema, settingSchema } from "./schemas";
@@ -36,40 +33,14 @@ export async function updateBranch(input: unknown): Promise<ActionResult> {
   if (!cidrs) return fail("validation.invalid", { public_ips: "validation.invalid" });
 
   const supabase = await createClient();
-  const { id, name_en, name_ar, area, map_key, checkin_methods, is_active } = parsed.data;
+  const { id, name_en, name_ar, area, map_key, checkin_methods, is_active, latitude, longitude, geofence_radius_m } = parsed.data;
   const { error } = await supabase
     .from("branches")
-    .update({ name_en, name_ar, area, map_key, checkin_methods, is_active, public_ips: cidrs })
+    .update({ name_en, name_ar, area, map_key, checkin_methods, is_active, public_ips: cidrs, latitude, longitude, geofence_radius_m })
     .eq("id", id);
   if (error) return fail("common.unknownError");
   revalidatePath("/[locale]/admin/branches", "page");
   return ok();
-}
-
-/** New kiosk key: shown once, only its hash is stored. */
-export async function generateKioskKey(input: unknown): Promise<ActionResult<{ url: string }>> {
-  const parsed = z.object({ branch_id: z.uuid() }).safeParse(input);
-  if (!parsed.success) return invalid(parsed.error);
-  if (!(await superAdmin())) return fail("common.notAllowed");
-
-  const key = randomKey(32);
-  const supabase = await createClient();
-  const { error } = await supabase.rpc("admin_set_kiosk_key_hash", {
-    p_branch_id: parsed.data.branch_id,
-    p_hash: sha256Hex(key),
-  });
-  if (error) return fail("common.unknownError");
-  const locale = await getLocale();
-  return ok({ url: `${env.appUrl}/${locale}/kiosk/${parsed.data.branch_id}?key=${key}` });
-}
-
-export async function rotateQrSecret(input: unknown): Promise<ActionResult> {
-  const parsed = z.object({ branch_id: z.uuid() }).safeParse(input);
-  if (!parsed.success) return invalid(parsed.error);
-  if (!(await superAdmin())) return fail("common.notAllowed");
-  const supabase = await createClient();
-  const { error } = await supabase.rpc("admin_rotate_qr_secret", { p_branch_id: parsed.data.branch_id });
-  return error ? fail("common.unknownError") : ok();
 }
 
 export async function updateSetting(input: unknown): Promise<ActionResult> {

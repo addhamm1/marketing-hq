@@ -8,7 +8,7 @@ Adham: fill in the Answer column. An answer here overrides the default.
 | --- | --- | --- | --- |
 | D-01 | Who can sign in, and is anyone activated automatically? | Any Google account can sign in and becomes `pending`; a super_admin activates it | No Google sign-in. Admins create every account with email and a temporary password; the employee must change it on first sign-in and can change it any time. No public sign-up |
 | D-02 | Which branch is the first map (the team's home branch)? | A branch with slug `hq` named "Marketing HQ" until the real branch is named | |
-| D-03 | Check-in verification per branch | Wi-Fi IP and rotating QR both enabled; geofence not built | |
+| D-03 | Check-in verification per branch | Location (geofence, 150 m radius plus up to 100 m for GPS accuracy; readings worse than 200 m refused) and office Wi-Fi IP as a fallback; field and home allowed. The reception QR kiosk was removed (M-02) | |
 | D-04 | Is attendance data used for payroll or deductions? | No. Team tool only; lateness visible to the person, their team lead, hr, super_admin and leadership | |
 | D-05 | Leave types, yearly allowances, caps, notice periods | Types from `SEED_DATA.md`; allowances seeded as 0 and set by HR before the pilot (a Day 7 check) | |
 | D-06 | Approval chains per request type | As listed in `SEED_DATA.md` | |
@@ -22,6 +22,7 @@ Adham: fill in the Answer column. An answer here overrides the default.
 | D-14 | Work week | Saturday to Thursday, 10:00 to 18:00, per-person override in schedules | |
 | D-15 | Monthly published-post target per brand | 12 | |
 | D-17 | How does someone recover a forgotten password? | No self-service: the sign-in page says "Ask your admin", and a super_admin uses Reset password. Email-based reset (Resend) can be added later | |
+| D-18 | Branch coordinates for location check-in | Approximate coordinates per branch area in the seed (`supabase/seed/01_core.sql`, `supabase/seed-production.sql`). Confirm each branch's exact point in `/admin/branches` ("Use my current location" while standing at the branch) before the pilot | |
 | D-16 | Should the Performance input stage be skippable? | Yes: the Performance lead can mark "no input" and the card moves to intake. Auto-skip after 24 hours is P1 | |
 | D-19 | Staff email addresses | `name@e-spaces.co` as listed in `supabase/staff.json`; confirm each before running `scripts/create-staff.mts` on production | |
 | D-20 | Access tiers | super_admin: Adham Mostafa, Omnia Magdy. traffic_manager (less access): Roaa Reda. Everyone else a regular employee (member / requester). No team leads, so leave and creative approvals fall back to the super admins; HR approval steps are skipped until someone has the hr role | Adham: "only me and Omnia Magdy have access to super admin, then Roaa less access, then the rest casual employee access" |

@@ -34,12 +34,26 @@ describe("organisation tables", () => {
   });
 });
 
-describe("branch_secrets", () => {
-  it.each(["admin", "member", "hr"] as const)("%s cannot read secrets", async (user) => {
-    const c = await as(user);
-    const { data, error } = await c.from("branch_secrets").select("hmac_secret");
-    expect(error).not.toBeNull();
-    expect(data).toBeNull();
+describe("branch locations", () => {
+  it.each(["admin", "member", "hr"] as const)("%s reads branch coordinates", async (user) => {
+    const { data } = await (await as(user)).from("branches").select("latitude, longitude, geofence_radius_m").eq("slug", "hq").single();
+    expect(data?.latitude).not.toBeNull();
+    expect(data?.geofence_radius_m).toBe(150);
+  });
+
+  it("only super_admin changes the geofence", async () => {
+    const member = await as("member");
+    const { data: none } = await member.from("branches").update({ geofence_radius_m: 999 }).eq("slug", "hq").select("id");
+    expect(none ?? []).toEqual([]);
+    const admin = await as("admin");
+    const { data: one } = await admin.from("branches").update({ geofence_radius_m: 150 }).eq("slug", "hq").select("id");
+    expect(one).toHaveLength(1);
+  });
+
+  it("refuses the retired QR method and out-of-range coordinates", async () => {
+    const admin = await as("admin");
+    expect((await admin.from("branches").update({ checkin_methods: ["qr"] }).eq("slug", "hq")).error).not.toBeNull();
+    expect((await admin.from("branches").update({ latitude: 95 }).eq("slug", "hq")).error).not.toBeNull();
   });
 });
 

@@ -35,7 +35,7 @@ export default async function AttendancePage({ searchParams }: PageProps<"/[loca
     .filter((p) => visible.has(p.id))
     .map((p) => {
       const d = byUser.get(p.id) ?? [];
-      const office = d.filter((x) => x.method === "wifi" || x.method === "qr" || x.method === "manual");
+      const office = d.filter((x) => x.method === "gps" || x.method === "wifi" || x.method === "qr" || x.method === "manual");
       return {
         id: p.id,
         name: p.display_name || p.full_name,

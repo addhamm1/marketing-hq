@@ -29,7 +29,7 @@ export async function proxy(request: NextRequest) {
   const [, locale, ...rest] = request.nextUrl.pathname.split("/");
   const path = "/" + rest.join("/");
   let access: Access | null = null;
-  if (signedIn && !path.startsWith("/kiosk")) {
+  if (signedIn) {
     const { data } = await supabase.rpc("my_access");
     access = (data as Access | null) ?? null;
   }
@@ -44,6 +44,6 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip API routes (cron and kiosk check their own secrets), Next internals and files.
+  // Skip API routes (cron checks its own secret; export checks the session), Next internals and files.
   matcher: ["/((?!api|_next|_vercel|monitoring|.*\\..*).*)"],
 };

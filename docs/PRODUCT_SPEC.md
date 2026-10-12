@@ -44,8 +44,7 @@ All routes sit under `/[locale]` (`en` or `ar`).
 | `/change-password` | everyone signed in | Forced password change on first sign-in and after an admin reset |
 | `/admin/*` | super_admin (hr for leave settings) | Users, roles, teams, branches, request types, leave types, holidays, stage targets, settings |
 | `/portal`, `/portal/requests/new`, `/portal/requests/[id]`, `/portal/approvals`, `/portal/files` | requester, final_approver | Department portal |
-| `/kiosk/[branchId]?key=...` | reception tablet | Full-screen rotating check-in QR |
-| `/checkin` | team | Check-in landing (opened by QR scan or the reception desk on the map) |
+| `/checkin` | team | Check-in and check-out by location (also opened from the reception desk on the map) |
 
 Navigation: sidebar on desktop, bottom bar on mobile with Map, Boards, My work, Approvals, More. A "classic view" setting makes `/my-work` the home page instead of the map.
 
@@ -118,15 +117,17 @@ One engine powers leaves, special requests, creative review and confirmation.
 
 ### Check-in
 - `/checkin` shows the user's state and a big Check in or Check out button.
-- Methods (branch setting decides which are allowed):
-  - `wifi`: server compares the request IP (`x-forwarded-for` first value on Vercel) with the branch's `public_ips` list (CIDR allowed).
-  - `qr`: the kiosk page `/kiosk/[branchId]?key=<kioskKey>` shows a QR encoding `/checkin?b=<branchId>&t=<token>`, refreshed every 60 seconds. `window = floor(epochSeconds / 60)`; `token` = the first 10 characters of RFC 4648 base32 (no padding) of `HMAC_SHA256(branch_secrets.hmac_secret, "<branchId>:<window>")`. The server accepts the current and previous window and compares in constant time. The kiosk key is a separate long random value: admin generates it, shows it once, and stores only its hash (`branch_secrets.kiosk_key_hash`). The kiosk page and its token endpoint need no sign-in, only a valid kiosk key. The HMAC secret never leaves the server.
-  - `field`: user picks the card they are working on (optional) and a short note; no verification; shown on the Field map.
+- Methods (branch setting decides which are allowed for branch check-in):
+  - `gps` (default): tapping Check in asks the browser for one high-accuracy reading (`getCurrentPosition`, 15-second timeout). The server picks the nearest active branch that has coordinates and allows `gps`, and accepts the check-in when the distance is at most `geofence_radius_m` (default 150, admin-editable) plus the reported accuracy capped at 100 m; readings worse than 200 m are refused. `check_in` repeats the same haversine check in SQL. Success says "You're at <branch>". Out of range shows the distance to the nearest branch and offers Field day, Work from home (only with approved WFH today) or Wi-Fi. Clear messages for permission denied, position unavailable, timeout and low accuracy.
+  - `wifi` (fallback): server compares the request IP (`x-forwarded-for` first value on Vercel) with the branch's `public_ips` list (CIDR allowed). A location is recorded too when the browser provided one.
+  - `field` (field or shooting day): requires the current location (any accuracy is recorded); optional place name (for example "Client office – Zayed", up to 120 characters), card and short note; shown on the Field map, and the place name shows in the map popover and on the person's profile.
   - `home`: allowed only on a day with an approved `work_from_home` request; shown on the Home map.
 - Only one open session per user. Checking in at a different branch closes nothing automatically; the user must check out first (show a clear message).
 - Auto check-out: an hourly cron (Vercel Cron runs in UTC, and Egypt changes clocks for summer time, so never hardcode a Cairo hour in the schedule) works out the current Cairo time in the handler; from 23:00 Cairo it closes every open session that started on that Cairo day or earlier, at `greatest(scheduled end time, checked_in_at)` and sets `auto_closed = true`. Next login shows "You were checked out automatically, please confirm your real time"; the user's correction is saved as an `attendance_edits` row.
 - Lateness: arrival after schedule start plus grace (admin setting, default 15 minutes) marks the session `late`. Lateness is never shown publicly.
-- Privacy: location is never tracked. The map shows only who is checked in, not where they are outside the branch.
+- Check-out also asks for one location reading (best effort, 8 seconds at most) and never blocks check-out.
+- The retired `qr` method stays in the enum for old sessions only; new QR check-ins are refused.
+- Privacy: location is read only at the moment of check-in and check-out, never tracked in between, and never stored for `home` sessions. The coordinates, accuracy and distance are visible only to the person, their team lead, hr, super_admin and leadership (the same people who see attendance). Everyone else sees only branch, method and the field place name (`who_is_in()` never returns coordinates). The HR export includes method, place and a plain "lat,lng" column; nothing links to an outside map service.
 
 ### Presence and status
 - Statuses: `available`, `focus`, `meeting`, `shoot`, `break`, `away`. Set from the top bar or the map. Stored on the profile; broadcast live.
@@ -210,7 +211,7 @@ Above every view: filters (brand, platform, status, pillar, owner, branch), the 
 
 ## 11. Admin (`/admin`)
 
-Users (create account with a one-time temporary password, reset password, deactivate and reactivate, roles, team, home branch, schedule, desk), teams, departments, branches (name, area, map key, public IPs, allowed check-in methods, generate a new kiosk key and rotate the QR secret), request types and approval chains (edit the chain; editing the JSON schema directly is acceptable in v1), leave allowances per type and year (hr), holidays (hr), stage targets, WIP limit, lateness grace, monthly post target.
+Users (create account with a one-time temporary password, reset password, deactivate and reactivate, roles, team, home branch, schedule, desk), teams, departments, branches (name, area, map key, public IPs, allowed check-in methods, latitude, longitude and check-in radius with a "Use my current location" button), request types and approval chains (edit the chain; editing the JSON schema directly is acceptable in v1), leave allowances per type and year (hr), holidays (hr), stage targets, WIP limit, lateness grace, monthly post target.
 
 ## 12. Non-functional requirements
 

@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { expect, test, type Browser, type Page } from "@playwright/test";
 import { signIn } from "./helpers";
@@ -90,14 +89,13 @@ test("content cycle: urgent request to published post", async ({ browser }) => {
   await expect(traffic.getByRole("dialog").getByText("Published").first()).toBeVisible();
 });
 
-test("QR check-in appears on a teammate's map", async ({ browser }) => {
+test("location check-in appears on a teammate's map", async ({ browser }) => {
   test.setTimeout(120_000);
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const svc = createClient(url, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
-  const branch = "30000000-0000-4000-8000-000000000001";
   const member = "00000000-0000-4000-8000-000000000006";
-  const key = "e2e-kiosk-key-123456";
-  await svc.from("branch_secrets").update({ kiosk_key_hash: createHash("sha256").update(key).digest("hex") }).eq("branch_id", branch);
+  // The hq test branch point (supabase/seed/01_core.sql).
+  const hq = { latitude: 30.096, longitude: 31.326, accuracy: 15 };
   // Start clean: member checked out.
   const { data: open } = await svc.from("attendance_sessions").select("id, checked_in_at").eq("user_id", member).is("checked_out_at", null);
   for (const s of open ?? []) await svc.from("attendance_sessions").update({ checked_out_at: new Date(Date.parse(s.checked_in_at) + 1000).toISOString() }).eq("id", s.id);
@@ -108,14 +106,35 @@ test("QR check-in appears on a teammate's map", async ({ browser }) => {
   await expect(counter).toBeVisible();
   const before = Number((await counter.textContent())?.match(/\d+/)?.[0] ?? 0);
 
-  const page = await as(browser, "member@test.local");
-  const res = await page.request.get(`/api/kiosk/${branch}/token?key=${key}`);
-  const { url: checkinUrl } = (await res.json()) as { url: string };
-  await page.goto(new URL(checkinUrl).pathname + new URL(checkinUrl).search);
-  await page.getByRole("button", { name: /Check in at/ }).click();
-  await expect(page.getByText(/Checked in at/)).toBeVisible();
+  // About 1 km from hq first: out of range, with the distance shown.
+  const context = await browser.newContext({
+    locale: "en-US",
+    timezoneId: "Africa/Cairo",
+    geolocation: { ...hq, latitude: hq.latitude + 0.009 },
+    permissions: ["geolocation"],
+  });
+  const page = await context.newPage();
+  await signIn(page, "member@test.local");
+  await page.goto("/en/checkin");
+  await page.getByRole("button", { name: "Check in", exact: true }).click();
+  await expect(page.getByText("You're not at a branch")).toBeVisible();
+  await expect(page.getByText(/You're 1(\.0)? km from Marketing HQ/)).toBeVisible();
+
+  // At the branch: checked in automatically at the nearest branch.
+  await context.setGeolocation(hq);
+  await page.getByRole("button", { name: "Try again" }).click();
+  await expect(page.getByText(/Checked in at Marketing HQ since/)).toBeVisible();
 
   await expect(viewer.getByText(new RegExp(`${before + 1} (people|person) here`))).toBeVisible({ timeout: 10_000 });
+
+  const { data: session } = await svc.from("attendance_sessions").select("method, branch_id, distance_m").eq("user_id", member).is("checked_out_at", null).single();
+  expect(session).toMatchObject({ method: "gps", branch_id: "30000000-0000-4000-8000-000000000001", distance_m: 0 });
+
+  // Check-out also records where it happened.
+  await page.getByRole("button", { name: "Check out" }).click();
+  await expect(page.getByText("You're not checked in")).toBeVisible();
+  const { data: last } = await svc.from("attendance_sessions").select("checkout_lat").eq("user_id", member).order("checked_in_at", { ascending: false }).limit(1).single();
+  expect(last?.checkout_lat).toBeCloseTo(hq.latitude, 4);
 });
 
 test("annual leave goes through team lead, admin and hr", async ({ browser }) => {

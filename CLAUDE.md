@@ -73,9 +73,8 @@ src/
     (auth)/            sign-in, change password (forced on first sign-in)
     (app)/             signed-in team app: map, boards, my-work, approvals, requests, calendar, content, reports, people, admin
     (portal)/portal/   department portal: new request, my requests, approvals, files
-    kiosk/[branchId]/  reception tablet showing the rotating check-in QR (no sign-in; checks the kiosk key)
   app/api/cron/        cron route handlers, protected by CRON_SECRET
-  app/api/kiosk/       QR token endpoint for the kiosk page, protected by the kiosk key
+  app/api/export/      HR CSV export (checks the session and role)
   proxy.ts             (Next.js 16 name for middleware) chains next-intl, the Supabase session refresh and the coarse route guard
   components/ui/       shadcn components (generated, do not hand-edit beyond theming)
   components/          shared app components

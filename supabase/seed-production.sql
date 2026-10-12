@@ -45,7 +45,30 @@ insert into public.branches (id, slug, name_en, name_ar, area, map_key, public_i
   ('30000000-0000-4000-8000-000000000017', 'alexandria', 'Alexandria', 'الإسكندرية', 'Alexandria', 'hq', '{}'),
   ('30000000-0000-4000-8000-000000000018', 'zagazig', 'Zagazig', 'الزقازيق', 'Zagazig', 'hq', '{}');
 
-insert into public.branch_secrets (branch_id) select id from public.branches;
+-- DECISION: D-18 approximate coordinates, confirm in /admin/branches
+-- (geofence radius 150 m by default). hq is a placeholder (D-02).
+update public.branches b set latitude = c.lat, longitude = c.lng
+from (values
+  ('hq', 30.0960, 31.3260),
+  ('nozha', 30.1168, 31.3440),
+  ('cocafe-korba', 30.0897, 31.3233),
+  ('the-hive', 30.0870, 31.3300),
+  ('makram', 30.0590, 31.3455),
+  ('mamoon', 30.0625, 31.3330),
+  ('diplo-plaza', 30.0262, 31.4905),
+  ('north-teseen', 30.0302, 31.4700),
+  ('south-teseen', 30.0150, 31.4650),
+  ('mashareq', 29.9700, 30.9500),
+  ('palm-hills', 29.9850, 30.9800),
+  ('saraya', 30.0430, 30.9800),
+  ('new-maadi', 29.9700, 31.2700),
+  ('old-maadi', 29.9600, 31.2580),
+  ('spaces-villa', 30.0380, 31.2100),
+  ('mosadak', 30.0400, 31.2050),
+  ('alexandria', 31.2156, 29.9553),
+  ('zagazig', 30.5877, 31.5020)
+) as c(slug, lat, lng)
+where b.slug = c.slug;
 
 
 -- Day 2 seed: brands, workspaces, boards, request types, demo cards (SEED_DATA.md).

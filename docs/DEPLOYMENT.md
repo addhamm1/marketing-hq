@@ -53,7 +53,7 @@ Two Supabase projects in Frankfurt (staging for previews and CI, production for 
 
 ## 4. Before the pilot
 
-- In `/admin/branches`, for each pilot branch: office public IPs (CIDR), allowed check-in methods, **Generate kiosk key** (open the link on the reception tablet), desks.
+- In `/admin/branches`, for each pilot branch: stand at the branch and tap **Use my current location** (or enter latitude and longitude), check the check-in radius (150 m by default), office public IPs (CIDR) for the Wi-Fi fallback, allowed check-in methods, desks. The seeded coordinates are approximate (DECISIONS D-18).
 - HR sets leave allowances in `/admin/leave` (they start at 0) and adds the year's holidays.
 - Create the staff accounts with `scripts/create-staff.mts` (or one by one in `/admin/users`) and hand each person their temporary password in person or by private message (`supabase/staff.json` lists names and roles).
 - Set each requesting department's default approver (Sales: the Sales team lead).

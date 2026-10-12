@@ -5,7 +5,7 @@ Two weeks with the marketing team plus Sales as the first requesting department.
 ## Before day 1 (Adham)
 
 - [ ] Production deployed (`docs/DEPLOYMENT.md`), first admin created, temporary password changed
-- [ ] Pilot branch: public IPs, check-in methods, desks, kiosk key opened on the reception tablet
+- [ ] Pilot branch: exact coordinates and radius (stand at the branch, "Use my current location"), public IPs for the Wi-Fi fallback, check-in methods, desks
 - [ ] Accounts created for the pilot users with the right roles and teams; temporary passwords handed over privately
 - [ ] HR set this year's leave allowances and holidays
 - [ ] Sales' default approver set (`/admin/organisation`)
@@ -14,7 +14,7 @@ Two weeks with the marketing team plus Sales as the first requesting department.
 ## What everyone should try in week 1
 
 - [ ] Sign in, change the temporary password, create your character
-- [ ] Check in by reception QR and by office Wi-Fi; check out; try a field day
+- [ ] Check in by location at the branch (allow location when the phone asks); check out; try a field day with a place name; try the Wi-Fi fallback once
 - [ ] Set your status (focus, meeting, shoot, break) and watch it change on a teammate's map
 - [ ] Find your cards in My work; comment with an @mention; attach a file
 - [ ] Request a leave day and a work-from-home day; approvers approve from Approvals

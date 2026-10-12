@@ -1,5 +1,6 @@
 import { hasRole, type Access } from "@/lib/auth/access";
 import { cairoInstant, formatCairo } from "@/lib/dates";
+import { formatLatLng } from "@/lib/geo";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -30,7 +31,7 @@ export async function GET(request: Request) {
   const [sessions, leaves, people] = await Promise.all([
     supabase
       .from("attendance_sessions")
-      .select("user_id, method, checked_in_at, checked_out_at, is_late, auto_closed, branch_id, branches(name_en)")
+      .select("user_id, method, checked_in_at, checked_out_at, is_late, auto_closed, branch_id, branches(name_en), checkin_place, checkin_lat, checkin_lng, checkin_accuracy_m, distance_m, checkout_lat, checkout_lng")
       .gte("checked_in_at", cairoInstant(from, "00:00").toISOString())
       .lt("checked_in_at", new Date(cairoInstant(to, "23:59").getTime() + 60_000).toISOString())
       .order("checked_in_at")
@@ -46,17 +47,19 @@ export async function GET(request: Request) {
     supabase.from("profiles").select("id, full_name, email"),
   ]);
   const who = new Map((people.data ?? []).map((p) => [p.id, p]));
-  const rows: (string | number | null)[][] = [["type", "name", "email", "date", "check_in", "check_out", "hours", "method", "branch", "late", "auto_closed", "leave_type", "leave_from", "leave_to", "days"]];
+  const rows: (string | number | null)[][] = [["type", "name", "email", "date", "check_in", "check_out", "hours", "method", "branch", "place", "checkin_location", "accuracy_m", "distance_m", "checkout_location", "late", "auto_closed", "leave_type", "leave_from", "leave_to", "days"]];
   for (const s of sessions.data ?? []) {
     const p = who.get(s.user_id);
     const hours = s.checked_out_at ? ((Date.parse(s.checked_out_at) - Date.parse(s.checked_in_at)) / 3_600_000).toFixed(2) : "";
     rows.push(["attendance", p?.full_name ?? "", p?.email ?? "", formatCairo(s.checked_in_at, "yyyy-MM-dd"), formatCairo(s.checked_in_at, "HH:mm"),
       s.checked_out_at ? formatCairo(s.checked_out_at, "HH:mm") : "", hours, s.method, (s.branches as unknown as { name_en: string } | null)?.name_en ?? "",
+      s.checkin_place ?? "", formatLatLng(s.checkin_lat, s.checkin_lng), s.checkin_accuracy_m, s.distance_m,
+      formatLatLng(s.checkout_lat, s.checkout_lng),
       s.is_late ? "yes" : "no", s.auto_closed ? "yes" : "no", "", "", "", ""]);
   }
   for (const l of leaves.data ?? []) {
     const p = who.get(l.requester_id);
-    rows.push(["leave", p?.full_name ?? "", p?.email ?? "", "", "", "", "", "", "", "", "", (l.request_types as unknown as { name_en: string }).name_en, l.starts_on, l.ends_on, l.days === null ? "" : Number(l.days)]);
+    rows.push(["leave", p?.full_name ?? "", p?.email ?? "", "", "", "", "", "", "", "", "", "", "", "", "", (l.request_types as unknown as { name_en: string }).name_en, l.starts_on, l.ends_on, l.days === null ? "" : Number(l.days)]);
   }
   return new Response(csv(rows), {
     headers: {

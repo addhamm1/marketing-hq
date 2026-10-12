@@ -2,6 +2,12 @@
 
 One entry per sprint day, newest first. Claude Code writes it at the end of each day.
 
+## M-02 (2026-10-18): location check-in replaces QR
+
+- Done: check-in by location (nearest branch inside its geofence: radius + accuracy capped at 100 m, readings worse than 200 m refused), Wi-Fi kept as a fallback, field days require a location and take an optional place name, check-out records a location (best effort). The reception QR kiosk, its API route, kiosk key and QR secret (`branch_secrets`), the QR crypto and the `qrcode` dependency are gone. Admin branches edit latitude, longitude and radius ("Use my current location"). HR export adds method, place, check-in and check-out "lat,lng", accuracy and distance. Field place names show in the map popover and on profiles.
+- Access: coordinates follow the existing attendance row policy (person, team lead, hr, super_admin, leadership); `who_is_in()` returns branch, method and place only. Home sessions never store a location.
+- Decisions used with defaults: D-03 (location + Wi-Fi), D-18 (approximate seeded coordinates; confirm per branch in `/admin/branches`).
+
 ## Sprint summary (2026-10-17)
 
 All seven days are built and tested locally: 41 of 42 tasks are done (every P0 and P1 except D7-05, which is prepared and waits for the cloud accounts). 178 Vitest tests (unit and database access rules), 13 Playwright tests (smoke, three golden paths across ten users, every route at 375px in English and Arabic), zero Supabase advisor warnings, production build passing.
