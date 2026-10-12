@@ -1,4 +1,4 @@
-# Pixel HQ: data model and access rules
+# Marketing HQ: data model and access rules
 
 Postgres on Supabase. Every table has `id uuid primary key default gen_random_uuid()` unless noted, `created_at timestamptz default now()`, and where rows change, `updated_at timestamptz` maintained by a trigger. Columns listed here are the required ones; add indexes on every foreign key and on columns used in filters.
 
@@ -237,7 +237,7 @@ mark_post_published(post_id, links jsonb)        -- links optional; sets publish
 
 | Bucket | Path | Rules |
 | --- | --- | --- |
-| `card-attachments` | `cards/<card_id>/<file>` | R: `can_view_card`. Upload: `can_view_card` (matches comments). Delete: uploader, `can_edit_card` |
+| `card-attachments` | `cards/<card_id>/<file>`; drafts `drafts/<uid>/<file>` | R: `can_view_card`; drafts only their uploader. Upload: `can_view_card` (matches comments); drafts only into your own folder (active users). Update (= move): only your own draft, only into `cards/<card_id>/` of a card you can view; used by the portal to attach media picked before the card existed (M-03). Delete: uploader, `can_edit_card` |
 | `post-media` | `posts/<post_id>/<file>` | R: same as posts. W: same as posts |
 | `request-files` | `requests/<request_id>/<file>` | R: same as requests. Upload: the requester |
 

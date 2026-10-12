@@ -45,7 +45,7 @@ export function ActivityFeed({ events }: { events: CardDetail["events"] }) {
       <ol className="space-y-2.5 border-s ps-3">
         {events.map((e) => (
           <li key={e.id} className="text-xs leading-relaxed">
-            <span className="font-medium">{e.actor_id ? name(e.actor_id) : "Pixel HQ"}</span>{" "}
+            <span className="font-medium">{e.actor_id ? name(e.actor_id) : "Marketing HQ"}</span>{" "}
             <span className="text-muted-foreground">{describe(e)}</span>
             <div className="text-muted-foreground/80 mt-0.5" dir="ltr">{formatCairo(e.created_at, "d MMM, HH:mm")}</div>
           </li>

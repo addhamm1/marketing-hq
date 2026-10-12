@@ -4,6 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { DropTarget } from "@/components/file-dropzone/drop-target";
 import { usePeople } from "@/components/people-context";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +17,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useMessage } from "@/hooks/use-message";
 import { fromCairoInput } from "@/lib/dates";
 import { moveCardStage } from "./card-actions";
+import { useCardUploads } from "./card-sheet/use-card-uploads";
+import { StageBriefMedia } from "./stage-brief-media";
 import { ASSIGNEE_ROLES, type AssigneeRole, type Stage } from "./types";
 
 export type StageMoveRequest = {
@@ -43,6 +46,7 @@ export function StageMoveDialog({ request, onClose, onMoved }: { request: StageM
   const tc = useTranslations("common");
   const tcard = useTranslations("card");
   const tb = useTranslations("boards");
+  const tm = useTranslations("media");
   const message = useMessage();
   const { people } = usePeople();
   const [pending, startTransition] = useTransition();
@@ -51,9 +55,11 @@ export function StageMoveDialog({ request, onClose, onMoved }: { request: StageM
   const [missing, setMissing] = useState("");
   const [due, setDue] = useState("");
   const [rows, setRows] = useState<{ user_id: string; role: AssigneeRole }[]>(request?.assignees ?? []);
+  const uploads = useCardUploads(request?.cardId);
   const [seen, setSeen] = useState(request);
   if (request !== seen) {
     setSeen(request);
+    if (!uploads.busy) uploads.clearFinished();
     setRows(request?.assignees.length ? request.assignees : [{ user_id: "", role: "design" }]);
     setNotes("");
     setReason("");
@@ -87,7 +93,7 @@ export function StageMoveDialog({ request, onClose, onMoved }: { request: StageM
         </DialogHeader>
 
         {mode === "production" ? (
-          <div className="space-y-4">
+          <DropTarget onFiles={uploads.add} className="space-y-4">
             <div className="space-y-2">
               <Label>{tcard("assignees")}</Label>
               {rows.map((row, i) => (
@@ -129,7 +135,8 @@ export function StageMoveDialog({ request, onClose, onMoved }: { request: StageM
               <Label htmlFor="production-due">{t("productionDue")}</Label>
               <Input id="production-due" type="datetime-local" dir="ltr" value={due} onChange={(e) => setDue(e.target.value)} />
             </div>
-          </div>
+            <StageBriefMedia cardId={request.cardId} queue={uploads} />
+          </DropTarget>
         ) : null}
 
         {mode === "return" ? (
@@ -171,7 +178,7 @@ export function StageMoveDialog({ request, onClose, onMoved }: { request: StageM
             </Button>
           ) : (
             <Button
-              disabled={pending}
+              disabled={pending || uploads.busy}
               onClick={() =>
                 submit({
                   stage_due_at: fromCairoInput(due) ?? undefined,
@@ -179,7 +186,7 @@ export function StageMoveDialog({ request, onClose, onMoved }: { request: StageM
                 })
               }
             >
-              {t("startProduction")}
+              {uploads.busy ? tm("waitForUploads") : t("startProduction")}
             </Button>
           )}
         </DialogFooter>

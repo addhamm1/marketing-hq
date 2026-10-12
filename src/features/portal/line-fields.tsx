@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import type { Brand } from "@/features/boards/types";
 import { cn } from "@/lib/utils";
+import { DraftMediaField } from "./draft-media-field";
+import { ReferenceLinksField } from "./reference-links-field";
 import type { LineInput } from "./schemas";
 
 export type LineOptions = { brands: Brand[]; verticals: string[]; formats: string[]; platforms: string[] };
@@ -19,10 +21,13 @@ type Props = {
   errors?: FieldErrors<LineInput>;
   options: LineOptions;
   compact?: boolean;
+  /** New requests: upload reference media now, attach it to the card on submit. */
+  withMedia?: boolean;
+  onUploadBusy?: (busy: boolean) => void;
 };
 
 /** One content request: shared by strategic lines, urgent requests and resubmission. */
-export function LineFields({ prefix, control, register, errors, options, compact }: Props) {
+export function LineFields({ prefix, control, register, errors, options, compact, withMedia, onUploadBusy }: Props) {
   const t = useTranslations("card.fields");
   const tp = useTranslations("priority");
   const tpl = useTranslations("platform");
@@ -116,9 +121,14 @@ export function LineFields({ prefix, control, register, errors, options, compact
             <Textarea id={id("description")} rows={3} {...register(name("description"))} />
           </FormField>
           <FormField id={id("reference_links")} label={t("reference_links")} error={errors?.reference_links?.message} className="sm:col-span-2">
-            <Textarea id={id("reference_links")} rows={2} dir="ltr" placeholder="https://" {...register(name("reference_links"))} />
+            <ReferenceLinksField id={id("reference_links")} control={control} name={name("reference_links")} />
           </FormField>
         </>
+      ) : null}
+      {withMedia ? (
+        <div className="sm:col-span-2">
+          <DraftMediaField control={control} name={name("files" as keyof LineInput)} onBusy={onUploadBusy} />
+        </div>
       ) : null}
     </div>
   );

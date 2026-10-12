@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Pixel HQ",
+    "appName": "Marketing HQ",
     "save": "Save",
     "saving": "Saving…",
     "cancel": "Cancel",
@@ -65,7 +65,7 @@
     "uuid": "Choose a value from the list"
   },
   "auth": {
-    "signInTitle": "Sign in to Pixel HQ",
+    "signInTitle": "Sign in to Marketing HQ",
     "signInSubtitle": "Use the email and password your admin gave you.",
     "email": "Work email",
     "password": "Password",
@@ -565,13 +565,13 @@
   "email": {
     "greeting": "Hi {name},",
     "approvalWaitingSubject": "An approval is waiting for you",
-    "approvalWaitingBody": "Something needs your decision in Pixel HQ.",
+    "approvalWaitingBody": "Something needs your decision in Marketing HQ.",
     "requestDecidedSubject": "Your request was {status}",
     "requestDecidedBody": "Your {type} request was {status}.",
     "cardReturnedSubject": "Your request was returned",
     "cardReturnedBody": "“{title}” was returned by the marketing team: {reason}",
-    "open": "Open Pixel HQ",
-    "footer": "You're receiving this because you use Pixel HQ at Espaces."
+    "open": "Open Marketing HQ",
+    "footer": "You're receiving this because you use Marketing HQ at Espaces."
   },
   "requestStatus": {
     "pending": "Pending",
@@ -633,7 +633,7 @@
     "subtitle": "Open your phone camera and scan this code.",
     "refreshes": "The code refreshes every minute.",
     "invalid": "This kiosk link is not valid. Ask an admin for a new one.",
-    "offline": "Can't reach Pixel HQ. Retrying…"
+    "offline": "Can't reach Marketing HQ. Retrying…"
   },
   "map": {
     "title": "Map",
@@ -665,7 +665,7 @@
   "character": {
     "title": "My character",
     "intro": "This is you on the map. Pick a look that feels like you.",
-    "welcome": "Welcome to Pixel HQ! Create your character before you start.",
+    "welcome": "Welcome to Marketing HQ! Create your character before you start.",
     "randomise": "Randomise",
     "save": "Save character",
     "saved": "Character saved",
@@ -929,5 +929,52 @@
     "team": "Team",
     "anyTeam": "All teams",
     "anyBrand": "All brands"
+  },
+  "media": {
+    "title": "Brief media",
+    "count": "{count, plural, one {# item} other {# items}}",
+    "empty": "No media yet. Drop references, screenshots or footage above, or add a link.",
+    "referenceMedia": "Reference media",
+    "dropTitle": "Drag files here or <browse>browse</browse>",
+    "dropHint": "Paste screenshots with Ctrl/⌘+V · images, video, PDF and documents up to {max} each",
+    "dropToAttach": "Drop to attach",
+    "camera": "Take a photo or video",
+    "uploads": "Uploads",
+    "progress": "Upload progress for {name}",
+    "percent": "{percent}%",
+    "status": {
+      "queued": "Waiting…",
+      "uploading": "Uploading…",
+      "done": "Uploaded",
+      "error": "Upload failed",
+      "canceled": "Canceled"
+    },
+    "cancel": "Cancel upload of {name}",
+    "retry": "Retry {name}",
+    "remove": "Remove {name}",
+    "addedToBrief": "{count, plural, one {Uploading # file to brief media} other {Uploading # files to brief media}}",
+    "waitForUploads": "Finishing uploads…",
+    "someFailed": "{count, plural, one {# file could not be attached. Add it again from the request page.} other {# files could not be attached. Add them again from the request page.}}",
+    "linkLabel": "Reference link",
+    "linkPlaceholder": "Paste a Drive, WeTransfer or any link",
+    "addLink": "Add link",
+    "linkInvalid": "That doesn't look like a link. Paste a full address, for example https://drive.google.com/…",
+    "removeLink": "Remove {url}",
+    "links": "Links",
+    "gallery": "Brief media gallery",
+    "preview": "Preview {name}",
+    "lightboxHint": "Use the arrow keys to move between files.",
+    "previous": "Previous file",
+    "next": "Next file",
+    "open": "Open",
+    "download": "Download",
+    "loadError": "Couldn't load previews.",
+    "tryAgain": "Try again",
+    "errors": {
+      "tooBig": "{name} is larger than {max}. Share big files as a Drive or WeTransfer link instead.",
+      "badType": "{name} can't be uploaded: use images, video, PDF or office documents.",
+      "empty": "{name} is empty.",
+      "tooMany": "You can add up to {max} files at a time."
+    }
   }
 }

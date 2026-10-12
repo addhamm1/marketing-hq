@@ -36,7 +36,7 @@ Two Supabase projects in Frankfurt (staging for previews and CI, production for 
    | `NEXT_PUBLIC_APP_URL` | the public URL (production: the e-spaces.co subdomain) |
    | `CRON_SECRET` | a long random string (Vercel sends it to cron routes) |
    | `RESEND_API_KEY` | Resend key (verified e-spaces.co domain) |
-   | `EMAIL_FROM` | `Pixel HQ <pixelhq@e-spaces.co>` |
+   | `EMAIL_FROM` | `Marketing HQ <marketinghq@e-spaces.co>` |
    | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | Sentry project (optional) |
 
 3. Cron jobs are declared in `vercel.json` (UTC; the code works out Cairo time itself):

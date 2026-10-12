@@ -1,6 +1,6 @@
-# Pixel HQ
+# Marketing HQ
 
-Pixel HQ is the internal portal for the Espaces marketing department (Espaces is an Egyptian coworking brand with branches across Cairo, Giza, Alexandria and Sharqia). Its home screen is a pixel-art map of a branch where each team member appears as their own character while checked in. Behind the map: Trello-style boards running the marketing content cycle, a department portal for other teams to submit requests, leaves and special requests with approvals, dashboards, and a visual content calendar showing what gets posted when, with its media and caption.
+Marketing HQ is the internal portal for the Espaces marketing department (Espaces is an Egyptian coworking brand with branches across Cairo, Giza, Alexandria and Sharqia). Its home screen is a pixel-art map of a branch where each team member appears as their own character while checked in. Behind the map: Trello-style boards running the marketing content cycle, a department portal for other teams to submit requests, leaves and special requests with approvals, dashboards, and a visual content calendar showing what gets posted when, with its media and caption.
 
 Owner: Adham Mostafa, Marketing Team Lead. He is the only developer; you are his pair programmer.
 

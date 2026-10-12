@@ -1,8 +1,8 @@
-# Pixel HQ: product spec for the MVP
+# Marketing HQ: product spec for the MVP
 
-This spec covers what the 7-day sprint builds. The full long-term scope lives in the "Pixel HQ: Marketing Portal Scope & Implementation Plan" doc; anything not written here is out of scope for now (see the last section).
+This spec covers what the 7-day sprint builds. The full long-term scope lives in the "Marketing HQ: Marketing Portal Scope & Implementation Plan" doc; anything not written here is out of scope for now (see the last section).
 
-**No integrations with outside platforms.** Pixel HQ does not connect to Facebook, Instagram, TikTok, LinkedIn, Snapchat, Google Ads, Google Calendar, Trello or any other platform's API. (The optional one-time Trello import in section 3 reads an exported file; it does not connect to Trello.) Publishing, ad buying and scheduling on those platforms stay manual. The only outside services are the ones the app itself runs on: Supabase (database and email and password sign-in), Vercel (hosting and cron), Resend (email) and Sentry (errors).
+**No integrations with outside platforms.** Marketing HQ does not connect to Facebook, Instagram, TikTok, LinkedIn, Snapchat, Google Ads, Google Calendar, Trello or any other platform's API. (The optional one-time Trello import in section 3 reads an exported file; it does not connect to Trello.) Publishing, ad buying and scheduling on those platforms stay manual. The only outside services are the ones the app itself runs on: Supabase (database and email and password sign-in), Vercel (hosting and cron), Resend (email) and Sentry (errors).
 
 Access definitions ("team app user", "portal user", "marketing user") are in `DATA_MODEL.md` section 2; "team" in the tables below means team app user.
 
