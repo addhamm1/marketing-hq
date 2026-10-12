@@ -8,7 +8,8 @@ insert into public.departments (id, slug, name_en, name_ar, is_marketing) values
   ('10000000-0000-4000-8000-000000000005', 'operations', 'Operations', 'العمليات', false),
   ('10000000-0000-4000-8000-000000000006', 'hr', 'Human Resources', 'الموارد البشرية', false),
   ('10000000-0000-4000-8000-000000000007', 'finance', 'Finance', 'المالية', false),
-  ('10000000-0000-4000-8000-000000000008', 'logistics', 'Logistics', 'اللوجستيات', false);
+  ('10000000-0000-4000-8000-000000000008', 'logistics', 'Logistics', 'اللوجستيات', false),
+  ('10000000-0000-4000-8000-000000000009', 'management', 'Management', 'الإدارة', false);
 
 insert into public.teams (id, department_id, slug, name_en, name_ar, color) values
   ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000001', 'traffic', 'Traffic', 'التنسيق', '#F59E0B'),

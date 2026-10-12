@@ -59,6 +59,7 @@ pnpm make:placeholders   # regenerate placeholder tileset, maps and sprite sheet
 node scripts/i18n-add.mjs <file.json>   # merge new strings into both message files
 node scripts/perf-check.mjs <url>       # mobile performance check against a production build
 pnpm tsx scripts/create-admin.mts <email> "<name>"   # first super admin on a fresh project
+pnpm tsx scripts/create-staff.mts [email ...]          # accounts for supabase/staff.json (temporary passwords)
 pnpm supabase db advisors --local --type all --level warn
 ```
 

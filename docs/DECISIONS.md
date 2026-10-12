@@ -23,3 +23,5 @@ Adham: fill in the Answer column. An answer here overrides the default.
 | D-15 | Monthly published-post target per brand | 12 | |
 | D-17 | How does someone recover a forgotten password? | No self-service: the sign-in page says "Ask your admin", and a super_admin uses Reset password. Email-based reset (Resend) can be added later | |
 | D-16 | Should the Performance input stage be skippable? | Yes: the Performance lead can mark "no input" and the card moves to intake. Auto-skip after 24 hours is P1 | |
+| D-19 | Staff email addresses | `name@e-spaces.co` as listed in `supabase/staff.json`; confirm each before running `scripts/create-staff.mts` on production | |
+| D-20 | Access tiers | super_admin: Adham Mostafa, Omnia Magdy. traffic_manager (less access): Roaa Reda. Everyone else a regular employee (member / requester). No team leads, so leave and creative approvals fall back to the super admins; HR approval steps are skipped until someone has the hr role | Adham: "only me and Omnia Magdy have access to super admin, then Roaa less access, then the rest casual employee access" |

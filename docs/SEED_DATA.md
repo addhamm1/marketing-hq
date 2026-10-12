@@ -95,28 +95,39 @@ For the team lead of a team lead (or a member with no team lead), `team_lead_of_
 
 ## Accounts to create in production
 
-Not seeded: Adham creates each account in `/admin/users` with these roles and hands over the temporary password. Fill in emails before Day 7.
+The roster lives in `supabase/staff.json` (the single source). Locally and on staging the same people are seeded by `supabase/seed/08_espaces_people.sql` with the test password. On production run:
 
-| Name | Department | Team | Roles | Email |
-| --- | --- | --- | --- | --- |
-| Adham Mostafa | Marketing | | super_admin | |
-| Roaa Reda | Marketing | Traffic | traffic_manager | |
-| Ibrahem Seif | Marketing | Creative | team_lead (creative) | |
-| Basil Nabil | Marketing | Creative | member | |
-| Yasmin Shaarawy | Marketing | Creative | member | |
-| Mahmoud Hussein | Marketing | Creative | member | |
-| Hatem Sapet | Marketing | Creative | member | |
-| Omar Afify | Marketing | Performance | team_lead (performance) | |
-| Omar Mansy | Marketing | Performance | member | |
-| Ahmed Gad | Marketing | Performance | member | |
-| Ahmed Yassin | (none) | | leadership | |
-| Omnia Magdy | (none) | | leadership | |
-| Asmaa Hossam | Sales | | requester, final_approver | |
-| Hadeer Mohamed | Daily Reservation | | requester | |
-| Mohamed Sami | Business Development | | requester | |
-| Safaa | HR | | hr, requester | |
+```bash
+SUPABASE_URL=https://<ref>.supabase.co SUPABASE_SERVICE_ROLE_KEY=<key> pnpm tsx scripts/create-staff.mts
+```
 
-Community Management lead, the new Junior Designer and the Reel Creator are added when hired or named.
+It skips accounts that already exist, prints each new temporary password once (hand it over privately), forces a password change at first sign-in, and sets the departments' default approvers.
+
+Access tiers (DECISIONS D-20): **super_admin** only for Adham Mostafa and Omnia Magdy; **traffic_manager** (less access: runs the pipeline, no admin) for Roaa Reda; **everyone else is a regular employee**: `member` in marketing, `requester` in other departments. `final_approver` on Asmaa is her delivery-confirmation duty, not extra access. Emails follow `name@e-spaces.co` until confirmed (D-19).
+
+| Name | Title | Department | Team | Roles | Email |
+| --- | --- | --- | --- | --- | --- |
+| Adham Mostafa | Marketing Team Lead | marketing |  | super_admin | adham@e-spaces.co |
+| Omnia Magdy | Acting Managing Partner, Head of Sales | sales |  | super_admin | omnia@e-spaces.co |
+| Roaa Reda | Traffic Manager | marketing | traffic | traffic_manager | roaa@e-spaces.co |
+| Ibrahem Seif | Creative and Content Director | marketing | creative | member | ibrahem@e-spaces.co |
+| Mahmoud Hussein | Designer | marketing | creative | member | mahmoud.hussein@e-spaces.co |
+| Hatem Sapet | Videographer | marketing | creative | member | hatem@e-spaces.co |
+| Basil Nabil | Intern Content Creator | marketing | creative | member | basil@e-spaces.co |
+| Omar Afify | Head of Performance and Media Buying | marketing | performance | member | omar.afify@e-spaces.co |
+| Yasmin Shaarawy | Creative | marketing | creative | member | yasmin@e-spaces.co |
+| Omar Mansy | Performance | marketing | performance | member | omar.mansy@e-spaces.co |
+| Ahmed Gad | Performance | marketing | performance | member | ahmed.gad@e-spaces.co |
+| Ahmed Yassin | CEO and Founder | management |  | requester | ahmed.yassin@e-spaces.co |
+| Asmaa Hossam | Sales Team Lead | sales |  | requester, final_approver | asmaa@e-spaces.co |
+| Hadeer Mohamed | Head of Daily Reservation Sales | daily-reservation |  | requester | hadeer@e-spaces.co |
+| Mohamed Sami | Head of Business Development (Cocafe) | business-development |  | requester | sami@e-spaces.co |
+| Safaa | HR Manager | hr |  | requester | safaa@e-spaces.co |
+| Nada Hossam | Finance Manager | finance |  | requester | nada@e-spaces.co |
+| Omar Abd al-Aziz | Head of Logistics | logistics |  | requester | omar.abdelaziz@e-spaces.co |
+| Mohamed Mohy | Head of Operations | operations |  | requester | mohy@e-spaces.co |
+
+Community Management lead, the new Junior Designer and the Reel Creator are added to `staff.json` when hired or named.
 
 ## Test users (local and staging only)
 

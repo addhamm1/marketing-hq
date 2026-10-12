@@ -1,0 +1,201 @@
+{
+  "_note": "Real Espaces staff. Source for scripts/create-staff.mts (staging/production) and mirrored in supabase/seed/08_espaces_people.sql (local). Emails follow name@e-spaces.co; confirm each address before creating production accounts (DECISIONS D-19). Access tiers (D-20): super_admin = Adham, Omnia; traffic_manager (less access) = Roaa; everyone else is a regular employee (member in marketing, requester elsewhere). final_approver is a workflow duty (delivery confirmation), not extra access.",
+  "default_approvers": {
+    "sales": "asmaa@e-spaces.co",
+    "daily-reservation": "asmaa@e-spaces.co",
+    "business-development": "asmaa@e-spaces.co"
+  },
+  "people": [
+    {
+      "email": "adham@e-spaces.co",
+      "full_name": "Adham Mostafa",
+      "department": "marketing",
+      "team": null,
+      "roles": [
+        "super_admin"
+      ],
+      "title": "Marketing Team Lead"
+    },
+    {
+      "email": "omnia@e-spaces.co",
+      "full_name": "Omnia Magdy",
+      "department": "sales",
+      "team": null,
+      "roles": [
+        "super_admin"
+      ],
+      "title": "Acting Managing Partner, Head of Sales"
+    },
+    {
+      "email": "roaa@e-spaces.co",
+      "full_name": "Roaa Reda",
+      "department": "marketing",
+      "team": "traffic",
+      "roles": [
+        "traffic_manager"
+      ],
+      "title": "Traffic Manager"
+    },
+    {
+      "email": "ibrahem@e-spaces.co",
+      "full_name": "Ibrahem Seif",
+      "department": "marketing",
+      "team": "creative",
+      "roles": [
+        "member"
+      ],
+      "title": "Creative and Content Director"
+    },
+    {
+      "email": "mahmoud.hussein@e-spaces.co",
+      "full_name": "Mahmoud Hussein",
+      "department": "marketing",
+      "team": "creative",
+      "roles": [
+        "member"
+      ],
+      "title": "Designer"
+    },
+    {
+      "email": "hatem@e-spaces.co",
+      "full_name": "Hatem Sapet",
+      "department": "marketing",
+      "team": "creative",
+      "roles": [
+        "member"
+      ],
+      "title": "Videographer"
+    },
+    {
+      "email": "basil@e-spaces.co",
+      "full_name": "Basil Nabil",
+      "department": "marketing",
+      "team": "creative",
+      "roles": [
+        "member"
+      ],
+      "title": "Intern Content Creator"
+    },
+    {
+      "email": "omar.afify@e-spaces.co",
+      "full_name": "Omar Afify",
+      "department": "marketing",
+      "team": "performance",
+      "roles": [
+        "member"
+      ],
+      "title": "Head of Performance and Media Buying"
+    },
+    {
+      "email": "yasmin@e-spaces.co",
+      "full_name": "Yasmin Shaarawy",
+      "department": "marketing",
+      "team": "creative",
+      "roles": [
+        "member"
+      ],
+      "title": "Creative"
+    },
+    {
+      "email": "omar.mansy@e-spaces.co",
+      "full_name": "Omar Mansy",
+      "department": "marketing",
+      "team": "performance",
+      "roles": [
+        "member"
+      ],
+      "title": "Performance"
+    },
+    {
+      "email": "ahmed.gad@e-spaces.co",
+      "full_name": "Ahmed Gad",
+      "department": "marketing",
+      "team": "performance",
+      "roles": [
+        "member"
+      ],
+      "title": "Performance"
+    },
+    {
+      "email": "ahmed.yassin@e-spaces.co",
+      "full_name": "Ahmed Yassin",
+      "department": "management",
+      "team": null,
+      "roles": [
+        "requester"
+      ],
+      "title": "CEO and Founder"
+    },
+    {
+      "email": "asmaa@e-spaces.co",
+      "full_name": "Asmaa Hossam",
+      "department": "sales",
+      "team": null,
+      "roles": [
+        "requester",
+        "final_approver"
+      ],
+      "title": "Sales Team Lead"
+    },
+    {
+      "email": "hadeer@e-spaces.co",
+      "full_name": "Hadeer Mohamed",
+      "department": "daily-reservation",
+      "team": null,
+      "roles": [
+        "requester"
+      ],
+      "title": "Head of Daily Reservation Sales"
+    },
+    {
+      "email": "sami@e-spaces.co",
+      "full_name": "Mohamed Sami",
+      "department": "business-development",
+      "team": null,
+      "roles": [
+        "requester"
+      ],
+      "title": "Head of Business Development (Cocafe)"
+    },
+    {
+      "email": "safaa@e-spaces.co",
+      "full_name": "Safaa",
+      "department": "hr",
+      "team": null,
+      "roles": [
+        "requester"
+      ],
+      "title": "HR Manager"
+    },
+    {
+      "email": "nada@e-spaces.co",
+      "full_name": "Nada Hossam",
+      "department": "finance",
+      "team": null,
+      "roles": [
+        "requester"
+      ],
+      "title": "Finance Manager"
+    },
+    {
+      "email": "omar.abdelaziz@e-spaces.co",
+      "full_name": "Omar Abd al-Aziz",
+      "department": "logistics",
+      "team": null,
+      "roles": [
+        "requester"
+      ],
+      "title": "Head of Logistics"
+    },
+    {
+      "email": "mohy@e-spaces.co",
+      "full_name": "Mohamed Mohy",
+      "department": "operations",
+      "team": null,
+      "roles": [
+        "requester"
+      ],
+      "title": "Head of Operations"
+    }
+  ]
+}

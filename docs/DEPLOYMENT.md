@@ -22,6 +22,10 @@ Two Supabase projects in Frankfurt (staging for previews and CI, production for 
    SUPABASE_URL=https://<ref>.supabase.co SUPABASE_SERVICE_ROLE_KEY=<key> \
      pnpm tsx scripts/create-admin.mts adham@e-spaces.co "Adham Mostafa"
    ```
+9. **Everyone else (production):** confirm the emails in `supabase/staff.json` (D-19), then create all accounts at once; the script skips existing ones and prints each temporary password once:
+   ```bash
+   SUPABASE_URL=https://<ref>.supabase.co SUPABASE_SERVICE_ROLE_KEY=<key> pnpm tsx scripts/create-staff.mts
+   ```
 
 ## 2. Vercel
 
@@ -51,5 +55,5 @@ Two Supabase projects in Frankfurt (staging for previews and CI, production for 
 
 - In `/admin/branches`, for each pilot branch: office public IPs (CIDR), allowed check-in methods, **Generate kiosk key** (open the link on the reception tablet), desks.
 - HR sets leave allowances in `/admin/leave` (they start at 0) and adds the year's holidays.
-- Create the pilot users' accounts in `/admin/users` and hand each person their temporary password in person or by private message (`docs/SEED_DATA.md` lists names and roles).
+- Create the staff accounts with `scripts/create-staff.mts` (or one by one in `/admin/users`) and hand each person their temporary password in person or by private message (`supabase/staff.json` lists names and roles).
 - Set each requesting department's default approver (Sales: the Sales team lead).

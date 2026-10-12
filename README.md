@@ -16,6 +16,8 @@ pnpm dev               # http://localhost:3000
 
 Test users (local and staging only) all use the password `Test1234!`: `admin@`, `traffic@`, `lead.creative@`, `lead.performance@`, `member@`, `member2@`, `community@`, `sales@`, `approver@`, `hr@`, `leadership@`, `guest@test.local`, plus `newhire@test.local` (forced password change).
 
+The real Espaces staff from `supabase/staff.json` are seeded too, with the same local password: `adham@e-spaces.co` and `omnia@e-spaces.co` (super admins), `roaa@e-spaces.co` (traffic), and everyone else as a regular employee.
+
 ## Checks
 
 ```bash
