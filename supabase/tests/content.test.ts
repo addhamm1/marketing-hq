@@ -101,7 +101,7 @@ describe("post reminders", () => {
 
 describe("dashboard views", () => {
   it("a member sees only their own attendance rows; a team lead sees the team", async () => {
-    await svc.rpc("check_in", { p_user_id: U.member2, p_method: "field", p_branch_id: null as unknown as string, p_verify: {} }).then(() => undefined);
+    await svc.rpc("check_in", { p_user_id: U.member2, p_method: "field", p_lat: 30.05, p_lng: 31.2, p_accuracy_m: 20, p_verify: {} }).then(() => undefined);
     const mine = (await (await as("member")).from("v_attendance_daily").select("user_id")).data ?? [];
     expect(new Set(mine.map((r) => r.user_id)).size).toBeLessThanOrEqual(1);
     expect(mine.every((r) => r.user_id === U.member)).toBe(true);

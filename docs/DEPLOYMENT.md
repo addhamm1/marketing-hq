@@ -36,7 +36,7 @@ Two Supabase projects in Frankfurt (staging for previews and CI, production for 
    | `NEXT_PUBLIC_APP_URL` | the public URL (production: the e-spaces.co subdomain) |
    | `CRON_SECRET` | a long random string (Vercel sends it to cron routes) |
    | `RESEND_API_KEY` | Resend key (verified e-spaces.co domain) |
-   | `EMAIL_FROM` | `Pixel HQ <pixelhq@e-spaces.co>` |
+   | `EMAIL_FROM` | `Marketing HQ <marketinghq@e-spaces.co>` |
    | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | Sentry project (optional) |
 
 3. Cron jobs are declared in `vercel.json` (UTC; the code works out Cairo time itself):
@@ -49,7 +49,7 @@ Two Supabase projects in Frankfurt (staging for previews and CI, production for 
 
 ## 4. Before the pilot
 
-- In `/admin/branches`, for each pilot branch: office public IPs (CIDR), allowed check-in methods, **Generate kiosk key** (open the link on the reception tablet), desks.
+- In `/admin/branches`, for each pilot branch: stand at the branch and tap **Use my current location** (or enter latitude and longitude), check the check-in radius (150 m by default), office public IPs (CIDR) for the Wi-Fi fallback, allowed check-in methods, desks. The seeded coordinates are approximate (DECISIONS D-18).
 - HR sets leave allowances in `/admin/leave` (they start at 0) and adds the year's holidays.
 - Create the pilot users' accounts in `/admin/users` and hand each person their temporary password in person or by private message (`docs/SEED_DATA.md` lists names and roles).
 - Set each requesting department's default approver (Sales: the Sales team lead).

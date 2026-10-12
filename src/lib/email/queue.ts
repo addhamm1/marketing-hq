@@ -32,7 +32,7 @@ export async function flushEmailQueue(limit = 50): Promise<number> {
 
   const key = process.env.RESEND_API_KEY;
   const resend = key ? new Resend(key) : null;
-  const from = process.env.EMAIL_FROM ?? "Pixel HQ <pixelhq@e-spaces.co>";
+  const from = process.env.EMAIL_FROM ?? "Marketing HQ <marketinghq@e-spaces.co>";
   let sent = 0;
 
   for (const n of claimed) {

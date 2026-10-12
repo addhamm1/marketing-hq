@@ -10,14 +10,18 @@ export async function generateMetadata() {
   return { title: t("title") };
 }
 
-export default async function CheckinPage({ searchParams }: PageProps<"/[locale]/checkin">) {
+export default async function CheckinPage() {
   const access = await requireAccess();
-  const { b, t: token } = await searchParams;
   const t = await getTranslations("checkin");
   const locale = await getLocale();
   const supabase = await createClient();
   const [{ data: open }, { data: branches }, { data: wfh }, { data: autoClosed }, { data: assigned }] = await Promise.all([
-    supabase.rpc("my_open_session"),
+    supabase
+      .from("attendance_sessions")
+      .select("id, branch_id, method, checked_in_at, is_late, checkin_place")
+      .eq("user_id", access.user_id)
+      .is("checked_out_at", null)
+      .maybeSingle(),
     supabase.from("branches").select("id, name_en, name_ar, checkin_methods").eq("is_active", true).order("name_en"),
     supabase.rpc("my_wfh_today"),
     supabase
@@ -41,12 +45,11 @@ export default async function CheckinPage({ searchParams }: PageProps<"/[locale]
       <PageHeader title={t("title")} />
       {autoClosed?.[0] ? <AutoCheckoutConfirm session={autoClosed[0]} /> : null}
       <CheckinPanel
-        open={open?.[0] ?? null}
+        open={open ?? null}
         branches={branchList}
         homeBranchId={access.home_branch_id}
         wfhToday={!!wfh}
         cards={cards}
-        qr={typeof b === "string" && typeof token === "string" ? { branchId: b, token } : null}
         canCheckIn={access.is_marketing}
       />
     </div>

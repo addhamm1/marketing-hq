@@ -85,14 +85,14 @@ isOneToOne: false
                   ]
                 },"attendance_sessions": {
                   Row: {
-                    "auto_closed": boolean,"branch_id": string | null,"checked_in_at": string,"checked_out_at": string | null,"confirmed_at": string | null,"created_at": string,"field_card_id": string | null,"id": string,"is_late": boolean,"method": Database["public"]['Enums']["checkin_method"],"note": string | null,"user_id": string,"verify": NonNullable<Json>
+                    "auto_closed": boolean,"branch_id": string | null,"checked_in_at": string,"checked_out_at": string | null,"checkin_accuracy_m": number | null,"checkin_lat": number | null,"checkin_lng": number | null,"checkin_place": string | null,"checkout_accuracy_m": number | null,"checkout_lat": number | null,"checkout_lng": number | null,"confirmed_at": string | null,"created_at": string,"distance_m": number | null,"field_card_id": string | null,"id": string,"is_late": boolean,"method": Database["public"]['Enums']["checkin_method"],"note": string | null,"user_id": string,"verify": NonNullable<Json>
                   }
                   ComputedFields: never
                   Insert: {
-                    "auto_closed"?: boolean,"branch_id"?: string | null,"checked_in_at"?: string,"checked_out_at"?: string | null,"confirmed_at"?: string | null,"created_at"?: string,"field_card_id"?: string | null,"id"?: string,"is_late"?: boolean,"method": Database["public"]['Enums']["checkin_method"],"note"?: string | null,"user_id": string,"verify"?: NonNullable<Json>
+                    "auto_closed"?: boolean,"branch_id"?: string | null,"checked_in_at"?: string,"checked_out_at"?: string | null,"checkin_accuracy_m"?: number | null,"checkin_lat"?: number | null,"checkin_lng"?: number | null,"checkin_place"?: string | null,"checkout_accuracy_m"?: number | null,"checkout_lat"?: number | null,"checkout_lng"?: number | null,"confirmed_at"?: string | null,"created_at"?: string,"distance_m"?: number | null,"field_card_id"?: string | null,"id"?: string,"is_late"?: boolean,"method": Database["public"]['Enums']["checkin_method"],"note"?: string | null,"user_id": string,"verify"?: NonNullable<Json>
                   }
                   Update: {
-                    "auto_closed"?: boolean,"branch_id"?: string | null,"checked_in_at"?: string,"checked_out_at"?: string | null,"confirmed_at"?: string | null,"created_at"?: string,"field_card_id"?: string | null,"id"?: string,"is_late"?: boolean,"method"?: Database["public"]['Enums']["checkin_method"],"note"?: string | null,"user_id"?: string,"verify"?: NonNullable<Json>
+                    "auto_closed"?: boolean,"branch_id"?: string | null,"checked_in_at"?: string,"checked_out_at"?: string | null,"checkin_accuracy_m"?: number | null,"checkin_lat"?: number | null,"checkin_lng"?: number | null,"checkin_place"?: string | null,"checkout_accuracy_m"?: number | null,"checkout_lat"?: number | null,"checkout_lng"?: number | null,"confirmed_at"?: string | null,"created_at"?: string,"distance_m"?: number | null,"field_card_id"?: string | null,"id"?: string,"is_late"?: boolean,"method"?: Database["public"]['Enums']["checkin_method"],"note"?: string | null,"user_id"?: string,"verify"?: NonNullable<Json>
                   }
                   Relationships: [
                     {
@@ -207,36 +207,16 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"branch_secrets": {
-                  Row: {
-                    "branch_id": string,"hmac_secret": string,"kiosk_key_hash": string | null,"updated_at": string
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "branch_id": string,"hmac_secret"?: string,"kiosk_key_hash"?: string | null,"updated_at"?: string
-                  }
-                  Update: {
-                    "branch_id"?: string,"hmac_secret"?: string,"kiosk_key_hash"?: string | null,"updated_at"?: string
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "branch_secrets_branch_id_fkey"
-      columns: ["branch_id"]
-isOneToOne: true
-      referencedRelation: "branches"
-      referencedColumns: ["id"]
-    }
-                  ]
                 },"branches": {
                   Row: {
-                    "area": string,"checkin_methods": (Database["public"]['Enums']["checkin_method"])[],"created_at": string,"id": string,"is_active": boolean,"map_key": string,"name_ar": string,"name_en": string,"public_ips": (unknown)[],"slug": string
+                    "area": string,"checkin_methods": (Database["public"]['Enums']["checkin_method"])[],"created_at": string,"geofence_radius_m": number,"id": string,"is_active": boolean,"latitude": number | null,"longitude": number | null,"map_key": string,"name_ar": string,"name_en": string,"public_ips": (unknown)[],"slug": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "area"?: string,"checkin_methods"?: (Database["public"]['Enums']["checkin_method"])[],"created_at"?: string,"id"?: string,"is_active"?: boolean,"map_key"?: string,"name_ar": string,"name_en": string,"public_ips"?: (unknown)[],"slug": string
+                    "area"?: string,"checkin_methods"?: (Database["public"]['Enums']["checkin_method"])[],"created_at"?: string,"geofence_radius_m"?: number,"id"?: string,"is_active"?: boolean,"latitude"?: number | null,"longitude"?: number | null,"map_key"?: string,"name_ar": string,"name_en": string,"public_ips"?: (unknown)[],"slug": string
                   }
                   Update: {
-                    "area"?: string,"checkin_methods"?: (Database["public"]['Enums']["checkin_method"])[],"created_at"?: string,"id"?: string,"is_active"?: boolean,"map_key"?: string,"name_ar"?: string,"name_en"?: string,"public_ips"?: (unknown)[],"slug"?: string
+                    "area"?: string,"checkin_methods"?: (Database["public"]['Enums']["checkin_method"])[],"created_at"?: string,"geofence_radius_m"?: number,"id"?: string,"is_active"?: boolean,"latitude"?: number | null,"longitude"?: number | null,"map_key"?: string,"name_ar"?: string,"name_en"?: string,"public_ips"?: (unknown)[],"slug"?: string
                   }
                   Relationships: [
                     
@@ -1108,6 +1088,9 @@ isOneToOne: false
 "_creative_lead":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
+"_distance_m":
+{ Args: { "p_lat1": number,"p_lat2": number,"p_lng1": number,"p_lng2": number }; Returns: number
+                           },
 "_finish_request":
 { Args: { "p_request_id": string,"p_status": Database["public"]['Enums']["request_status"] }; Returns: undefined
                            },
@@ -1134,12 +1117,6 @@ isOneToOne: false
                            },
 "admin_revoke_sessions":
 { Args: { "p_user_id": string }; Returns: undefined
-                           },
-"admin_rotate_qr_secret":
-{ Args: { "p_branch_id": string }; Returns: undefined
-                           },
-"admin_set_kiosk_key_hash":
-{ Args: { "p_branch_id": string,"p_hash": string }; Returns: undefined
                            },
 "admin_set_roles":
 { Args: { "p_user_id": string,"roles": Json }; Returns: undefined
@@ -1187,10 +1164,12 @@ isOneToOne: false
 { Args: { "p_approver_id": string,"p_board_id": string,"p_department_id": string }; Returns: boolean
                            },
 "check_in":
-{ Args: { "p_branch_id": string,"p_card_id"?: string,"p_method": Database["public"]['Enums']["checkin_method"],"p_note"?: string,"p_now"?: string,"p_user_id": string,"p_verify"?: Json }; Returns: string
+{ Args: { "p_accuracy_m"?: number,"p_branch_id"?: string,"p_card_id"?: string,"p_lat"?: number,"p_lng"?: number,"p_method": Database["public"]['Enums']["checkin_method"],"p_note"?: string,"p_now"?: string,"p_place"?: string,"p_user_id": string,"p_verify"?: Json }; Returns: string
                            },
 "check_out":
 { Args: Record<PropertyKey, never>; Returns: undefined
+                           } |
+{ Args: { "p_accuracy_m": number,"p_lat": number,"p_lng": number }; Returns: undefined
                            },
 "confirm_auto_checkout":
 { Args: { "p_actual_out": string,"p_session_id": string }; Returns: undefined
@@ -1317,7 +1296,7 @@ isOneToOne: false
                            },
 "who_is_in":
 { Args: { "p_branch_id"?: string }; Returns: {
-              "branch_id": string,"checked_in_at": string,"field_card_id": string,"method": Database["public"]['Enums']["checkin_method"],"note": string,"user_id": string
+              "branch_id": string,"checked_in_at": string,"checkin_place": string,"field_card_id": string,"method": Database["public"]['Enums']["checkin_method"],"note": string,"user_id": string
             }[]
                            },
 "working_days":
@@ -1325,7 +1304,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "app_role": "super_admin"|"leadership"|"team_lead"|"traffic_manager"|"member"|"requester"|"final_approver"|"hr"|"guest","assignee_role": "design"|"copy"|"video"|"media_buying"|"other","card_priority": "low"|"normal"|"high"|"urgent","card_request_kind": "strategic"|"urgent"|"internal","card_stage": "request"|"performance_input"|"intake"|"brief_schedule"|"production"|"creative_review"|"confirmation"|"ready_to_publish"|"published"|"reported","checkin_method": "wifi"|"qr"|"field"|"home"|"manual","content_pillar": "awareness"|"engagement"|"insights"|"offer"|"community","post_status": "draft"|"in_review"|"approved"|"scheduled"|"published","presence_status": "available"|"focus"|"meeting"|"shoot"|"break"|"away","profile_status": "active"|"inactive","request_status": "pending"|"approved"|"rejected"|"cancelled","revision_reason": "brief_changed"|"quality"|"new_information"|"other","step_status": "waiting"|"active"|"approved"|"rejected"|"changes_requested"|"skipped"
+            "app_role": "super_admin"|"leadership"|"team_lead"|"traffic_manager"|"member"|"requester"|"final_approver"|"hr"|"guest","assignee_role": "design"|"copy"|"video"|"media_buying"|"other","card_priority": "low"|"normal"|"high"|"urgent","card_request_kind": "strategic"|"urgent"|"internal","card_stage": "request"|"performance_input"|"intake"|"brief_schedule"|"production"|"creative_review"|"confirmation"|"ready_to_publish"|"published"|"reported","checkin_method": "gps"|"wifi"|"qr"|"field"|"home"|"manual","content_pillar": "awareness"|"engagement"|"insights"|"offer"|"community","post_status": "draft"|"in_review"|"approved"|"scheduled"|"published","presence_status": "available"|"focus"|"meeting"|"shoot"|"break"|"away","profile_status": "active"|"inactive","request_status": "pending"|"approved"|"rejected"|"cancelled","revision_reason": "brief_changed"|"quality"|"new_information"|"other","step_status": "waiting"|"active"|"approved"|"rejected"|"changes_requested"|"skipped"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -1441,7 +1420,7 @@ export type CompositeTypes<
 export const Constants = {
   "public": {
           Enums: {
-            "app_role": ["super_admin", "leadership", "team_lead", "traffic_manager", "member", "requester", "final_approver", "hr", "guest"],"assignee_role": ["design", "copy", "video", "media_buying", "other"],"card_priority": ["low", "normal", "high", "urgent"],"card_request_kind": ["strategic", "urgent", "internal"],"card_stage": ["request", "performance_input", "intake", "brief_schedule", "production", "creative_review", "confirmation", "ready_to_publish", "published", "reported"],"checkin_method": ["wifi", "qr", "field", "home", "manual"],"content_pillar": ["awareness", "engagement", "insights", "offer", "community"],"post_status": ["draft", "in_review", "approved", "scheduled", "published"],"presence_status": ["available", "focus", "meeting", "shoot", "break", "away"],"profile_status": ["active", "inactive"],"request_status": ["pending", "approved", "rejected", "cancelled"],"revision_reason": ["brief_changed", "quality", "new_information", "other"],"step_status": ["waiting", "active", "approved", "rejected", "changes_requested", "skipped"]
+            "app_role": ["super_admin", "leadership", "team_lead", "traffic_manager", "member", "requester", "final_approver", "hr", "guest"],"assignee_role": ["design", "copy", "video", "media_buying", "other"],"card_priority": ["low", "normal", "high", "urgent"],"card_request_kind": ["strategic", "urgent", "internal"],"card_stage": ["request", "performance_input", "intake", "brief_schedule", "production", "creative_review", "confirmation", "ready_to_publish", "published", "reported"],"checkin_method": ["gps", "wifi", "qr", "field", "home", "manual"],"content_pillar": ["awareness", "engagement", "insights", "offer", "community"],"post_status": ["draft", "in_review", "approved", "scheduled", "published"],"presence_status": ["available", "focus", "meeting", "shoot", "break", "away"],"profile_status": ["active", "inactive"],"request_status": ["pending", "approved", "rejected", "cancelled"],"revision_reason": ["brief_changed", "quality", "new_information", "other"],"step_status": ["waiting", "active", "approved", "rejected", "changes_requested", "skipped"]
           }
         }
 } as const

@@ -1,12 +1,12 @@
-# Pixel HQ: user guide
+# Marketing HQ: user guide
 
 ## English
 
-**Sign in.** Open Pixel HQ and sign in with your work email and the temporary password your admin gave you. You'll be asked to choose your own password (at least 10 characters) before anything else. Forgot it later? Ask your admin to reset it. Change it any time from the account menu → Change password.
+**Sign in.** Open Marketing HQ and sign in with your work email and the temporary password your admin gave you. You'll be asked to choose your own password (at least 10 characters) before anything else. Forgot it later? Ask your admin to reset it. Change it any time from the account menu → Change password.
 
 **Create your character.** On your first visit you land on *My character*: pick a body, outfit, hair or headwear, glasses and colours, or tap *Randomise*. Tap *Save character*. This is how teammates see you on the map and next to your name everywhere.
 
-**Check in.** At the office, scan the QR code on the reception screen and tap *Check in at …*, or open *Check in* while on the office Wi-Fi. Working outside? Choose *In the field* (optionally pick the card you're on). Working from home is available on days with an approved work-from-home request. Tap *Check out* when you leave; if you forget, Pixel HQ checks you out at night and asks you to confirm your real time next morning.
+**Check in.** At the office, open *Check in* and tap *Check in*. Allow location when your phone asks: Marketing HQ finds the branch you're at and checks you in. Your location is read only at that moment (and when you check out), and only you, your team lead and HR can see it. If it says you're not at a branch, it shows how far the nearest branch is. Out on a shoot or at a client? Choose *Field / shooting day*, add where you are (for example "Client office – Zayed") and, if you like, the card you're on. No location signal at the office? Use *Office Wi-Fi instead*. Working from home is available on days with an approved work-from-home request. Tap *Check out* when you leave; if you forget, Marketing HQ checks you out at night and asks you to confirm your real time next morning.
 
 **Find your cards.** *My work* lists everything assigned to you by due date (overdue, today, this week, later) and what's waiting for your review. Open a card to see its brief, checklists, files and comments; type @ in a comment to mention someone. When your work is ready, tap *Submit for review*.
 
@@ -16,11 +16,11 @@
 
 ## العربية
 
-**تسجيل الدخول.** افتح Pixel HQ وسجّل دخولك ببريد العمل وكلمة المرور المؤقتة التي أعطاها لك المسؤول. سيُطلب منك اختيار كلمة مرور خاصة بك (10 أحرف على الأقل) قبل أي شيء. لو نسيتها لاحقًا اطلب من المسؤول إعادة تعيينها، ويمكنك تغييرها في أي وقت من قائمة الحساب ← تغيير كلمة المرور.
+**تسجيل الدخول.** افتح Marketing HQ وسجّل دخولك ببريد العمل وكلمة المرور المؤقتة التي أعطاها لك المسؤول. سيُطلب منك اختيار كلمة مرور خاصة بك (10 أحرف على الأقل) قبل أي شيء. لو نسيتها لاحقًا اطلب من المسؤول إعادة تعيينها، ويمكنك تغييرها في أي وقت من قائمة الحساب ← تغيير كلمة المرور.
 
 **أنشئ شخصيتك.** في أول زيارة تصل إلى صفحة *شخصيتي*: اختر الجسم والملابس والشعر أو غطاء الرأس والنظارة والألوان، أو اضغط *عشوائي*، ثم *حفظ الشخصية*. هكذا يراك زملاؤك على الخريطة وبجانب اسمك في كل مكان.
 
-**سجّل حضورك.** في المكتب امسح رمز QR على شاشة الاستقبال واضغط *سجّل حضورك في …*، أو افتح *تسجيل الحضور* وأنت متصل بواي فاي المكتب. تعمل خارج المكتب؟ اختر *عمل ميداني* (ويمكنك اختيار الكارت الذي تعمل عليه). العمل من المنزل متاح في الأيام التي لديك فيها موافقة على العمل من المنزل. اضغط *تسجيل الانصراف* عند المغادرة، ولو نسيت يسجّل Pixel HQ انصرافك ليلًا ويطلب منك تأكيد الوقت الفعلي في اليوم التالي.
+**سجّل حضورك.** في المكتب افتح *تسجيل الحضور* واضغط *تسجيل الحضور*. اسمح بالوصول إلى الموقع عندما يطلب هاتفك ذلك: يحدد Marketing HQ الفرع الذي أنت فيه ويسجّل حضورك. يُقرأ موقعك في تلك اللحظة فقط (وعند تسجيل الانصراف)، ولا يراه إلا أنت وقائد فريقك والموارد البشرية. إذا ظهر أنك لست في فرع، ستعرف المسافة إلى أقرب فرع. في تصوير أو عند عميل؟ اختر *يوم ميداني / تصوير*، واكتب مكانك (مثل "مكتب العميل – زايد") ويمكنك اختيار الكارت الذي تعمل عليه. لا توجد إشارة موقع في المكتب؟ استخدم *واي فاي المكتب بدلًا من ذلك*. العمل من المنزل متاح في الأيام التي لديك فيها موافقة على العمل من المنزل. اضغط *تسجيل الانصراف* عند المغادرة، ولو نسيت يسجّل Marketing HQ انصرافك ليلًا ويطلب منك تأكيد الوقت الفعلي في اليوم التالي.
 
 **اعثر على كروتك.** صفحة *مهامي* تعرض كل ما أُسند إليك حسب موعد التسليم (متأخرة، اليوم، هذا الأسبوع، لاحقًا) وما ينتظر مراجعتك. افتح الكارت لترى البريف وقوائم المهام والملفات والتعليقات، واكتب @ في التعليق للإشارة إلى زميل. عندما ينتهي عملك اضغط *إرسال للمراجعة*.
 

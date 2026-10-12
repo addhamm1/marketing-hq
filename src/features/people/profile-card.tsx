@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Phone } from "lucide-react";
+import { Mail, MapPinned, Phone } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { PRESENCE_DOT, type Presence } from "@/components/shell/presence-picker";
 import { UserAvatar } from "@/components/user-avatar";
@@ -8,12 +8,13 @@ import { cn } from "@/lib/utils";
 
 type Labels = Record<"team" | "department" | "branch" | "contact" | "checkedIn" | "notCheckedIn" | "openCards", string>;
 
-export function ProfileCard({ person, team, teamColor, department, branch, email, phone, presence, checkedIn, openCards, labels }: {
+export function ProfileCard({ person, team, teamColor, department, branch, email, phone, presence, checkedIn, fieldPlace, openCards, labels }: {
   person: { id: string; display_name: string; title: string | null };
   team: string | null; teamColor: string | null; department: string | null; branch: string | null;
-  email: string | null; phone: string | null; presence: Presence | null; checkedIn: boolean; openCards: number; labels: Labels;
+  email: string | null; phone: string | null; presence: Presence | null; checkedIn: boolean; fieldPlace: string | null; openCards: number; labels: Labels;
 }) {
   const tp = useTranslations("presence");
+  const tpe = useTranslations("people");
   const rows: [string, string | null][] = [[labels.team, team], [labels.department, department], [labels.branch, branch]];
   return (
     <div className="mx-auto max-w-xl space-y-4">
@@ -29,6 +30,11 @@ export function ProfileCard({ person, team, teamColor, department, branch, email
             <span className={cn("size-2 rounded-full", checkedIn ? "bg-emerald-500" : "bg-slate-300")} />
             {checkedIn ? labels.checkedIn : labels.notCheckedIn}
           </span>
+          {checkedIn && fieldPlace ? (
+            <span className="bg-muted inline-flex items-center gap-1.5 rounded-full px-2 py-0.5">
+              <MapPinned className="size-3" aria-hidden /> {tpe("fieldPlace", { place: fieldPlace })}
+            </span>
+          ) : null}
           {presence && checkedIn ? (
             <span className="bg-muted inline-flex items-center gap-1.5 rounded-full px-2 py-0.5">
               <span className={cn("size-2 rounded-full", PRESENCE_DOT[presence])} /> {tp(presence)}

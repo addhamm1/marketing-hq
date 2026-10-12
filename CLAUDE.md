@@ -1,6 +1,6 @@
-# Pixel HQ
+# Marketing HQ
 
-Pixel HQ is the internal portal for the Espaces marketing department (Espaces is an Egyptian coworking brand with branches across Cairo, Giza, Alexandria and Sharqia). Its home screen is a pixel-art map of a branch where each team member appears as their own character while checked in. Behind the map: Trello-style boards running the marketing content cycle, a department portal for other teams to submit requests, leaves and special requests with approvals, dashboards, and a visual content calendar showing what gets posted when, with its media and caption.
+Marketing HQ is the internal portal for the Espaces marketing department (Espaces is an Egyptian coworking brand with branches across Cairo, Giza, Alexandria and Sharqia). Its home screen is a pixel-art map of a branch where each team member appears as their own character while checked in. Behind the map: Trello-style boards running the marketing content cycle, a department portal for other teams to submit requests, leaves and special requests with approvals, dashboards, and a visual content calendar showing what gets posted when, with its media and caption.
 
 Owner: Adham Mostafa, Marketing Team Lead. He is the only developer; you are his pair programmer.
 
@@ -72,9 +72,8 @@ src/
     (auth)/            sign-in, change password (forced on first sign-in)
     (app)/             signed-in team app: map, boards, my-work, approvals, requests, calendar, content, reports, people, admin
     (portal)/portal/   department portal: new request, my requests, approvals, files
-    kiosk/[branchId]/  reception tablet showing the rotating check-in QR (no sign-in; checks the kiosk key)
   app/api/cron/        cron route handlers, protected by CRON_SECRET
-  app/api/kiosk/       QR token endpoint for the kiosk page, protected by the kiosk key
+  app/api/export/      HR CSV export (checks the session and role)
   proxy.ts             (Next.js 16 name for middleware) chains next-intl, the Supabase session refresh and the coarse route guard
   components/ui/       shadcn components (generated, do not hand-edit beyond theming)
   components/          shared app components

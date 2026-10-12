@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarPlus, UserRound, X } from "lucide-react";
+import { CalendarPlus, MapPinned, UserRound, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { PRESENCE_DOT } from "@/components/shell/presence-picker";
 import { UserAvatar } from "@/components/user-avatar";
@@ -10,10 +10,12 @@ import { formatCairo } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import type { MapPerson } from "./types";
 
-export function CharacterPopover({ person, at, checkedInAt, onLeave, card, onClose }: {
+export function CharacterPopover({ person, at, checkedInAt, place, onLeave, card, onClose }: {
   person: MapPerson;
   at: { x: number; y: number };
   checkedInAt: string | null;
+  /** Field day place name (never coordinates). */
+  place?: string | null;
   onLeave: boolean;
   card?: { id: string; title: string; board_id: string };
   onClose: () => void;
@@ -42,6 +44,12 @@ export function CharacterPopover({ person, at, checkedInAt, onLeave, card, onClo
       </div>
       {checkedInAt ? (
         <p className="text-muted-foreground mt-2 text-xs">{t("checkedInSince", { time: formatCairo(checkedInAt, "HH:mm") })}</p>
+      ) : null}
+      {place ? (
+        <p className="mt-1 flex items-center gap-1 text-xs">
+          <MapPinned className="text-muted-foreground size-3.5 shrink-0" aria-hidden />
+          <span className="truncate">{t("fieldPlace", { place })}</span>
+        </p>
       ) : null}
       {card ? (
         <Link href={`/boards/${card.board_id}?card=${card.id}`} className="bg-muted/60 hover:bg-muted mt-2 block rounded-md px-2 py-1.5 text-xs">

@@ -54,6 +54,16 @@ export const updateUserSchema = z
 export const userIdSchema = z.object({ user_id: z.uuid() });
 export const setActiveSchema = z.object({ user_id: z.uuid(), active: z.boolean() });
 
+/** Check-in methods an admin can enable ('qr' is retired, 'manual' is HR only). */
+export const CHECKIN_METHODS = ["gps", "wifi", "field", "home"] as const;
+
+function coordinate(min: number, max: number, message: string) {
+  return z
+    .union([z.string(), z.number(), z.null()])
+    .transform((v) => (v === null || (typeof v === "string" && v.trim() === "") ? null : Number(v)))
+    .pipe(z.number(message).min(min, message).max(max, message).nullable());
+}
+
 export const branchSchema = z.object({
   id: z.uuid(),
   name_en: z.string().trim().min(1, "validation.required").max(120),
@@ -61,9 +71,16 @@ export const branchSchema = z.object({
   area: z.string().trim().max(120),
   map_key: z.string().trim().regex(/^[a-z0-9-]+$/, "validation.invalid"),
   public_ips: z.string().max(2000),
-  checkin_methods: z.array(z.enum(["wifi", "qr", "field", "home", "manual"])),
+  checkin_methods: z.array(z.enum(CHECKIN_METHODS)),
   is_active: z.boolean(),
-});
+  // Empty string = no coordinates (location check-in off for the branch).
+  latitude: coordinate(-90, 90, "validation.latitude"),
+  longitude: coordinate(-180, 180, "validation.longitude"),
+  geofence_radius_m: z
+    .union([z.string(), z.number()])
+    .transform((v) => (typeof v === "string" && v.trim() === "" ? Number.NaN : Number(v)))
+    .pipe(z.number("validation.radius").int("validation.radius").min(25, "validation.radius").max(2000, "validation.radius")),
+}).refine((v) => (v.latitude === null) === (v.longitude === null), { path: ["longitude"], message: "validation.coordinatesPair" });
 
 export const settingSchema = z.object({
   key: z.string().min(1).max(80),
@@ -72,7 +89,8 @@ export const settingSchema = z.object({
 
 export type CreateAccountInput = z.input<typeof createAccountSchema>;
 export type UpdateUserInput = z.input<typeof updateUserSchema>;
-export type BranchInput = z.infer<typeof branchSchema>;
+export type BranchInput = z.input<typeof branchSchema>;
+export type BranchOutput = z.output<typeof branchSchema>;
 
 export function rolesPayload(roles: readonly string[], leadTeamId: string | null) {
   return roles.map((role) => ({ role, team_id: role === "team_lead" ? leadTeamId : null }));

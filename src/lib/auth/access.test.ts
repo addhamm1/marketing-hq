@@ -30,10 +30,6 @@ describe("decideRoute", () => {
     expect(decideRoute("/sign-in", false, null)).toEqual({ kind: "allow" });
   });
 
-  it("always allows the kiosk", () => {
-    expect(decideRoute("/kiosk/abc", false, null)).toEqual({ kind: "allow" });
-  });
-
   it("signs out inactive users", () => {
     expect(decideRoute("/map", true, { ...base, status: "inactive" })).toEqual({
       kind: "sign-out",

@@ -12,7 +12,7 @@ Start a fresh session each day. The docs, `PROGRESS.md` and git history carry ev
 ## Prompt for Day 1 (paste as your first message)
 
 ```
-We are building Pixel HQ. The kit is already in this repository. Read CLAUDE.md and every file in docs/ before doing anything else. In D1-01, scaffold in a temporary folder and move it into this repository without overwriting the kit files.
+We are building Marketing HQ. The kit is already in this repository. Read CLAUDE.md and every file in docs/ before doing anything else. In D1-01, scaffold in a temporary folder and move it into this repository without overwriting the kit files.
 
 Then:
 1. Summarise in 10 lines what we are building this week and what is out of scope.

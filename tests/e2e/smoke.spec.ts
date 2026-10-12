@@ -26,5 +26,5 @@ test("wrong password shows a generic error", async ({ page }) => {
 test("Arabic renders right to left", async ({ page }) => {
   await page.goto("/ar/sign-in");
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
-  await expect(page.getByRole("heading", { name: "تسجيل الدخول إلى Pixel HQ" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "تسجيل الدخول إلى Marketing HQ" })).toBeVisible();
 });

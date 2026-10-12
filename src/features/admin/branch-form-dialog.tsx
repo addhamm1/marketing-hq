@@ -11,10 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { BranchLocationFields } from "./branch-location-fields";
 import { updateBranch } from "./org-actions";
-import { branchSchema, type BranchInput } from "./schemas";
+import { branchSchema, CHECKIN_METHODS, type BranchInput, type BranchOutput } from "./schemas";
 
-const METHODS = ["wifi", "qr", "field", "home"] as const;
+const METHODS = CHECKIN_METHODS;
 
 export type BranchRow = {
   id: string;
@@ -23,18 +24,29 @@ export type BranchRow = {
   area: string;
   map_key: string;
   public_ips: string[];
-  checkin_methods: ("wifi" | "qr" | "field" | "home" | "manual")[];
+  checkin_methods: ("gps" | "wifi" | "qr" | "field" | "home" | "manual")[];
   is_active: boolean;
+  latitude: number | null;
+  longitude: number | null;
+  geofence_radius_m: number;
 };
 
 export function BranchFormDialog({ branch, onClose }: { branch: BranchRow; onClose: () => void }) {
   const t = useTranslations("admin");
   const tm = useTranslations("checkinMethod");
   const tc = useTranslations("common");
-  const { form, onSubmit, pending } = useActionForm<BranchInput>({
+  const { form, onSubmit, pending } = useActionForm<BranchInput, undefined, BranchOutput>({
     schema: branchSchema,
     action: updateBranch,
-    defaultValues: { ...branch, public_ips: branch.public_ips.join("\n") },
+    defaultValues: {
+      ...branch,
+      // Retired or HR-only methods are not editable here.
+      checkin_methods: branch.checkin_methods.filter((m): m is (typeof METHODS)[number] => (METHODS as readonly string[]).includes(m)),
+      public_ips: branch.public_ips.join("\n"),
+      latitude: branch.latitude === null ? "" : String(branch.latitude),
+      longitude: branch.longitude === null ? "" : String(branch.longitude),
+      geofence_radius_m: String(branch.geofence_radius_m),
+    },
     successMessage: t("branchSaved"),
     onSuccess: onClose,
   });
@@ -68,6 +80,7 @@ export function BranchFormDialog({ branch, onClose }: { branch: BranchRow; onClo
           >
             <Textarea id="public_ips" dir="ltr" rows={3} {...form.register("public_ips")} />
           </FormField>
+          <BranchLocationFields form={form} />
           <fieldset className="sm:col-span-2">
             <legend className="mb-2 text-sm font-medium">{t("checkinMethods")}</legend>
             <Controller

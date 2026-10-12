@@ -33,7 +33,7 @@ export default async function MyNumbers({ searchParams }: PageProps<"/[locale]/r
       revisions={mean(delivered.map((c) => c.revision_count ?? 0))}
       daysIn={(days ?? []).length}
       workingDays={working}
-      avgArrival={averageClock((days ?? []).filter((d) => d.method === "wifi" || d.method === "qr").map((d) => formatCairo(d.first_arrival!, "HH:mm")))}
+      avgArrival={averageClock((days ?? []).filter((d) => d.method === "gps" || d.method === "wifi" || d.method === "qr").map((d) => formatCairo(d.first_arrival!, "HH:mm")))}
       late={(days ?? []).filter((d) => d.is_late).length}
     />
   );

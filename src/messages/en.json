@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Pixel HQ",
+    "appName": "Marketing HQ",
     "save": "Save",
     "saving": "Saving…",
     "cancel": "Cancel",
@@ -62,10 +62,14 @@
     "passwordMismatch": "The passwords don't match",
     "invalid": "This value isn't valid",
     "tooLong": "This is too long",
-    "uuid": "Choose a value from the list"
+    "uuid": "Choose a value from the list",
+    "latitude": "Enter a latitude between -90 and 90",
+    "longitude": "Enter a longitude between -180 and 180",
+    "radius": "Enter a radius between 25 and 2000 metres",
+    "coordinatesPair": "Enter both latitude and longitude, or neither"
   },
   "auth": {
-    "signInTitle": "Sign in to Pixel HQ",
+    "signInTitle": "Sign in to Marketing HQ",
     "signInSubtitle": "Use the email and password your admin gave you.",
     "email": "Work email",
     "password": "Password",
@@ -202,12 +206,6 @@
     "publicIps": "Office public IPs",
     "publicIpsHint": "One per line, CIDR allowed, for example 41.33.10.0/24",
     "checkinMethods": "Allowed check-in methods",
-    "generateKioskKey": "Generate kiosk key",
-    "kioskKeyTitle": "Kiosk key",
-    "kioskKeyBody": "Open this link on the reception tablet. The key is shown once; generating a new one disables the old link.",
-    "rotateQr": "Rotate QR secret",
-    "rotateQrConfirm": "Rotate the QR secret? Open kiosk pages pick up the change on their next refresh.",
-    "qrRotated": "QR secret rotated",
     "branchSaved": "Branch saved",
     "nameEn": "Name (English)",
     "nameAr": "Name (Arabic)",
@@ -232,7 +230,17 @@
     "chainHint": "Steps in order, for example [{\"resolve\":\"team_lead_of_requester\"},{\"resolve\":\"role:hr\"}]",
     "teamColor": "Name-tag colour",
     "requestTypeSaved": "Request type saved",
-    "teamSaved": "Team saved"
+    "teamSaved": "Team saved",
+    "location": "Location check-in",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "geofenceRadius": "Check-in radius (m)",
+    "geofenceHint": "People within this distance of the point (plus up to 100 m for GPS accuracy) can check in by location.",
+    "useMyLocation": "Use my current location",
+    "locatingBranch": "Finding your location…",
+    "locationFailed": "Couldn't get your location. Enter the coordinates by hand.",
+    "noCoordinates": "No coordinates: location check-in is off",
+    "radiusShort": "{n} m radius"
   },
   "weekdays": {
     "0": "Sun",
@@ -245,10 +253,11 @@
   },
   "checkinMethod": {
     "wifi": "Office Wi-Fi",
-    "qr": "Reception QR",
+    "qr": "Reception QR (retired)",
     "field": "Field",
     "home": "Home",
-    "manual": "Manual"
+    "manual": "Manual",
+    "gps": "Location"
   },
   "placeholderPages": {
     "map": "The branch map arrives on Day 4.",
@@ -565,13 +574,13 @@
   "email": {
     "greeting": "Hi {name},",
     "approvalWaitingSubject": "An approval is waiting for you",
-    "approvalWaitingBody": "Something needs your decision in Pixel HQ.",
+    "approvalWaitingBody": "Something needs your decision in Marketing HQ.",
     "requestDecidedSubject": "Your request was {status}",
     "requestDecidedBody": "Your {type} request was {status}.",
     "cardReturnedSubject": "Your request was returned",
     "cardReturnedBody": "“{title}” was returned by the marketing team: {reason}",
-    "open": "Open Pixel HQ",
-    "footer": "You're receiving this because you use Pixel HQ at Espaces."
+    "open": "Open Marketing HQ",
+    "footer": "You're receiving this because you use Marketing HQ at Espaces."
   },
   "requestStatus": {
     "pending": "Pending",
@@ -601,13 +610,7 @@
     "checkOut": "Check out",
     "checkedIn": "You're checked in. Have a great day!",
     "checkedOut": "Checked out. See you tomorrow!",
-    "atBranch": "Check in at {branch}",
-    "qrHint": "Scanned the reception QR code",
-    "methodOffice": "In the office",
-    "methodField": "In the field",
-    "methodHome": "From home",
     "branch": "Branch",
-    "officeHint": "Connect to the office Wi-Fi, then check in. Or scan the QR code at reception.",
     "fieldCard": "What are you working on? (optional)",
     "fieldNote": "Short note (optional)",
     "homeHint": "Available on days with an approved work-from-home request.",
@@ -620,20 +623,46 @@
     "confirmed": "Thanks, your time is saved.",
     "errors": {
       "already": "You're already checked in ({branch}). Check out first.",
-      "ip_not_matched": "You don't seem to be on this branch's Wi-Fi. Scan the reception QR code instead.",
+      "ip_not_matched": "You don't seem to be on this branch's Wi-Fi. Use location check-in instead.",
       "method_not_allowed": "This check-in method isn't enabled for this branch.",
       "no_wfh_today": "You don't have an approved work-from-home request for today.",
-      "qr_expired": "This QR code has expired. Scan the code on the reception screen again.",
       "not_checked_in": "You're not checked in.",
-      "invalid_time": "Choose a time between your check-in and now."
+      "invalid_time": "Choose a time between your check-in and now.",
+      "out_of_range": "You're {distance} m from {branch}, the nearest branch.",
+      "out_of_range_short": "You're outside the branch check-in area.",
+      "low_accuracy": "Your location is too rough. Turn on precise location and try again.",
+      "low_accuracy_m": "Your location is too rough (±{accuracy} m). Turn on precise location and try again.",
+      "location_required": "This check-in needs your location. Allow location access and try again.",
+      "invalid_location": "That location doesn't look right. Try again.",
+      "no_branches": "No branch has location check-in set up yet. Use office Wi-Fi or ask an admin."
+    },
+    "checkedInFieldAt": "Field day at {place} since {time}",
+    "checkedInAtBranch": "You're at {branch}. Checked in.",
+    "checkedOutNoLocation": "Checked out (location wasn't available).",
+    "locating": "Finding your location…",
+    "checkingOut": "Checking out…",
+    "checkInHint": "We use your location once to find the branch you're at. It's saved with your check-in and visible to you, your team lead and HR.",
+    "notAtBranch": "Not at a branch?",
+    "tryAgain": "Try again",
+    "fieldTitle": "Field / shooting day",
+    "fieldHint": "Your current location is saved with the check-in.",
+    "fieldPlace": "Where are you? (optional)",
+    "fieldPlacePlaceholder": "Client office – Zayed",
+    "fieldSubmit": "Start field day",
+    "homeTitle": "Work from home",
+    "wifiTitle": "Office Wi-Fi instead",
+    "wifiHint": "Connect to the branch Wi-Fi, choose the branch, then check in.",
+    "outsideTitle": "You're not at a branch",
+    "outside": "You're {distance} from {branch}, the nearest branch.",
+    "meters": "{n} m",
+    "kilometers": "{n} km",
+    "geo": {
+      "denied": "Location access is off. Allow location for this site in your browser settings, then try again.",
+      "unavailable": "We couldn't get your location. Turn on location services or move near a window, then try again.",
+      "timeout": "Finding your location took too long. Try again.",
+      "low_accuracy": "Your location is too rough (±{accuracy} m). Turn on precise location or step outside, then try again.",
+      "unsupported": "This browser can't share your location. Use office Wi-Fi check-in instead."
     }
-  },
-  "kiosk": {
-    "title": "Scan to check in",
-    "subtitle": "Open your phone camera and scan this code.",
-    "refreshes": "The code refreshes every minute.",
-    "invalid": "This kiosk link is not valid. Ask an admin for a new one.",
-    "offline": "Can't reach Pixel HQ. Retrying…"
   },
   "map": {
     "title": "Map",
@@ -660,12 +689,13 @@
       "trophy-shelf": "Trophy shelf"
     },
     "announcementsSoon": "Announcements are coming soon.",
-    "takingBreak": "Enjoy your break ☕"
+    "takingBreak": "Enjoy your break ☕",
+    "fieldPlace": "Field day: {place}"
   },
   "character": {
     "title": "My character",
     "intro": "This is you on the map. Pick a look that feels like you.",
-    "welcome": "Welcome to Pixel HQ! Create your character before you start.",
+    "welcome": "Welcome to Marketing HQ! Create your character before you start.",
     "randomise": "Randomise",
     "save": "Save character",
     "saved": "Character saved",
@@ -738,7 +768,7 @@
     "holidaySaved": "Holiday saved",
     "noHolidays": "No holidays yet",
     "export": "HR export",
-    "exportBody": "Download attendance sessions and approved leaves for a date range (CSV).",
+    "exportBody": "Download attendance sessions (with method, place and recorded location) and approved leaves for a date range (CSV).",
     "download": "Download CSV",
     "type": "Type"
   },
@@ -763,7 +793,8 @@
     "contact": "Contact",
     "checkedIn": "Checked in",
     "notCheckedIn": "Not checked in",
-    "openCards": "Open cards"
+    "openCards": "Open cards",
+    "fieldPlace": "Field day: {place}"
   },
   "desks": {
     "title": "Desks",

@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Pixel HQ",
-    short_name: "Pixel HQ",
+    name: "Marketing HQ",
+    short_name: "Marketing HQ",
     description: "Espaces marketing portal",
     start_url: "/",
     display: "standalone",

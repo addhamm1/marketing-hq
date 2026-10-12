@@ -16,8 +16,8 @@ const zones = ["reception", "desk-1", "desk-2", "desk-3", "spot-1", "spot-2"];
 describe("placeCharacters", () => {
   it("puts people at their assigned desk, others at the first free desk", () => {
     const sessions = [
-      { user_id: "a", branch_id: "b1", method: "wifi", checked_in_at: "x", field_card_id: null, note: null },
-      { user_id: "b", branch_id: "b1", method: "qr", checked_in_at: "x", field_card_id: null, note: null },
+      { user_id: "a", branch_id: "b1", method: "wifi", checked_in_at: "x", field_card_id: null, note: null, checkin_place: null },
+      { user_id: "b", branch_id: "b1", method: "gps", checked_in_at: "x", field_card_id: null, note: null, checkin_place: null },
     ];
     const placed = placeCharacters({ ...base, sessions }, "b1", zones);
     expect(placed.find((p) => p.userId === "b")?.spot).toBe("desk-2");
@@ -26,7 +26,7 @@ describe("placeCharacters", () => {
   });
 
   it("uses spots on the field and home maps", () => {
-    const sessions = [{ user_id: "c", branch_id: null, method: "field", checked_in_at: "x", field_card_id: null, note: null }];
+    const sessions = [{ user_id: "c", branch_id: null, method: "field", checked_in_at: "x", field_card_id: null, note: null, checkin_place: null }];
     expect(placeCharacters({ ...base, sessions }, "field", zones)).toMatchObject([{ userId: "c", spot: "spot-1" }]);
     expect(placeCharacters({ ...base, sessions }, "home", zones)).toEqual([]);
   });

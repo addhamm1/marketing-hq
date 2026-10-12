@@ -45,7 +45,7 @@ export function renderEmail({ kind, locale, name, link, data, appUrl }: Input) {
   const html = `<!doctype html><html lang="${locale}" dir="${dir}"><body style="margin:0;background:#f5f7f8;font-family:Inter,'IBM Plex Sans Arabic',Arial,sans-serif;color:#1f2a33">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
   <table role="presentation" width="100%" style="max-width:520px;background:#fff;border-radius:12px;border:1px solid #e3e8eb" cellpadding="0" cellspacing="0">
-  <tr><td style="padding:24px 28px 8px;font-weight:600;font-size:15px;color:#1f3b45">Pixel HQ</td></tr>
+  <tr><td style="padding:24px 28px 8px;font-weight:600;font-size:15px;color:#1f3b45">Marketing HQ</td></tr>
   <tr><td style="padding:8px 28px;font-size:15px;line-height:1.6">
     <p style="margin:0 0 12px">${escape(t("greeting", { name }))}</p>
     <p style="margin:0 0 20px">${escape(body)}</p>
