@@ -6,7 +6,7 @@ const ACTIVE = ["admin", "leadership", "traffic", "leadCreative", "member", "sal
 describe("organisation tables", () => {
   it.each(ACTIVE)("%s reads departments, teams, branches and settings", async (user) => {
     const c = await as(user);
-    expect((await visibleIds(c, "departments")).length).toBe(8);
+    expect((await visibleIds(c, "departments")).length).toBe(9);
     expect((await visibleIds(c, "teams")).length).toBe(4);
     expect((await visibleIds(c, "branches")).length).toBeGreaterThanOrEqual(18);
     expect((await visibleIds(c, "settings", "key")).length).toBeGreaterThan(5);

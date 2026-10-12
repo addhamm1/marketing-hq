@@ -65,9 +65,12 @@ describe("check-in", () => {
   });
 
   it("home check-in needs an approved work-from-home request today", async () => {
-    expect((await checkIn(U.member, "home")).error?.message).toContain("no_wfh_today");
-    const { data: type } = await svc.from("request_types").select("id").eq("key", "work_from_home").single();
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Cairo" });
+    const { data: type } = await svc.from("request_types").select("id").eq("key", "work_from_home").single();
+    // A rerun on the same day would find the request inserted below.
+    const del = await svc.from("requests").delete().eq("requester_id", U.member).eq("type_id", type!.id).eq("starts_on", today);
+    expect(del.error).toBeNull();
+    expect((await checkIn(U.member, "home")).error?.message).toContain("no_wfh_today");
     await svc.from("requests").insert({ type_id: type!.id, requester_id: U.member, status: "approved", starts_on: today, ends_on: today, data: {} });
     expect((await checkIn(U.member, "home")).error).toBeNull();
   });

@@ -71,7 +71,8 @@ describe("pipeline cards", () => {
   });
 
   it("hr (another department) sees none of the sales cards", async () => {
-    const { data } = await (await as("hr")).from("cards").select("id");
+    // Cards where hr is the named approver are visible by design (see below); sales cards are not.
+    const { data } = await (await as("hr")).from("cards").select("id").eq("requesting_department_id", DEPT.sales);
     expect(data ?? []).toEqual([]);
   });
 

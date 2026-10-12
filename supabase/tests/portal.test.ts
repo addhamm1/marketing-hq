@@ -26,7 +26,9 @@ async function activeSteps(requestId: string) {
     .eq("subject_type", "request")
     .eq("subject_id", requestId)
     .order("step_index");
-  return data ?? [];
+  // Only the test users: the seeded Espaces staff (08_espaces_people.sql) add extra super_admin candidates.
+  const testUsers = new Set<string>(Object.values(U));
+  return (data ?? []).filter((s) => testUsers.has(s.approver_id));
 }
 
 async function decide(user: Parameters<typeof as>[0], stepId: string, decision: "approved" | "rejected", comment?: string) {

@@ -80,7 +80,7 @@ export function PostSheet({ postId, brands, branches, perms, onClose, onChanged 
             </header>
             <div className="space-y-5 px-4 py-5 sm:px-6">
               {post.card_id ? (
-                <Link href={`/cards/${post.card_id}`} className="text-primary flex items-center gap-1.5 text-sm hover:underline"><Link2 className="size-4" aria-hidden />{t("fields.linkedCard")}</Link>
+                <Link href={`/cards/${post.card_id}`} className="text-primary-ink flex items-center gap-1.5 text-sm hover:underline"><Link2 className="size-4" aria-hidden />{t("fields.linkedCard")}</Link>
               ) : null}
               {post.review_comment ? <p className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900"><span className="font-medium">{t("editor.reviewComment")}: </span>{post.review_comment}</p> : null}
 

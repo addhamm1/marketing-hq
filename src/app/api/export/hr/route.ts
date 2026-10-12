@@ -64,7 +64,7 @@ export async function GET(request: Request) {
   return new Response(csv(rows), {
     headers: {
       "content-type": "text/csv; charset=utf-8",
-      "content-disposition": `attachment; filename="pixel-hq-hr-${from}-to-${to}.csv"`,
+      "content-disposition": `attachment; filename="marketing-hq-hr-${from}-to-${to}.csv"`,
       "cache-control": "no-store",
     },
   });
