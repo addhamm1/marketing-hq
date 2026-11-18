@@ -13,11 +13,12 @@ type Branch = { id: string; name: string; methods: string[] };
 type Open = "field" | "home" | "wifi" | null;
 
 /** Other ways to check in: field day, work from home (approved WFH only) and office Wi-Fi. */
-export function CheckinAlternatives({ branches, homeBranchId, wfhToday, cards, pending, initial = null, onField, onHome, onWifi }: {
+export function CheckinAlternatives({ branches, homeBranchId, wfhToday, cards, shoots = [], pending, initial = null, onField, onHome, onWifi }: {
   branches: Branch[];
   homeBranchId: string | null;
   wfhToday: boolean;
   cards: { id: string; title: string }[];
+  shoots?: { id: string; title: string }[];
   pending: boolean;
   initial?: Open;
   onField: (v: FieldValues) => void;
@@ -48,7 +49,7 @@ export function CheckinAlternatives({ branches, homeBranchId, wfhToday, cards, p
 
   return (
     <ul className="space-y-2">
-      {item("field", MapPinned, t("fieldTitle"), <FieldForm cards={cards} pending={pending} onSubmit={onField} />)}
+      {item("field", MapPinned, t("fieldTitle"), <FieldForm cards={cards} shoots={shoots} pending={pending} onSubmit={onField} />)}
       {item(
         "home",
         Home,

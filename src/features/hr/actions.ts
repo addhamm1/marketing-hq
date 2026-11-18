@@ -23,19 +23,6 @@ export async function setAllowance(input: unknown): Promise<ActionResult> {
   return error ? fail("common.notAllowed") : ok();
 }
 
-export async function bulkSetAllowance(input: unknown): Promise<ActionResult> {
-  const parsed = allowanceSchema.omit({ user_id: true }).safeParse(input);
-  if (!parsed.success) return invalid(parsed.error);
-  if (!(await hr())) return fail("common.notAllowed");
-  const supabase = await createClient();
-  const { data: people } = await supabase.from("profiles").select("id").eq("status", "active");
-  const rows = (people ?? []).map((p) => ({ user_id: p.id, ...parsed.data }));
-  const { error } = await supabase.from("leave_balances").upsert(rows, { onConflict: "user_id,type_id,year" });
-  if (error) return fail("common.notAllowed");
-  revalidatePath("/[locale]/admin/leave", "page");
-  return ok();
-}
-
 const holidaySchema = z.object({
   day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "validation.invalid"),
   name_en: z.string().trim().min(1, "validation.required").max(120),

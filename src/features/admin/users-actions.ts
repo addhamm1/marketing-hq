@@ -56,6 +56,10 @@ export async function createAccount(input: unknown): Promise<ActionResult<{ pass
       team_id: v.team_id,
       home_branch_id: v.home_branch_id,
       title: v.title || null,
+      phone: v.phone,
+      birth_month: v.birth_month,
+      birth_day: v.birth_day,
+      joined_on: v.joined_on,
       must_change_password: true,
       workdays: v.workdays,
       start_time: v.start_time,
@@ -84,7 +88,11 @@ export async function updateUser(input: unknown): Promise<ActionResult> {
   const isAdmin = hasRole(access, "super_admin");
   const supabase = await createClient();
 
-  const schedule = { workdays: v.workdays, start_time: v.start_time, end_time: v.end_time };
+  // hr may change schedules and people details (birthday, joining date) only.
+  const hrFields = {
+    workdays: v.workdays, start_time: v.start_time, end_time: v.end_time,
+    birth_month: v.birth_month, birth_day: v.birth_day, joined_on: v.joined_on,
+  };
   const patch = isAdmin
     ? {
         full_name: v.full_name,
@@ -92,9 +100,10 @@ export async function updateUser(input: unknown): Promise<ActionResult> {
         team_id: v.team_id,
         home_branch_id: v.home_branch_id,
         title: v.title || null,
-        ...schedule,
+        phone: v.phone,
+        ...hrFields,
       }
-    : schedule; // hr may change schedules only
+    : hrFields;
 
   const { error } = await supabase.rpc("admin_update_profile", { p_user_id: v.user_id, patch });
   if (error) return fail(rpcError(error));

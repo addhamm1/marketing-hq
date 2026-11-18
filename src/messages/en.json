@@ -1770,5 +1770,304 @@
       "attached": "The calendar file is attached, so you can add this to your calendar.",
       "footer": "Sent by Espaces on behalf of the meeting organiser."
     }
+  },
+  "shoots": {
+    "title": "Shoot days",
+    "subtitle": "Who, where and what for every shooting day.",
+    "new": "New shoot",
+    "create": "Create shoot",
+    "created": "Shoot created",
+    "saved": "Shoot saved",
+    "editTitle": "Edit shoot",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "noUpcoming": "No shoots coming up",
+    "noPast": "No past shoots yet",
+    "crewCount": "{count, plural, =0 {No crew yet} one {# crew, {confirmed} confirmed} other {# crew, {confirmed} confirmed}}",
+    "callSheet": "Call sheet",
+    "print": "Print",
+    "backToShoot": "Back to the shoot",
+    "openMap": "Open map",
+    "noProducer": "Not set",
+    "archive": "Archive",
+    "archived": "Shoot archived",
+    "archiveTitle": "Archive this shoot?",
+    "archiveBody": "It leaves the shoot list and the crew stops getting reminders.",
+    "status": {
+      "planned": "Planned",
+      "confirmed": "Confirmed",
+      "wrapped": "Wrapped",
+      "cancelled": "Cancelled"
+    },
+    "tabs": {
+      "crew": "Crew",
+      "shots": "Shots",
+      "equipment": "Kit",
+      "cards": "Cards"
+    },
+    "fields": {
+      "title": "Shoot title",
+      "date": "Date",
+      "times": "Call and wrap",
+      "callTime": "Call time",
+      "wrapTime": "Wrap time",
+      "place": "Location",
+      "atBranch": "At a branch",
+      "outside": "Outside location",
+      "branch": "Branch",
+      "locationName": "Location name",
+      "mapLink": "Map link",
+      "mapLinkHint": "Paste a Google Maps link so the crew can find it.",
+      "producer": "Producer",
+      "brief": "Brief",
+      "backupPlan": "Backup plan",
+      "backupPlanHint": "What happens if the weather, the location or a person falls through."
+    },
+    "errors": {
+      "mapLink": "Enter a link that starts with https://",
+      "wrapAfterCall": "Wrap time must be after the call time",
+      "alreadyCrew": "This person is already on the crew",
+      "stale": "The shot list changed. Refresh and try again."
+    },
+    "crew": {
+      "kind": "Who",
+      "member": "Team member",
+      "outside": "Outside",
+      "person": "Name",
+      "outsideName": "Their name",
+      "role": "Role",
+      "rolePlaceholder": "Camera, talent, assistant",
+      "noRole": "No role set",
+      "callTime": "Call time",
+      "confirmed": "Confirmed",
+      "notConfirmed": "Not confirmed",
+      "yes": "Yes",
+      "no": "No",
+      "added": "Added to the crew",
+      "empty": "No crew yet",
+      "emptyHint": "Add the people who need to be on set."
+    },
+    "shots": {
+      "add": "Add shot",
+      "addTitle": "Add a shot",
+      "editTitle": "Edit shot",
+      "description": "What to capture",
+      "type": "Shot type",
+      "linkedCard": "Linked card",
+      "noLinkedCards": "Link a card to this shoot first, from the Cards tab.",
+      "done": "Done",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "progress": "{done} of {total} done",
+      "empty": "No shots planned yet",
+      "emptyHint": "List the shots so nothing gets missed on the day.",
+      "types": {
+        "wide": "Wide",
+        "medium": "Medium",
+        "closeUp": "Close-up",
+        "detail": "Detail",
+        "interview": "Interview",
+        "broll": "B-roll",
+        "drone": "Drone",
+        "pov": "POV"
+      }
+    },
+    "equipment": {
+      "item": "Item",
+      "quantity": "Qty",
+      "owner": "Responsible",
+      "noOwner": "No one yet",
+      "packed": "Packed",
+      "returned": "Returned",
+      "defaultKit": "Add default kit",
+      "kitAdded": "Default kit is on the list",
+      "progress": "{packed} of {total} packed, {returned} returned",
+      "empty": "No equipment listed",
+      "emptyHint": "Add the default kit in one tap, then adjust it."
+    },
+    "cards": {
+      "search": "Search cards by title",
+      "searchFailed": "Search didn't work. Try again.",
+      "noResults": "No matching cards",
+      "link": "Link",
+      "unlink": "Unlink",
+      "empty": "No linked cards",
+      "emptyHint": "Link the cards this shoot produces content for."
+    },
+    "checkin": {
+      "shoot": "Today's shoot",
+      "noShoot": "Not on a shoot"
+    }
+  },
+  "launch": {
+    "tab": "Launch",
+    "title": "Launch readiness",
+    "summary": "{ready} of {total} checks are ready.",
+    "summaryBlocked": "{count, plural, one {# item blocks launch.} other {# items block launch.}}",
+    "summaryClear": "Nothing blocks launch.",
+    "countLabel": "{count} to fix",
+    "fix": "Fix",
+    "status": {
+      "ready": "Ready",
+      "review": "Review",
+      "blocked": "Blocks launch"
+    },
+    "checks": {
+      "branches": {
+        "title": "Branch locations confirmed",
+        "ok": "Every active branch has a confirmed point.",
+        "issue": "{count, plural, one {# active branch still uses} other {# active branches still use}} a rough point and a wide check-in area."
+      },
+      "birthday": {
+        "title": "Staff birthdays",
+        "ok": "Everyone who wants celebrating has a birthday saved.",
+        "issue": "{count, plural, one {# person has} other {# people have}} no birthday saved."
+      },
+      "joined": {
+        "title": "Joining dates",
+        "ok": "Every staff member has a joining date.",
+        "issue": "{count, plural, one {# person has} other {# people have}} no joining date."
+      },
+      "phone": {
+        "title": "Phone numbers",
+        "ok": "Every staff member has a phone number.",
+        "issue": "{count, plural, one {# person has} other {# people have}} no phone number."
+      },
+      "branch": {
+        "title": "Home branches",
+        "ok": "Every staff member has a home branch.",
+        "issue": "{count, plural, one {# person has} other {# people have}} no home branch."
+      },
+      "leave": {
+        "title": "Annual leave allowances",
+        "ok": "Every staff member has an allowance this year.",
+        "issue": "{count, plural, one {# person has} other {# people have}} zero annual leave this year."
+      },
+      "hr": {
+        "title": "HR role assigned",
+        "ok": "{holders, plural, one {# person holds} other {# people hold}} the HR role.",
+        "issue": "No one holds the HR role, so leave approvals will stall."
+      },
+      "rooms": {
+        "title": "Meeting rooms",
+        "ok": "Every active branch has a meeting room.",
+        "issue": "{count, plural, one {# active branch has} other {# active branches have}} no meeting room."
+      },
+      "holidays": {
+        "title": "Public holidays, next 12 months",
+        "ok": "The holiday list covers the next 12 months.",
+        "issue": "{count, plural, one {# expected holiday is} other {# expected holidays are}} missing."
+      },
+      "gates": {
+        "title": "Monthly gate owners",
+        "ok": "Every active gate has an owner.",
+        "issue": "{count, plural, one {# active gate has} other {# active gates have}} no owner."
+      },
+      "email": {
+        "title": "Email delivery",
+        "ok": "Email is configured.",
+        "issue": "Email is not configured. Add the Resend key in the hosting settings."
+      },
+      "push": {
+        "title": "Phone notifications",
+        "ok": "Phone notifications are configured.",
+        "issue": "Phone notifications are not configured. Add the VAPID keys in the hosting settings."
+      }
+    },
+    "birthday": {
+      "title": "My birthday",
+      "label": "Birthday",
+      "hint": "Month and day only. We never ask for the year.",
+      "month": "Month",
+      "day": "Day",
+      "invalid": "That day doesn't exist in this month",
+      "celebrate": "Celebrate me",
+      "celebrateHint": "Show my birthday and work anniversary to the team.",
+      "saved": "Birthday settings saved"
+    },
+    "userForm": {
+      "phone": "Phone",
+      "joinedOn": "Joining date",
+      "birthday": "Birthday",
+      "birthdayHint": "Month and day only.",
+      "showAll": "Show everyone",
+      "missing": {
+        "birthday": "{count, plural, one {# person} other {# people}} without a birthday",
+        "joined": "{count, plural, one {# person} other {# people}} without a joining date",
+        "phone": "{count, plural, one {# person} other {# people}} without a phone number",
+        "branch": "{count, plural, one {# person} other {# people}} without a home branch"
+      }
+    },
+    "bulk": {
+      "open": "Set for everyone",
+      "title": "Set an allowance for everyone",
+      "body": "{type}, {year}. Nothing changes until you confirm. Days already taken are kept.",
+      "days": "Days per person",
+      "invalidDays": "Enter a number from 0 to 365",
+      "unset": "{count, plural, =0 {No one is waiting for an allowance.} one {# person has no allowance yet and will get {days} days.} other {# people have no allowance yet and will get {days} days.}}",
+      "overwrite": "Also replace {count, plural, one {the allowance of # person who already has} other {the allowances of # people who already have}} a different number",
+      "confirm": "{count, plural, =0 {No changes to apply} one {Apply to # person} other {Apply to # people}}",
+      "applied": "{count, plural, =0 {No allowances changed} one {Allowance set for # person} other {Allowance set for # people}}"
+    },
+    "org": {
+      "departmentNames": "Department names",
+      "newDepartment": "New department",
+      "addTeam": "Add a team",
+      "brands": "Brands",
+      "newBrand": "New brand",
+      "brandName": "Brand name",
+      "brandColor": "Brand colour"
+    },
+    "branches": {
+      "add": "Add branch",
+      "addHint": "Set its map point and check-in methods from the branch list afterwards.",
+      "added": "Branch added",
+      "area": "Area",
+      "confirm": "Confirm this point",
+      "confirmed": "Branch point confirmed",
+      "pointConfirmed": "Point confirmed",
+      "pointUnconfirmed": "Point not confirmed",
+      "noPoint": "Add this branch's coordinates first"
+    },
+    "rooms": {
+      "title": "Meeting rooms",
+      "intro": "Rooms people can book for meetings, per branch.",
+      "add": "Add room",
+      "addTitle": "Add a meeting room",
+      "editTitle": "Edit meeting room",
+      "branch": "Branch",
+      "noBranch": "No branch",
+      "capacity": "Seats",
+      "seats": "{count, plural, one {# seat} other {# seats}}",
+      "empty": "No meeting rooms yet",
+      "emptyHint": "Add one for each real room people can book."
+    },
+    "requestTypes": {
+      "add": "Add request type",
+      "addHint": "It starts switched off, so you can review its approval chain and form first.",
+      "added": "Request type added",
+      "category": "Category",
+      "countsDays": "Counts working days"
+    }
+  },
+  "seasonsAdmin": {
+    "title": "Seasons",
+    "intro": "Outfits that appear on the map during each season.",
+    "add": "Add season",
+    "addTitle": "Add a season",
+    "editTitle": "Edit season",
+    "saved": "Season saved",
+    "startsOn": "First day",
+    "endsOn": "Last day",
+    "items": "Outfit item ids",
+    "itemsHint": "Separate ids with commas, for example {example}",
+    "itemCount": "{count, plural, =0 {No items} one {# item} other {# items}}",
+    "empty": "No seasons yet",
+    "errors": {
+      "dates": "The last day can't be before the first day",
+      "item": "Use lowercase letters, numbers and hyphens only",
+      "tooMany": "Use 12 items or fewer",
+      "duplicate": "A season with this name already exists for that year"
+    }
   }
 }

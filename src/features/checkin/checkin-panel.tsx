@@ -21,12 +21,13 @@ type Phase =
   | { k: "outside"; branch: string; distance: number; location: Location }
   | { k: "error"; message: string };
 
-export function CheckinPanel({ open, branches, homeBranchId, wfhToday, cards, canCheckIn }: {
+export function CheckinPanel({ open, branches, homeBranchId, wfhToday, cards, shoots = [], canCheckIn }: {
   open: OpenSession | null;
   branches: Branch[];
   homeBranchId: string | null;
   wfhToday: boolean;
   cards: { id: string; title: string }[];
+  shoots?: { id: string; title: string }[];
   canCheckIn: boolean;
 }) {
   const t = useTranslations("checkin");
@@ -92,7 +93,7 @@ export function CheckinPanel({ open, branches, homeBranchId, wfhToday, cards, ca
         if (!geo.ok) return setPhase({ k: "geoError", kind: geo.kind, accuracy: geo.accuracy });
         location = geo.location;
       }
-      await submit({ method: "field", location, place: v.place || undefined, card_id: v.card_id, note: v.note || undefined });
+      await submit({ method: "field", location, place: v.place || undefined, card_id: v.card_id, note: v.note || undefined, shoot_id: v.shoot_id });
     });
   }
 
@@ -129,6 +130,7 @@ export function CheckinPanel({ open, branches, homeBranchId, wfhToday, cards, ca
           homeBranchId={homeBranchId}
           wfhToday={wfhToday}
           cards={cards}
+          shoots={shoots}
           pending={busy}
           initial={phase.k === "outside" ? "field" : null}
           onField={field}

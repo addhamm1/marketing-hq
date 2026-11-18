@@ -13,15 +13,17 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
+import { AddRequestTypeDialog } from "@/features/launch/add-request-type-dialog";
 import { updateRequestType } from "./org-actions";
 
-type Row = { id: string; key: string; name_en: string; name_ar: string; category: string; is_active: boolean; requires_attachment_after_days: number | null; approval_chain: string; form_schema: string };
+type Row = { id: string; key: string; name_en: string; name_ar: string; category: string; is_active: boolean; counts_working_days: boolean; requires_attachment_after_days: number | null; approval_chain: string; form_schema: string };
 
 const schema = z.object({
   id: z.string(),
   name_en: z.string().trim().min(1, "validation.required"),
   name_ar: z.string().trim().min(1, "validation.required"),
   is_active: z.boolean(),
+  counts_working_days: z.boolean(),
   requires_attachment_after_days: z.string(),
   approval_chain: z.string(),
   form_schema: z.string(),
@@ -31,6 +33,7 @@ type Values = z.infer<typeof schema>;
 function EditDialog({ row, onClose }: { row: Row; onClose: () => void }) {
   const t = useTranslations("admin");
   const tc = useTranslations("common");
+  const tl = useTranslations("launch.requestTypes");
   const { form, onSubmit, pending } = useActionForm<Values>({
     schema,
     action: (v) => updateRequestType({ ...v, requires_attachment_after_days: v.requires_attachment_after_days ? Number(v.requires_attachment_after_days) : null }),
@@ -50,6 +53,9 @@ function EditDialog({ row, onClose }: { row: Row; onClose: () => void }) {
           <Controller control={form.control} name="is_active" render={({ field }) => (
             <Label className="flex items-center gap-2 self-end pb-2 font-normal"><Switch checked={field.value} onCheckedChange={field.onChange} /> {t("active")}</Label>
           )} />
+          <Controller control={form.control} name="counts_working_days" render={({ field }) => (
+            <Label className="flex items-center gap-2 font-normal sm:col-span-2"><Switch checked={field.value} onCheckedChange={field.onChange} /> {tl("countsDays")}</Label>
+          )} />
           <FormField id="approval_chain" label={t("approvalChain")} description={t("chainHint")} error={errors.approval_chain?.message} className="sm:col-span-2">
             <Textarea id="approval_chain" dir="ltr" rows={5} className="font-mono text-xs" {...form.register("approval_chain")} />
           </FormField>
@@ -63,13 +69,14 @@ function EditDialog({ row, onClose }: { row: Row; onClose: () => void }) {
   );
 }
 
-export function RequestTypesEditor({ types }: { types: Row[] }) {
+export function RequestTypesEditor({ types, isAdmin }: { types: Row[]; isAdmin: boolean }) {
   const t = useTranslations("admin");
   const tr = useTranslations("requests");
   const locale = useLocale();
   const [editing, setEditing] = useState<Row | null>(null);
   return (
     <>
+      <div className="mb-3 flex justify-end"><AddRequestTypeDialog isAdmin={isAdmin} /></div>
       <ul className="bg-card divide-y rounded-xl border">
         {types.map((r) => (
           <li key={r.id}>

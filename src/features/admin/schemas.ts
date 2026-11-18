@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { birthdayFields, checkBirthday, staffDetailFields } from "@/features/launch/birthday";
 
 export const APP_ROLES = [
   "super_admin", "leadership", "team_lead", "traffic_manager", "member",
@@ -34,6 +35,8 @@ const userFields = {
   roles: z.array(z.enum(APP_ROLES)),
   lead_team_id: optionalUuid,
   ...scheduleSchema.shape,
+  ...staffDetailFields,
+  ...birthdayFields,
 };
 
 function rolesNeedTeam<T extends { roles: string[]; lead_team_id: string | null }>(v: T) {
@@ -45,11 +48,13 @@ export const createAccountSchema = z
     email: z.string().trim().toLowerCase().min(1, "validation.required").email("validation.email"),
     ...userFields,
   })
-  .refine(rolesNeedTeam, { path: ["lead_team_id"], message: "validation.required" });
+  .refine(rolesNeedTeam, { path: ["lead_team_id"], message: "validation.required" })
+  .superRefine(checkBirthday);
 
 export const updateUserSchema = z
   .object({ user_id: z.uuid(), ...userFields })
-  .refine(rolesNeedTeam, { path: ["lead_team_id"], message: "validation.required" });
+  .refine(rolesNeedTeam, { path: ["lead_team_id"], message: "validation.required" })
+  .superRefine(checkBirthday);
 
 export const userIdSchema = z.object({ user_id: z.uuid() });
 export const setActiveSchema = z.object({ user_id: z.uuid(), active: z.boolean() });

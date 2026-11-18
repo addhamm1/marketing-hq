@@ -57,6 +57,7 @@ describe("decideRoute", () => {
   it("limits guests to boards and my work", () => {
     expect(decideRoute("/boards/1", true, guest)).toEqual({ kind: "allow" });
     expect(decideRoute("/map", true, guest)).toEqual({ kind: "redirect", to: "/boards" });
+    expect(decideRoute("/shoots/1", true, guest)).toEqual({ kind: "allow" });
   });
 
   it("shows no-access to users without roles", () => {

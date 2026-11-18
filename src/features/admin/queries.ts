@@ -14,6 +14,11 @@ export type AdminUser = {
   title: string | null;
   status: "active" | "inactive";
   must_change_password: boolean;
+  phone: string | null;
+  birth_month: number | null;
+  birth_day: number | null;
+  joined_on: string | null;
+  celebrate: boolean;
   roles: { role: AppRole; team_id: string | null }[];
   schedule: { workdays: number[]; start_time: string; end_time: string };
 };
@@ -37,7 +42,7 @@ export async function getAdminUsers(): Promise<AdminUser[]> {
   const [profiles, roles, schedules] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, email, full_name, department_id, team_id, home_branch_id, title, status, must_change_password")
+      .select("id, email, full_name, department_id, team_id, home_branch_id, title, status, must_change_password, phone, birth_month, birth_day, joined_on, celebrate")
       .order("full_name"),
     supabase.from("user_roles").select("user_id, role, team_id"),
     supabase.from("schedules").select("user_id, workdays, start_time, end_time"),

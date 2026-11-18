@@ -5,6 +5,7 @@ import { getLocale } from "next-intl/server";
 import { z } from "zod";
 import { fail, invalid, ok, type ActionResult } from "@/lib/actions";
 import { actionAccess } from "@/lib/auth/session";
+import { cairoDateString } from "@/lib/dates";
 import { MAX_ACCURACY_M, nearestBranch } from "@/lib/geo";
 import { clientIp, matchCidr } from "@/lib/ip";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -66,6 +67,16 @@ export async function checkIn(input: unknown): Promise<ActionResult<CheckInData>
     verify = { geofence: { radius_m: near.branch.geofence_radius_m, distance_m: Math.round(near.distanceM) } };
     branchId = near.branch.id;
     branchName = name;
+  } else if (v.method === "field" && v.shoot_id) {
+    // Only a shoot the person is on, today (check_in itself trusts this server).
+    const { data: crew } = await admin
+      .from("shoot_crew")
+      .select("shoots!inner(id)")
+      .eq("shoot_id", v.shoot_id)
+      .eq("user_id", access.user_id)
+      .eq("shoots.shoot_on", cairoDateString())
+      .maybeSingle();
+    if (!crew) return fail("checkin.errors.shoot_not_found");
   } else if (v.method === "wifi") {
     const ip = clientIp(await headers());
     const { data: branch } = await admin.from("branches").select("public_ips, name_en, name_ar").eq("id", v.branch_id).single();

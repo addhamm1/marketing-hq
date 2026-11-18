@@ -14,7 +14,7 @@ export default async function AdminBranchesPage() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("branches")
-    .select("id, name_en, name_ar, area, map_key, public_ips, checkin_methods, is_active, latitude, longitude, geofence_radius_m")
+    .select("id, name_en, name_ar, area, map_key, public_ips, checkin_methods, is_active, latitude, longitude, geofence_radius_m, location_confirmed_at")
     .order("area")
     .order("name_en");
   if (error) throw error;

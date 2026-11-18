@@ -26,7 +26,7 @@ export default async function LeaveAdminPage({ searchParams }: PageProps<"/[loca
     <div className="space-y-8">
       <AllowancesEditor
         year={year}
-        types={(types ?? []).map((t) => ({ id: t.id, name: locale === "ar" ? t.name_ar : t.name_en }))}
+        types={(types ?? []).map((t) => ({ id: t.id, key: t.key, name: locale === "ar" ? t.name_ar : t.name_en }))}
         people={(people ?? []).map((p) => ({ id: p.id, name: p.display_name || p.full_name }))}
         balances={(balances ?? []).map((b) => ({ ...b, allowance: Number(b.allowance), used: Number(b.used) }))}
       />

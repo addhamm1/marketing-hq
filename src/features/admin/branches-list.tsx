@@ -1,14 +1,19 @@
 "use client";
 
-import { Armchair, MapPin, MoreVertical, Pencil } from "lucide-react";
+import { Armchair, CircleCheck, CircleDashed, MapPin, MapPinCheck, MoreVertical, Pencil } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { EmptyState } from "@/components/states/states";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AddBranchDialog } from "@/features/launch/add-branch-dialog";
+import { confirmBranchLocation } from "@/features/launch/org-actions";
+import { useMessage } from "@/hooks/use-message";
+import { useRouter } from "@/i18n/navigation";
 import { formatLatLng } from "@/lib/geo";
 import { BranchFormDialog, type BranchRow } from "./branch-form-dialog";
 import { DesksDialog } from "./desks-dialog";
@@ -23,11 +28,25 @@ export function BranchesList({ branches, desks, zonesByMap }: { branches: Branch
   const [editing, setEditing] = useState<BranchRow | null>(null);
   const [deskBranch, setDeskBranch] = useState<BranchRow | null>(null);
   const td = useTranslations("desks");
+  const tl = useTranslations("launch.branches");
+  const message = useMessage();
+  const router = useRouter();
+  const [, startTransition] = useTransition();
 
-  if (!branches.length) return <EmptyState title={tc("emptyTitle")} />;
+  function confirmPoint(id: string) {
+    startTransition(async () => {
+      const r = await confirmBranchLocation({ id });
+      if (r.ok) toast.success(tl("confirmed"));
+      else toast.error(message(r.error));
+      router.refresh();
+    });
+  }
+
+  if (!branches.length) return <EmptyState title={tc("emptyTitle")} action={<AddBranchDialog />} />;
 
   return (
     <>
+      <div className="mb-3 flex justify-end"><AddBranchDialog /></div>
       <ul className="divide-y rounded-xl border bg-card">
         {branches.map((b) => (
           <li key={b.id} className="flex items-center gap-3 px-4 py-3">
@@ -35,6 +54,11 @@ export function BranchesList({ branches, desks, zonesByMap }: { branches: Branch
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-medium">{locale === "ar" ? b.name_ar : b.name_en}</span>
                 {!b.is_active ? <Badge variant="outline">{t("statusInactive")}</Badge> : null}
+                {b.location_confirmed_at ? (
+                  <Badge variant="secondary"><CircleCheck aria-hidden /> {tl("pointConfirmed")}</Badge>
+                ) : (
+                  <Badge variant="outline"><CircleDashed aria-hidden /> {tl("pointUnconfirmed")}</Badge>
+                )}
               </div>
               <div className="text-muted-foreground text-xs">{b.area}</div>
               <div className="text-muted-foreground mt-1 flex items-center gap-1 text-xs">
@@ -70,6 +94,11 @@ export function BranchesList({ branches, desks, zonesByMap }: { branches: Branch
                 <DropdownMenuItem onSelect={() => setEditing(b)}>
                   <Pencil aria-hidden /> {tc("edit")}
                 </DropdownMenuItem>
+                {b.latitude !== null && !b.location_confirmed_at ? (
+                  <DropdownMenuItem onSelect={() => confirmPoint(b.id)}>
+                    <MapPinCheck aria-hidden /> {tl("confirm")}
+                  </DropdownMenuItem>
+                ) : null}
                 <DropdownMenuItem onSelect={() => setDeskBranch(b)}>
                   <Armchair aria-hidden /> {td("title")}
                 </DropdownMenuItem>
