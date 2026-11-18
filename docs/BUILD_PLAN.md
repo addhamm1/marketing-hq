@@ -129,10 +129,11 @@ Each migration seeds only the tables it creates. Seed files are split per migrat
 ## Backlog: weeks 2 to 4 (not in this sprint)
 
 Week 2
-- Meetings inside Marketing HQ (requests, accept and decline, room, status "In a meeting"), without calendar sync
+- [x] Meetings inside Marketing HQ (requests, accept and decline, room, status "In a meeting"), without calendar sync (W-11)
 - KPI scorecards per role with auto-filled measures and monthly acknowledgement
 - Department service dashboard; monthly snapshot and executive PDF emailed on the 1st
-- Delegation of approvals; daily digest email; push notifications
+- Delegation of approvals
+- [x] Daily digest email; push notifications (W-13)
 
 Week 3
 - More branch maps with real art; asset pack integration
@@ -141,7 +142,7 @@ Week 3
 
 Week 4
 - Gamification: XP, coins, levels, badges, kudos, cosmetic shop, desk decoration, seasonal items, team leaderboards with anti-gaming caps
-- Free walking on the map
+- [x] Tap to walk and interact on the map; kudos; seasonal outfits (W-16, W-17)
 - Polish: speed, accessibility, Arabic copy review
 - Onboarding and offboarding checklists, one-to-one notes, training records
 

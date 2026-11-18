@@ -72,3 +72,10 @@ All seven days are built and tested locally: 41 of 42 tasks are done (every P0 a
 - Decisions used with defaults: D-02 (hq branch), D-03 (Wi-Fi and QR), D-08 (English default), D-09 (Latin digits), D-13, D-14, D-15, D-17 (admin resets passwords).
 - Risks or blockers: the Mac has little free disk space (Docker images use about 3 GB). Docker runs in Colima.
 - Tomorrow starts with: D2-01 boards, approvals and notifications schema.
+
+## 2026-11-18: workflow round (W-00 to W-18)
+
+- Done: required location for every check-in and check-out, My Day, meetings and fixed meetings, monthly gates, shoot planner, team week, request tracker, digest and phone notifications, kudos and birthdays, tap to move and map interactions, new character art and seasonal outfits, launch checklist and admin editors.
+- Security: Next.js 16.4.0 to 16.4.6 and Zod 4.6.7, closing critical and high advisories. `shadcn` moved to dev dependencies.
+- Not verified with real services: Resend email, web push on a real phone, the production database.
+- Waiting on Adham: staff emails (D-19), birthdays and joining dates, branch points (D-18), cloud accounts and VAPID keys.

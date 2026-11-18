@@ -15,7 +15,7 @@ Two Supabase projects in Frankfurt (staging for previews and CI, production for 
    ```
 6. Seed:
    - **Staging:** `pnpm supabase db push --include-seed` (test users and demo data from `supabase/seed/`). Never on production.
-   - **Production:** `psql "<production connection string>" -v ON_ERROR_STOP=1 -f supabase/seed-production.sql` (departments, teams, branches, settings, brands, workspaces, the Content Pipeline, request types, holidays; no users).
+   - **Production:** `psql "<production connection string>" -v ON_ERROR_STOP=1 -f supabase/seed-production.sql` (departments, teams, branches, settings, brands, workspaces, the Content Pipeline, the Meeting actions board, meeting rooms, request types, holidays; no users). Run it from the repository root so the included seed file is found.
 7. Run the advisors and fix anything new: `pnpm supabase db advisors --linked --type all --level warn`.
 8. **First admin (production):** sign-up is disabled, so create the first super admin with the service role key, then sign in and change the temporary password:
    ```bash
@@ -41,10 +41,11 @@ Two Supabase projects in Frankfurt (staging for previews and CI, production for 
    | `CRON_SECRET` | a long random string (Vercel sends it to cron routes) |
    | `RESEND_API_KEY` | Resend key (verified e-spaces.co domain) |
    | `EMAIL_FROM` | `Marketing HQ <marketinghq@e-spaces.co>` |
+   | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Phone notifications. Generate once with `pnpm dlx web-push generate-vapid-keys`; the subject is the app URL |
    | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | Sentry project (optional) |
 
 3. Cron jobs are declared in `vercel.json` (UTC; the code works out Cairo time itself):
-   `due-soon` hourly, `daily` 03:30, `emails` every 10 minutes, `auto-checkout` hourly at :05, `post-reminders` every 5 minutes. Sub-hourly schedules need Vercel Pro.
+   `due-soon` hourly, `daily` 03:30, `emails` every 10 minutes, `auto-checkout` hourly at :05, `post-reminders`, `meetings` and `push` every 5 minutes, `digest` hourly from 03:00 to 07:00. Sub-hourly schedules need Vercel Pro.
 4. Add the production domain (a subdomain of e-spaces.co).
 
 ## 3. GitHub Actions
@@ -57,3 +58,7 @@ Two Supabase projects in Frankfurt (staging for previews and CI, production for 
 - HR sets leave allowances in `/admin/leave` (they start at 0) and adds the year's holidays.
 - Create the staff accounts with `scripts/create-staff.mts` (or one by one in `/admin/users`) and hand each person their temporary password in person or by private message (`supabase/staff.json` lists names and roles).
 - Set each requesting department's default approver (Sales: the Sales team lead).
+
+## 3. After the first deploy
+
+Sign in as a super admin and open `/admin/launch`. It lists what still needs a person: branch points, staff details, leave allowances, rooms, holidays, and whether email and phone notifications are configured.

@@ -225,4 +225,18 @@ Users (create account with a one-time temporary password, reset password, deacti
 
 ## 13. Out of scope for the sprint
 
-Any integration with outside platforms (social publishing, social or ads analytics, Google Calendar, Trello connection, WhatsApp); meetings; KPI scorecards, one-to-ones, onboarding checklists, training records; gamification (XP, coins, badges, shop, leaderboards); asset library beyond card attachments; free walking on the map; announcements; delegation; daily digest email; push notifications; native mobile apps; payroll; CRM; an in-app map editor. The non-integration items are in the Weeks 2 to 4 backlog in `BUILD_PLAN.md`.
+Any integration with outside platforms (social publishing, social or ads analytics, Google Calendar, Trello connection, WhatsApp); KPI scorecards, one-to-ones, onboarding checklists, training records; gamification (XP, coins, shop, leaderboards); asset library beyond card attachments; announcements; delegation; native mobile apps; payroll; CRM; an in-app map editor. The non-integration items are in the Weeks 2 to 4 backlog in `BUILD_PLAN.md`.
+
+## 14. Workflow round (added after the sprint)
+
+- **My Day** (`/my-day`) is the team app's home screen: today's meetings, due cards, approvals, gates, shoots, meeting actions and celebrations.
+- **Meetings** (`/meetings`, `/portal/meetings`): colleagues, other departments and outside guests (email with a calendar file, also when cancelled); rooms with availability; agenda, shared notes, and action items that become cards; fixed daily, weekly and monthly meetings.
+- **Monthly gates** (`/gates`, `/gates/rhythm`): the month at a glance, editable per month and as a standing rhythm.
+- **Shoot days** (`/shoots`): crew, shot list, equipment, printable call sheet, linked to field check-in.
+- **Team week** (`/week`, `/portal/week`): where each person is, day by day.
+- **Request tracker** (`/portal`): five steps (Received: request, performance input. In review: intake, brief and schedule. In production. Your confirmation. Delivered), expected delivery date, needs-your-action state and the strategic deadline banner.
+- **Daily digest and phone notifications**: settings on `/me/account`; signing out stops notifications on that device.
+- **Celebrations** (`/celebrations`, `/portal/celebrations`): kudos, birthdays and work anniversaries.
+- **Map**: tap to walk, wave, high five, coffee, chat, dance and clap.
+- **Characters**: new art and wardrobe, three saved looks, seasonal outfits available during their event.
+- **Admin**: `/admin/launch` (launch readiness checklist), `/admin/seasons`, `/admin/rooms`, plus editors for departments, teams, branches, brands, request types and bulk leave allowances.

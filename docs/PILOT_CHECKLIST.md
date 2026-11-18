@@ -10,6 +10,8 @@ Two weeks with the marketing team plus Sales as the first requesting department.
 - [ ] HR set this year's leave allowances and holidays
 - [ ] Sales' default approver set (`/admin/organisation`)
 - [ ] Settings reviewed: stage targets, WIP limit, monthly post target, lateness grace
+- [ ] `/admin/launch` shows nothing left to fix
+- [ ] Monthly gates, gate owners and fixed meeting times reviewed
 
 ## What everyone should try in week 1
 
@@ -19,6 +21,7 @@ Two weeks with the marketing team plus Sales as the first requesting department.
 - [ ] Find your cards in My work; comment with an @mention; attach a file
 - [ ] Request a leave day and a work-from-home day; approvers approve from Approvals
 - [ ] Switch to Arabic and back; use the app on your phone (add it to the home screen)
+- [ ] Start from My Day; book a meeting, turn an action into a card; update your Team week; send kudos; tap to walk on the map; turn on phone notifications
 
 ## Role-specific
 

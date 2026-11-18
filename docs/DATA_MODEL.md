@@ -64,9 +64,9 @@ Accounts are created only by a super_admin (public sign-up is disabled in Supaba
 | Table | Columns | Notes |
 | --- | --- | --- |
 | `desks` | branch_id, zone_name (matches the Tiled object name, for example `desk-4`), assigned_user_id null, unique(branch_id, zone_name) | |
-| `attendance_sessions` | user_id, branch_id null (null for field and home), method checkin_method, checked_in_at, checked_out_at null, is_late bool, auto_closed bool default false, confirmed_at null, field_card_id null, note, verify jsonb, checkin_lat, checkin_lng, checkin_accuracy_m int, checkin_place text (field only, up to 120), checkout_lat, checkout_lng, checkout_accuracy_m int, distance_m int (from the branch at check-in) | `verify` holds the verification result, for example `{ "ipMatched": "41.x.x.0/24" }` or `{ "geofence": { "radius_m": 150, "distance_m": 40 } }`. Locations live in their own columns, are recorded only at check-in and check-out, and never for `home`. Readable only by the row policy below (the person, their team lead, hr, super_admin, leadership); `who_is_in()` never returns them. Partial unique index: one open session per user (`unique (user_id) where checked_out_at is null`). No direct writes from clients |
+| `attendance_sessions` | user_id, branch_id null (null for field and home), method checkin_method, checked_in_at, checked_out_at null, is_late bool, auto_closed bool default false, confirmed_at null, field_card_id null, note, verify jsonb, checkin_lat, checkin_lng, checkin_accuracy_m int, checkin_place text (field only, up to 120), checkout_lat, checkout_lng, checkout_accuracy_m int, distance_m int (from the branch at check-in) | `verify` holds the verification result, for example `{ "ipMatched": "41.x.x.0/24" }` or `{ "geofence": { "radius_m": 150, "distance_m": 40 } }`. Locations live in their own columns and are recorded at every check-in and check-out, for every method (D-03, D-23). `shoot_id` links a field check-in to its shoot. Readable only by the row policy below (the person, their team lead, hr, super_admin, leadership); `who_is_in()` never returns them. Partial unique index: one open session per user (`unique (user_id) where checked_out_at is null`). No direct writes from clients |
 | `attendance_edits` | session_id, edited_by, old_in, new_in, old_out, new_out, reason | Through `confirm_auto_checkout` or `admin_edit_session` |
-| `avatars` | user_id primary key, config jsonb, updated_at | Own row writable |
+| `avatars` | user_id primary key, config jsonb, looks jsonb (at most three saved looks), updated_at | Own row writable |
 
 ## 5. Boards and cards
 
@@ -191,11 +191,11 @@ decide_step(step_id, decision step_status, comment text, reason revision_reason 
 cancel_request(request_id)                       -- requester while pending; hr for approved requests (refunds balance)
 check_in(p_user_id uuid, method, branch_id, verify jsonb, card_id, note, now, lat, lng, accuracy_m, place)
   -- service_role ONLY (execute revoked from authenticated). Called by the server action after it validated the input
-  -- (nearest branch for gps, IP for wifi). gps: needs a location with accuracy <= 200 m inside the branch geofence
-  -- (radius + least(accuracy, 100)), via _distance_m (haversine). field: needs a location; place optional. qr and manual refused.
-  -- Enforces one open session, home check-in only with approved work_from_home today (no location stored), lateness from schedule and grace.
-check_out()                                      -- authenticated; closes the caller's own open session
-check_out(lat, lng, accuracy_m)                  -- authenticated; same, recording where (nulls allowed; never stored for home)
+  -- (nearest branch for gps, IP for wifi). Every method needs a location. gps: accuracy <= 200 m inside the branch geofence
+  -- (branch_geofence_m + least(accuracy, 100)), via _distance_m (haversine). A branch without location_confirmed_at uses at least 1,500 m.
+  -- field: place and shoot_id optional. qr and manual refused. Enforces one open session, home check-in only with approved
+  -- work_from_home today, lateness from schedule and grace.
+check_out(lat, lng, accuracy_m)                  -- authenticated; closes the caller's own open session; the location is required
 confirm_auto_checkout(session_id, actual_out timestamptz)  -- owner of an auto-closed session; writes attendance_edits, sets confirmed_at
 admin_edit_session(session_id, new_in, new_out, reason)    -- super_admin, hr
 decide_post(post_id, approve bool, comment text) -- in_review to approved (or scheduled when it has a time), or back to draft with a comment
@@ -289,4 +289,21 @@ Seeding email and password users in `seed.sql` needs rows in both `auth.users` (
 - A requester cannot receive messages on a `branch:` channel.
 - An inactive user reads only their own profile (the app needs it to show the deactivated message) and nothing else.
 - A user cannot update their own `must_change_password`, `email` or `status`.
+- A user cannot set their own `joined_on`, and no one can store an impossible birthday.
 - An authenticated user who is not super_admin cannot call `require_password_change`, `admin_update_profile` or `admin_set_roles`.
+
+## 14. Workflow (W-00 to W-18)
+
+Migrations `20261118*`. Every table has row-level security and access tests in `supabase/tests`.
+
+| Area | Tables | Access |
+| --- | --- | --- |
+| People | `profiles.birth_month`, `birth_day` (never a year), `joined_on`, `celebrate`; `kudos`; `seasonal_events` | Own birthday and `celebrate` writable; `joined_on` through `admin_update_profile`. Kudos: staff read and send as themselves, author or super_admin deletes. Seasons: super_admin writes |
+| Meetings | `meeting_rooms`, `meeting_series`, `meeting_series_members`, `meetings`, `meeting_attendees`, `meeting_guests`, `meeting_actions` | Writes through `save_meeting`, `respond_meeting`, `cancel_meeting`, `save_meeting_notes`, `save_meeting_series`, `archive_meeting_series`, `meeting_action_to_card`. Marketing reads non-private meetings; others only meetings they are in. `meeting_busy` shows when, never what |
+| Gates | `gate_tracks`, `gate_templates`, `gate_items`, `gate_item_cards`, `gate_item_exclusions` | Staff read. super_admin and traffic_manager edit; the owner sets status. A deleted or moved occurrence is recorded in `gate_item_exclusions` and is not rebuilt |
+| Shoots | `shoots`, `shoot_crew`, `shoot_shots`, `shoot_equipment`, `shoot_cards` | Marketing and crew read. Producer, crew, team leads, traffic and super_admin edit. Guests on a crew reach `/shoots` |
+| Team week | `week_plan_entries`; `team_week(from, to, department)` | People write their own plan from today onward; traffic and super_admin write any day. `team_week` returns a place only: no coordinates, leave type or reason, and colleagues cannot tell leave from a planned away day. The API caps rows at 1,000, so large ranges are paged |
+| Notifications | `push_subscriptions`, `notification_preferences`, `notifications.pushed_at`, `cron_log` | Subscriptions and preferences are private to their owner. `cron_log` has no client access; `claim_once` is service role only. `digest_hour` works between 06:00 and 09:00 Cairo all year |
+| Map | `map_positions`, `map_interactions` | Moves and interactions go through `map_move` and `map_interact`, which send the realtime events. Browsers never broadcast |
+
+Scheduled jobs: `cron_meetings` every 5 minutes; `cron_workflow_daily` (gates, shoots, strategic reminders, celebrations) daily; `/api/cron/push` every 5 minutes; `/api/cron/digest` hourly from 03:00 to 07:00 UTC.
