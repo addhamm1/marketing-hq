@@ -613,6 +613,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"gate_item_exclusions": {
+                  Row: {
+                    "created_at": string,"due_on": string,"month": string,"template_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"due_on": string,"month": string,"template_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"due_on"?: string,"month"?: string,"template_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "gate_item_exclusions_template_id_fkey"
+      columns: ["template_id"]
+isOneToOne: false
+      referencedRelation: "gate_templates"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"gate_items": {
                   Row: {
                     "completed_at": string | null,"completed_by": string | null,"created_at": string,"customised": boolean,"due_on": string,"id": string,"kind": Database["public"]['Enums']["gate_kind"],"month": string,"name_ar": string,"name_en": string,"note": string,"owner_id": string | null,"position": number,"starts_on": string,"status": Database["public"]['Enums']["gate_status"],"template_id": string | null,"track_id": string,"updated_at": string
