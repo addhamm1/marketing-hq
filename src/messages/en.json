@@ -736,6 +736,37 @@
       "pod-creative": "Creative",
       "pod-performance": "Performance",
       "pod-community": "Community"
+    },
+    "interact": {
+      "sayHello": "Say hello",
+      "yourMoves": "Your moves",
+      "actions": {
+        "wave": "Wave",
+        "high_five": "High five",
+        "coffee": "Coffee",
+        "chat": "Chat",
+        "dance": "Dance",
+        "clap": "Clap"
+      },
+      "received": {
+        "wave": "{name} waved at you",
+        "high_five": "{name} gave you a high five",
+        "coffee": "{name} is asking you for a coffee",
+        "chat": "{name} would like a quick chat"
+      },
+      "sent": {
+        "coffee": "Coffee invitation sent to {name}",
+        "chat": "Chat invitation sent to {name}"
+      },
+      "errors": {
+        "rate_limited": "That's a lot of excitement. Give it a few seconds.",
+        "not_here": "{name} isn't on this floor right now.",
+        "not_checked_in": "Check in first, then you can join in on the floor.",
+        "unknown": "That didn't go through. Please try again."
+      },
+      "hint": "Check in at this branch to walk around the floor.",
+      "hintAction": "Check in",
+      "dismissHint": "Dismiss"
     }
   },
   "character": {
@@ -2071,6 +2102,86 @@
       "item": "Use lowercase letters, numbers and hyphens only",
       "tooMany": "Use 12 items or fewer",
       "duplicate": "A season with this name already exists for that year"
+    }
+  },
+  "celebrations": {
+    "title": "Celebrations",
+    "subtitle": "Thank a colleague, and never miss a birthday or a work anniversary.",
+    "sendKudos": "Send kudos",
+    "formerColleague": "Former colleague",
+    "badges": {
+      "teamwork": "Teamwork",
+      "creative": "Creative spark",
+      "on_time": "Delivered on time",
+      "helped": "Helped me out",
+      "great_idea": "Great idea",
+      "birthday": "Birthday wish"
+    },
+    "feed": {
+      "title": "Kudos",
+      "emptyTitle": "No kudos yet",
+      "emptyBody": "Be the first to thank a colleague for something they did.",
+      "errorTitle": "Kudos couldn't load",
+      "errorBody": "Check your connection and try again.",
+      "retry": "Try again",
+      "showMore": "Show more",
+      "sentTo": "to",
+      "delete": "Delete kudos",
+      "deleteTitle": "Delete this kudos?",
+      "deleteBody": "It will be removed from the feed for everyone.",
+      "deleteConfirm": "Delete",
+      "deleted": "Kudos deleted"
+    },
+    "dialog": {
+      "title": "Send kudos",
+      "description": "A few words of thanks go a long way.",
+      "person": "Who is it for?",
+      "personPlaceholder": "Choose a colleague",
+      "search": "Search by name",
+      "noPeople": "Nobody found",
+      "badge": "Badge",
+      "message": "Message",
+      "messagePlaceholder": "What did they do that made a difference?",
+      "counter": "{count} of {max}",
+      "send": "Send kudos",
+      "sending": "Sending…",
+      "sent": "Kudos sent to {name}"
+    },
+    "upcoming": {
+      "title": "Coming up",
+      "subtitle": "The next 30 days",
+      "emptyTitle": "Nothing in the next 30 days",
+      "emptyBody": "Birthdays and work anniversaries will show up here.",
+      "errorTitle": "Upcoming dates couldn't load",
+      "errorBody": "Refresh the page to try again.",
+      "birthday": "Birthday",
+      "anniversary": "{years, plural, one {# year} other {# years}} at Espaces",
+      "inDays": "{days, plural, one {Tomorrow} other {In # days}}"
+    },
+    "today": {
+      "label": "Today",
+      "birthday": "It's {name}'s birthday today",
+      "birthdayBody": "Make their day with a quick wish.",
+      "ownBirthday": "Happy birthday, {name}!",
+      "ownBirthdayBody": "Wishing you a wonderful year ahead, from all of us.",
+      "anniversary": "{name} celebrates {years, plural, one {# year} other {# years}} at Espaces today",
+      "anniversaryBody": "Thank them for everything they bring to the team.",
+      "ownAnniversary": "Happy work anniversary, {name}!",
+      "ownAnniversaryBody": "{years, plural, one {# year} other {# years}} at Espaces. Thank you for all of it.",
+      "wish": "Send birthday wish",
+      "wishing": "Sending…",
+      "wished": "Wish sent",
+      "wishSent": "Your birthday wish is on its way to {name}",
+      "wishMessage": "Happy birthday, {name}! Wishing you a wonderful year ahead."
+    },
+    "errors": {
+      "person": "Choose a colleague",
+      "self": "You can't send kudos to yourself",
+      "badge": "Choose a badge",
+      "message": "Write a short message",
+      "messageTooLong": "Keep your message to 280 characters",
+      "notToday": "It isn't their birthday today.",
+      "alreadyWished": "You've already sent your wish today."
     }
   }
 }

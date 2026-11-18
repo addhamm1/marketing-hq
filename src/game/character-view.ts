@@ -48,6 +48,8 @@ export class CharacterView {
   private anim = "";
   private bubbleKind: BubbleKind | null = null;
   private propState = "";
+  /** Reduced motion: bubbles appear without popping in. */
+  calm = false;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -90,8 +92,8 @@ export class CharacterView {
     if (isNew) this.fadeIn();
   }
 
-  /** Draw one frame of the pose computed by the Director. */
-  render(pose: AgentPose, time: number): void {
+  /** Draw one frame of the pose computed by the Director; `shift` moves the body alone (dances, claps). */
+  render(pose: AgentPose, time: number, shift?: { x: number; y: number } | null): void {
     const x = Math.round(pose.x);
     const y = Math.round(pose.y);
     if (x !== this.container.x || y !== this.container.y) this.container.setPosition(x, y).setDepth(10 + y);
@@ -100,7 +102,8 @@ export class CharacterView {
       this.sprite.anims.play(key, true);
       this.anim = key;
     }
-    this.sprite.y = pose.anim === "dance" ? -Math.round(Math.abs(Math.sin(time / 140)) * 2) : 0;
+    const bob = pose.anim === "dance" ? -Math.round(Math.abs(Math.sin(time / 140)) * 2) : 0;
+    this.sprite.setPosition(shift?.x ?? 0, bob + (shift?.y ?? 0));
     this.setProp(pose.prop, pose.face);
     this.setBubble(pose.bubble);
   }
@@ -118,6 +121,11 @@ export class CharacterView {
       x: Math.round((this.container.x - cam.worldView.x) * cam.zoom + cam.x),
       y: Math.round((this.container.y - top - cam.worldView.y) * cam.zoom + cam.y),
     };
+  }
+
+  /** World position of the top of the head, where effects start from. */
+  headPoint(): { x: number; y: number } {
+    return { x: this.container.x, y: this.container.y - HEAD_OFFSET };
   }
 
   /** Stop reacting to clicks (used while fading out). */
@@ -154,7 +162,8 @@ export class CharacterView {
       this.bubble.setVisible(false);
       return;
     }
-    this.bubble.setTexture(bubbleKey(kind)).setVisible(true).setScale(0.4);
+    this.bubble.setTexture(bubbleKey(kind)).setVisible(true).setScale(this.calm ? 1 : 0.4);
+    if (this.calm) return;
     this.scene.tweens.add({ targets: this.bubble, scale: 1, duration: 160, ease: "Back.easeOut" });
   }
 

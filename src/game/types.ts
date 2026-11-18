@@ -24,6 +24,13 @@ export type MapSignage = {
   rtl: boolean;
 };
 
+export type MapTile = { x: number; y: number };
+/** Where someone was last seen on this floor. */
+export type MapPosition = MapTile & { userId: string };
+export type MapInteractionKind = "wave" | "high_five" | "coffee" | "chat" | "dance" | "clap";
+/** One person doing something on the floor; `to` is empty for a solo emote. */
+export type MapInteraction = { from: string; to: string | null; kind: MapInteractionKind };
+
 export type PixelGameOptions = {
   /** "hq" | "field" | "home" | other branch maps later; loads `/maps/<mapKey>.json`. */
   mapKey: string;
@@ -35,6 +42,10 @@ export type PixelGameOptions = {
    * of the character's head: handy for positioning a popover.
    */
   onCharacterClick?: (userId: string, screen: { x: number; y: number }) => void;
+  /** Open floor was tapped by someone who has no character to move here. */
+  onFloorTap?: () => void;
+  /** The viewer's character set off for `tile` (`arrived` false), then got there (`arrived` true). */
+  onPlayerMove?: (tile: MapTile, arrived: boolean) => void;
 };
 
 export interface PixelGameController {
@@ -44,6 +55,16 @@ export interface PixelGameController {
   setSignage(signage: MapSignage): void;
   /** Hold one character still (its popover is open), or release with null. */
   setFocus(userId: string | null): void;
+  /** The character the viewer walks by tapping the floor, or null when they aren't checked in here. */
+  setPlayer(userId: string | null): void;
+  /** Saved positions for this floor. Each is applied once, when that character appears. */
+  setPositions(positions: MapPosition[]): void;
+  /** Someone else moved: their character walks to `tile`. */
+  moveCharacter(userId: string, tile: MapTile): void;
+  /** Show a wave, high five, dance and so on. */
+  playInteraction(interaction: MapInteraction): void;
+  /** A short confetti burst over this character. */
+  celebrate(userId: string): void;
   /** Switch map (branch switcher). Current characters are re-applied to the new map. */
   setMap(mapKey: string): void;
   /** Names of the zone objects in the current map (empty until the map has loaded). */

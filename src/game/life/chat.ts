@@ -10,6 +10,7 @@ export const CHAT_RANGE = 16;
 export function canChat(other: Agent): boolean {
   return (
     !other.paused &&
+    other.heldUntil === 0 &&
     other.partner === null &&
     SOCIAL.has(other.status) &&
     other.phase === "do" &&

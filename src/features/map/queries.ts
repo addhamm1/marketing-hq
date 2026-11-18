@@ -8,7 +8,7 @@ type Client = SupabaseClient<Database>;
 
 export async function fetchMapData(supabase: Client, locale: string): Promise<MapData> {
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Cairo" });
-  const [branches, sessions, people, teams, desks, avatars, cards, absences] = await Promise.all([
+  const [branches, sessions, people, teams, desks, avatars, cards, absences, positions] = await Promise.all([
     supabase.from("branches").select("id, name_en, name_ar, map_key").eq("is_active", true).order("name_en"),
     supabase.rpc("who_is_in", {}),
     supabase.from("profiles").select("id, full_name, display_name, title, team_id, presence, home_branch_id").eq("status", "active"),
@@ -23,6 +23,7 @@ export async function fetchMapData(supabase: Client, locale: string): Promise<Ma
       .order("stage_entered_at", { ascending: false })
       .limit(300),
     supabase.rpc("team_absences", { p_from: today, p_to: today }),
+    supabase.from("map_positions").select("user_id, branch_id, tile_x, tile_y"),
   ]);
 
   const currentCards: MapData["currentCards"] = {};
@@ -51,5 +52,6 @@ export async function fetchMapData(supabase: Client, locale: string): Promise<Ma
     avatars: Object.fromEntries((avatars.data ?? []).map((a) => [a.user_id, a.config as unknown as AvatarConfig])),
     currentCards,
     onLeaveToday: [...new Set((absences.data ?? []).filter((a) => a.category === "leave").map((a) => a.user_id))],
+    positions: positions.data ?? [],
   };
 }

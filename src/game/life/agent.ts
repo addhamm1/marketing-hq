@@ -42,6 +42,8 @@ export class Agent {
   /** Stop at the next tile and plan again (status changed mid-walk). */
   replan = false;
   paused = false;
+  /** Director time until which a person controls this character; 0 means the simulation does. */
+  heldUntil = 0;
 
   constructor(
     readonly id: string,

@@ -736,6 +736,37 @@
       "pod-creative": "الإبداع",
       "pod-performance": "الأداء",
       "pod-community": "إدارة المجتمع"
+    },
+    "interact": {
+      "sayHello": "قول أهلًا",
+      "yourMoves": "حركاتك",
+      "actions": {
+        "wave": "تحية",
+        "high_five": "هاي فايف",
+        "coffee": "قهوة",
+        "chat": "دردشة",
+        "dance": "رقصة",
+        "clap": "تسقيف"
+      },
+      "received": {
+        "wave": "تحية من {name}",
+        "high_five": "هاي فايف من {name}",
+        "coffee": "عزومة قهوة من {name}",
+        "chat": "دعوة لدردشة سريعة من {name}"
+      },
+      "sent": {
+        "coffee": "عزومة القهوة وصلت لـ{name}",
+        "chat": "دعوة الدردشة وصلت لـ{name}"
+      },
+      "errors": {
+        "rate_limited": "براحة شوية! استنى ثواني وجرّب تاني.",
+        "not_here": "{name} مش على الدور ده دلوقتي.",
+        "not_checked_in": "سجّل حضورك الأول، وبعدها تقدر تشارك زمايلك على الخريطة.",
+        "unknown": "ماتمّتش العملية. حاول تاني."
+      },
+      "hint": "سجّل حضورك في الفرع ده علشان تتمشى في المكان.",
+      "hintAction": "تسجيل الحضور",
+      "dismissHint": "إخفاء"
     }
   },
   "character": {
@@ -2071,6 +2102,86 @@
       "item": "استخدم حروف إنجليزي صغيرة وأرقام وشرطات بس",
       "tooMany": "استخدم 12 قطعة أو أقل",
       "duplicate": "فيه موسم بالاسم ده في نفس السنة"
+    }
+  },
+  "celebrations": {
+    "title": "المناسبات",
+    "subtitle": "اشكر زميلك، وماتفوّتش عيد ميلاد أو سنوية شغل.",
+    "sendKudos": "ابعت شكر",
+    "formerColleague": "زميل سابق",
+    "badges": {
+      "teamwork": "روح الفريق",
+      "creative": "لمسة إبداعية",
+      "on_time": "التسليم في الميعاد",
+      "helped": "مساعدة وقت الحاجة",
+      "great_idea": "فكرة ممتازة",
+      "birthday": "تهنئة بعيد الميلاد"
+    },
+    "feed": {
+      "title": "رسائل الشكر",
+      "emptyTitle": "لسه مفيش رسائل شكر",
+      "emptyBody": "ابدأ واشكر زميل على حاجة فرقت معاك.",
+      "errorTitle": "ماقدرناش نحمّل رسائل الشكر",
+      "errorBody": "راجع الاتصال وحاول تاني.",
+      "retry": "حاول تاني",
+      "showMore": "عرض المزيد",
+      "sentTo": "إلى",
+      "delete": "حذف رسالة الشكر",
+      "deleteTitle": "تحذف رسالة الشكر دي؟",
+      "deleteBody": "هتتشال من الصفحة عند الكل.",
+      "deleteConfirm": "حذف",
+      "deleted": "اتحذفت رسالة الشكر"
+    },
+    "dialog": {
+      "title": "ابعت شكر",
+      "description": "كلمتين شكر بيفرقوا كتير.",
+      "person": "الشكر لمين؟",
+      "personPlaceholder": "اختار زميل",
+      "search": "ابحث بالاسم",
+      "noPeople": "مفيش نتايج",
+      "badge": "الشارة",
+      "message": "الرسالة",
+      "messagePlaceholder": "إيه الحاجة اللي فرقت معاك؟",
+      "counter": "{count} من {max}",
+      "send": "ابعت الشكر",
+      "sending": "جاري الإرسال…",
+      "sent": "الشكر وصل لـ{name}"
+    },
+    "upcoming": {
+      "title": "المناسبات الجاية",
+      "subtitle": "خلال ٣٠ يوم",
+      "emptyTitle": "مفيش مناسبات خلال ٣٠ يوم",
+      "emptyBody": "أعياد الميلاد وسنويات الشغل هتظهر هنا.",
+      "errorTitle": "ماقدرناش نحمّل المناسبات الجاية",
+      "errorBody": "حدّث الصفحة وحاول تاني.",
+      "birthday": "عيد ميلاد",
+      "anniversary": "{years, plural, one {سنة} two {سنتين} few {# سنين} many {# سنة} other {# سنة}} في إسبيسز",
+      "inDays": "{days, plural, one {بكرة} two {بعد يومين} few {بعد # أيام} many {بعد # يوم} other {بعد # يوم}}"
+    },
+    "today": {
+      "label": "النهارده",
+      "birthday": "النهارده عيد ميلاد {name}",
+      "birthdayBody": "تهنئة سريعة تحلّي اليوم.",
+      "ownBirthday": "عيد ميلاد سعيد يا {name}!",
+      "ownBirthdayBody": "نتمنالك سنة جميلة من كلنا.",
+      "anniversary": "النهارده سنوية {name}: {years, plural, one {سنة} two {سنتين} few {# سنين} many {# سنة} other {# سنة}} في إسبيسز",
+      "anniversaryBody": "كلمة شكر في يوم زي ده بتفرق.",
+      "ownAnniversary": "سنوية سعيدة يا {name}!",
+      "ownAnniversaryBody": "{years, plural, one {سنة} two {سنتين} few {# سنين} many {# سنة} other {# سنة}} في إسبيسز. شكرًا على كل حاجة.",
+      "wish": "ابعت تهنئة",
+      "wishing": "جاري الإرسال…",
+      "wished": "التهنئة اتبعتت",
+      "wishSent": "تهنئتك في الطريق لـ{name}",
+      "wishMessage": "عيد ميلاد سعيد يا {name}! نتمنالك سنة جميلة."
+    },
+    "errors": {
+      "person": "اختار زميل",
+      "self": "ماينفعش تبعت شكر لنفسك",
+      "badge": "اختار شارة",
+      "message": "اكتب رسالة قصيرة",
+      "messageTooLong": "الرسالة لازم ماتزيدش عن ٢٨٠ حرف",
+      "notToday": "النهارده مش يوم عيد الميلاد.",
+      "alreadyWished": "بعتّ تهنئتك النهارده بالفعل."
     }
   }
 }

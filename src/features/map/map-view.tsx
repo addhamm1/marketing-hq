@@ -3,20 +3,23 @@
 import { Loader2, Users } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useLocale, useTranslations } from "next-intl";
-import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { setPresence } from "@/features/presence/actions";
-import type { CharacterStatus } from "@/game";
-import type { AvatarConfig } from "@/game/avatar/types";
+import type { MapInteraction, MapInteractionKind, MapTile, PixelGameController } from "@/game";
 import { useRouter } from "@/i18n/navigation";
 import { isRtl } from "@/i18n/routing";
-import { createClient } from "@/lib/supabase/browser";
 import { CharacterPopover } from "./character-popover";
+import { bothOnFloor, floorOf, isBranchFloor } from "./floor";
+import { MapHint } from "./map-hint";
+import { sendInteraction, sendMove } from "./map-rpc";
+import { MoveSync } from "./move-sync";
 import { placeCharacters } from "./place";
 import { SIGN_KEYS } from "./signs";
-import type { MapData, MapSelection, MapSession } from "./types";
+import type { MapData, MapSelection } from "./types";
 import { useAvatarSheets } from "./use-avatar-sheets";
+import { useMapLive } from "./use-map-live";
 
 const MapCanvas = dynamic(() => import("./map-canvas"), { ssr: false });
 
@@ -24,25 +27,40 @@ const ZONE_ROUTES: Record<string, string> = {
   reception: "/checkin",
   "kanban-wall": "/boards",
   mailbox: "/approvals",
-  "meeting-room": "/calendar",
+  "meeting-room": "/meetings",
+  "notice-board": "/celebrations",
   studio: "/boards",
   "trophy-shelf": "/people",
 };
 
-export function MapView({ initial, defaultSelection }: { initial: MapData; defaultSelection: MapSelection }) {
+export function MapView({ initial, defaultSelection, viewerId, canAct }: {
+  initial: MapData;
+  defaultSelection: MapSelection;
+  viewerId: string;
+  /** Marketing staff can move and interact; other viewers only watch. */
+  canAct: boolean;
+}) {
   const t = useTranslations("map");
   const locale = useLocale();
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [selection, setSelection] = useState<MapSelection>(defaultSelection);
-  const [sessions, setSessions] = useState<MapSession[]>(initial.sessions);
-  const [presence, setPresenceMap] = useState<Record<string, CharacterStatus>>(() =>
-    Object.fromEntries(initial.people.map((p) => [p.id, p.presence])),
-  );
-  const [avatars, setAvatars] = useState<Record<string, AvatarConfig>>(initial.avatars);
   const [zones, setZones] = useState<string[]>([]);
   const [popover, setPopover] = useState<{ userId: string; x: number; y: number } | null>(null);
+  const [hint, setHint] = useState(0);
+  const game = useRef<PixelGameController | null>(null);
   const mapKey = selection === "field" || selection === "home" ? selection : (initial.branches.find((b) => b.id === selection)?.mapKey ?? "hq");
+
+  const nameOf = (id: string) => initial.people.find((p) => p.id === id)?.name ?? "";
+
+  function onInteraction(event: MapInteraction) {
+    game.current?.playInteraction(event);
+    if (event.to !== viewerId || event.from === viewerId) return;
+    if (event.kind === "dance" || event.kind === "clap") return;
+    toast(t(`interact.received.${event.kind}`, { name: nameOf(event.from) }));
+  }
+
+  const { sessions, positions, presence, avatars, refetchSessions } = useMapLive({ initial, selection, viewerId, game, onInteraction });
 
   const people = useMemo(() => initial.people.map((p) => ({ ...p, presence: presence[p.id] ?? p.presence })), [initial.people, presence]);
   const placed = useMemo(
@@ -51,6 +69,10 @@ export function MapView({ initial, defaultSelection }: { initial: MapData; defau
   );
   const sheets = useAvatarSheets(placed.map((p) => p.userId), avatars);
   const characters = useMemo(() => placed.map(({ checkedInAt: _c, ...c }) => ({ ...c, sheet: sheets[c.userId] })), [placed, sheets]);
+  const floorPositions = useMemo(
+    () => positions.filter((p) => p.branch_id === selection).map((p) => ({ userId: p.user_id, x: p.tile_x, y: p.tile_y })),
+    [positions, selection],
+  );
   const here = placed.filter((p) => !p.onLeave).length;
   const signage = useMemo(
     () => ({
@@ -61,39 +83,49 @@ export function MapView({ initial, defaultSelection }: { initial: MapData; defau
     [t, initial.teamAccents, locale],
   );
 
-  const refetchSessions = useCallback(async () => {
-    const { data } = await createClient().rpc("who_is_in", {});
-    if (data) setSessions(data);
-  }, []);
+  const checkedInHere = floorOf(sessions.find((s) => s.user_id === viewerId)) === selection;
+  const playerId = canAct && checkedInHere && isBranchFloor(selection) ? viewerId : null;
 
-  // Live events come from database triggers on a private branch channel (DATA_MODEL.md section 11).
+  // Positions go out at a pace the server accepts, for as long as the viewer walks this floor.
+  const moves = useRef<MoveSync | null>(null);
   useEffect(() => {
-    const supabase = createClient();
-    let channel: ReturnType<typeof supabase.channel> | null = null;
-    let cancelled = false;
-    (async () => {
-      await supabase.realtime.setAuth();
-      if (cancelled) return;
-      channel = supabase
-        .channel(`branch:${selection}`, { config: { private: true } })
-        .on("broadcast", { event: "checkin" }, () => void refetchSessions())
-        .on("broadcast", { event: "checkout" }, () => void refetchSessions())
-        .on("broadcast", { event: "status" }, ({ payload }) => {
-          const p = payload as { user_id: string; presence: CharacterStatus };
-          setPresenceMap((m) => ({ ...m, [p.user_id]: p.presence }));
-        })
-        .on("broadcast", { event: "avatar" }, async ({ payload }) => {
-          const id = (payload as { user_id: string }).user_id;
-          const { data } = await supabase.from("avatars").select("config").eq("user_id", id).maybeSingle();
-          if (data) setAvatars((a) => ({ ...a, [id]: data.config as unknown as AvatarConfig }));
-        })
-        .subscribe();
-    })();
+    if (!playerId) return;
+    const sync = new MoveSync(async (tile) => {
+      const result = await sendMove(selection, tile);
+      if (result !== "not_checked_in") return result;
+      toast.info(t("interact.errors.not_checked_in"));
+      void refetchSessions();
+      return "failed";
+    });
+    moves.current = sync;
     return () => {
-      cancelled = true;
-      if (channel) supabase.removeChannel(channel);
+      sync.dispose();
+      moves.current = null;
     };
-  }, [selection, refetchSessions]);
+  }, [playerId, selection, t, refetchSessions]);
+
+  const onPlayerMove = useCallback((tile: MapTile, arrived: boolean) => {
+    if (!arrived) setPopover(null);
+    moves.current?.push(tile);
+  }, []);
+  const dismissHint = useCallback(() => setHint(0), []);
+
+  function onFloorTap() {
+    if (canAct && isBranchFloor(selection)) setHint((n) => n + 1);
+  }
+
+  async function act(userId: string, kind: MapInteractionKind) {
+    setPopover(null); // lets go of the character so it can join in
+    const self = userId === viewerId;
+    const name = nameOf(userId);
+    const refused = await sendInteraction(self ? null : userId, kind);
+    if (refused) {
+      toast.info(t(`interact.errors.${refused}`, { name }));
+      if (refused === "not_here" || refused === "not_checked_in") void refetchSessions();
+    } else if (kind === "coffee" || kind === "chat") {
+      toast.success(t(`interact.sent.${kind}`, { name }));
+    }
+  }
 
   function onZoneClick(zone: string) {
     if (zone === "cafe" || zone === "lounge") {
@@ -101,10 +133,6 @@ export function MapView({ initial, defaultSelection }: { initial: MapData; defau
         const r = await setPresence("break");
         if (r.ok) toast.success(t("takingBreak"));
       });
-      return;
-    }
-    if (zone === "notice-board") {
-      toast(t("announcementsSoon"));
       return;
     }
     const route = ZONE_ROUTES[zone];
@@ -118,7 +146,7 @@ export function MapView({ initial, defaultSelection }: { initial: MapData; defau
     <div className="-mx-4 -mt-5 flex h-[calc(100dvh-3.5rem-4.5rem)] flex-col sm:-mx-6 md:h-[calc(100dvh-3.5rem)] lg:-mx-8">
       <div className="bg-background/80 flex flex-wrap items-center gap-2 border-b px-4 py-2 backdrop-blur sm:px-6">
         <h1 className="sr-only">{t("title")}</h1>
-        <Select value={selection} onValueChange={(v) => { setSelection(v); setPopover(null); }}>
+        <Select value={selection} onValueChange={(v) => { setSelection(v); setPopover(null); setHint(0); }}>
           <SelectTrigger size="sm" className="w-52" aria-label={t("branch")}><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -142,10 +170,16 @@ export function MapView({ initial, defaultSelection }: { initial: MapData; defau
           characters={characters}
           signage={signage}
           focusId={popover?.userId ?? null}
+          playerId={playerId}
+          positions={floorPositions}
           onZoneClick={onZoneClick}
           onCharacterClick={(userId, at) => setPopover({ userId, ...at })}
           onZones={setZones}
+          onFloorTap={onFloorTap}
+          onPlayerMove={onPlayerMove}
+          onGame={(g) => { game.current = g; }}
         />
+        {hint > 0 ? <MapHint key={hint} onDismiss={dismissHint} /> : null}
         {popover && popoverPerson ? (
           <CharacterPopover
             person={popoverPerson}
@@ -154,6 +188,9 @@ export function MapView({ initial, defaultSelection }: { initial: MapData; defau
             place={sessions.find((s) => s.user_id === popover.userId && s.method === "field")?.checkin_place ?? null}
             onLeave={!!popoverPlaced?.onLeave}
             card={initial.currentCards[popover.userId]}
+            self={popover.userId === viewerId}
+            canAct={canAct && bothOnFloor(sessions, viewerId, popover.userId, selection)}
+            onAct={(kind) => void act(popover.userId, kind)}
             onClose={() => setPopover(null)}
           />
         ) : null}

@@ -5,12 +5,14 @@ import { useTranslations } from "next-intl";
 import { PRESENCE_DOT } from "@/components/shell/presence-picker";
 import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
+import type { MapInteractionKind } from "@/game";
 import { Link } from "@/i18n/navigation";
 import { formatCairo } from "@/lib/dates";
 import { cn } from "@/lib/utils";
+import { CharacterActions } from "./character-actions";
 import type { MapPerson } from "./types";
 
-export function CharacterPopover({ person, at, checkedInAt, place, onLeave, card, onClose }: {
+export function CharacterPopover({ person, at, checkedInAt, place, onLeave, card, self, canAct, onAct, onClose }: {
   person: MapPerson;
   at: { x: number; y: number };
   checkedInAt: string | null;
@@ -18,6 +20,11 @@ export function CharacterPopover({ person, at, checkedInAt, place, onLeave, card
   place?: string | null;
   onLeave: boolean;
   card?: { id: string; title: string; board_id: string };
+  /** This is the viewer's own character. */
+  self: boolean;
+  /** Both people are checked in on this floor. */
+  canAct: boolean;
+  onAct: (kind: MapInteractionKind) => void;
   onClose: () => void;
 }) {
   const t = useTranslations("map");
@@ -27,8 +34,13 @@ export function CharacterPopover({ person, at, checkedInAt, place, onLeave, card
     <div
       role="dialog"
       aria-label={person.name}
-      className="bg-popover text-popover-foreground absolute z-20 w-64 -translate-x-1/2 -translate-y-full rounded-xl border p-3 shadow-lg"
-      style={{ left: Math.min(Math.max(at.x, 140), 10_000), top: Math.max(at.y - 8, 200) }}
+      className="bg-popover text-popover-foreground absolute z-20 w-64 rounded-xl border p-3 shadow-lg"
+      // Above the character, but never past the edges of the map.
+      style={{
+        left: `clamp(8.25rem, ${at.x}px, calc(100% - 8.25rem))`,
+        top: at.y - 8,
+        translate: `-50% max(-100%, ${16 - at.y}px)`,
+      }}
     >
       <div className="flex items-start gap-3">
         <UserAvatar userId={person.id} name={person.name} size={36} tooltip={false} />
@@ -57,13 +69,16 @@ export function CharacterPopover({ person, at, checkedInAt, place, onLeave, card
           <span className="font-medium">{card.title}</span>
         </Link>
       ) : null}
-      <div className="mt-3 flex gap-2">
-        <Button asChild size="sm" variant="outline" className="flex-1">
+      {canAct ? <CharacterActions self={self} onAct={onAct} /> : null}
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button asChild size="sm" variant="outline" className="flex-auto">
           <Link href={`/people/${person.id}`}><UserRound aria-hidden /> {t("viewProfile")}</Link>
         </Button>
-        <Button size="sm" variant="ghost" disabled title={tc("comingSoon")}>
-          <CalendarPlus aria-hidden /> <span className="sr-only">{t("requestMeeting")}</span>
-        </Button>
+        {self ? null : (
+          <Button asChild size="sm" variant="outline" className="flex-auto">
+            <Link href={`/meetings?new=1&with=${person.id}`}><CalendarPlus aria-hidden /> {t("requestMeeting")}</Link>
+          </Button>
+        )}
       </div>
     </div>
   );

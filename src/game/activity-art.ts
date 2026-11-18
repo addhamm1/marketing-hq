@@ -33,7 +33,13 @@ const ICONS: Record<BubbleKind, string[]> = {
   zzz: ["cccc....", "..c.....", ".c..ccc.", "cccc..c.", ".....c..", "....ccc."],
   phone: ["..kkkk.o", "..kttk..", "..kttko.", "..kttk..", "..kttk.o", "..kkkk.."],
   camera: ["...kk...", "kkkkkkkr", "kgkwwkgk", "kkwttwkk", "kkkwwkkk", "kkkkkkkk"],
+  wave: ["o.o.o...", "o.o.o.o.", "ooooo.o.", "ooooooo.", ".ooooo..", "..ooo..."],
+  highFive: ["y..oo..y", "..oooo..", "y.oooo.y", "..oooo..", "...oo...", "y......y"],
+  clap: ["y..y..y.", "........", ".oo..oo.", ".oooooo.", "..oooo..", "...oo..."],
 };
+
+/** A plain white pixel block, tinted per particle for confetti and sparkles. */
+export const PARTICLE_KEY = "pixel:particle";
 
 const PROPS: Record<Prop, string[]> = {
   coffee: ["kkkk.", "kwwkk", "koook", "kwwk.", ".kk.."],
@@ -62,6 +68,7 @@ function drawRows(ctx: CanvasRenderingContext2D, rows: string[], ox: number, oy:
 }
 
 export function ensureActivityTextures(scene: Phaser.Scene): void {
+  canvasTexture(scene, PARTICLE_KEY, 3, 3, (ctx) => px(ctx, "#ffffff", 0, 0, 3, 3));
   for (const [kind, rows] of Object.entries(ICONS) as [BubbleKind, string[]][]) {
     canvasTexture(scene, bubbleKey(kind), BUBBLE_W, BUBBLE_H, (ctx) => {
       // White speech bubble with a black pixel outline and a tail at the bottom left.

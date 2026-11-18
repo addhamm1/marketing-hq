@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { createPixelGame, type MapCharacter, type MapSignage, type PixelGameController } from "@/game";
+import { createPixelGame, type MapCharacter, type MapPosition, type MapSignage, type MapTile, type PixelGameController } from "@/game";
 
 type Props = {
   mapKey: string;
@@ -9,18 +9,28 @@ type Props = {
   signage: MapSignage;
   /** Character held still while its popover is open. */
   focusId: string | null;
+  /** The viewer's character, when they are checked in on this floor. */
+  playerId: string | null;
+  positions: MapPosition[];
   onZoneClick: (zone: string) => void;
   onCharacterClick: (userId: string, at: { x: number; y: number }) => void;
   onZones: (zones: string[]) => void;
+  onFloorTap: () => void;
+  onPlayerMove: (tile: MapTile, arrived: boolean) => void;
+  /** Hands the running game to the page, for events that arrive while it is open. */
+  onGame: (game: PixelGameController | null) => void;
 };
 
 /** Hosts the Phaser game; destroys it on unmount (no leaks across navigations). */
-export default function MapCanvas({ mapKey, characters, signage, focusId, onZoneClick, onCharacterClick, onZones }: Props) {
+export default function MapCanvas({
+  mapKey, characters, signage, focusId, playerId, positions,
+  onZoneClick, onCharacterClick, onZones, onFloorTap, onPlayerMove, onGame,
+}: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const game = useRef<PixelGameController | null>(null);
-  const handlers = useRef({ onZoneClick, onCharacterClick, onZones });
+  const handlers = useRef({ onZoneClick, onCharacterClick, onZones, onFloorTap, onPlayerMove, onGame });
   useEffect(() => {
-    handlers.current = { onZoneClick, onCharacterClick, onZones };
+    handlers.current = { onZoneClick, onCharacterClick, onZones, onFloorTap, onPlayerMove, onGame };
   });
 
   useEffect(() => {
@@ -29,8 +39,11 @@ export default function MapCanvas({ mapKey, characters, signage, focusId, onZone
       mapKey,
       onZoneClick: (z) => handlers.current.onZoneClick(z),
       onCharacterClick: (id, at) => handlers.current.onCharacterClick(id, at),
+      onFloorTap: () => handlers.current.onFloorTap(),
+      onPlayerMove: (tile, arrived) => handlers.current.onPlayerMove(tile, arrived),
     });
     game.current = controller;
+    handlers.current.onGame(controller);
     // Zones become available once the map has loaded.
     let tries = 0;
     const poll = setInterval(() => {
@@ -42,6 +55,7 @@ export default function MapCanvas({ mapKey, characters, signage, focusId, onZone
     }, 100);
     return () => {
       clearInterval(poll);
+      handlers.current.onGame(null);
       controller.destroy();
       game.current = null;
     };
@@ -65,6 +79,10 @@ export default function MapCanvas({ mapKey, characters, signage, focusId, onZone
   }, [mapKey]);
 
   useEffect(() => {
+    game.current?.setPositions(positions);
+  }, [positions]);
+
+  useEffect(() => {
     game.current?.setCharacters(characters);
   }, [characters]);
 
@@ -75,6 +93,10 @@ export default function MapCanvas({ mapKey, characters, signage, focusId, onZone
   useEffect(() => {
     game.current?.setFocus(focusId);
   }, [focusId]);
+
+  useEffect(() => {
+    game.current?.setPlayer(playerId);
+  }, [playerId]);
 
   return <div ref={ref} className="absolute inset-0 touch-none" data-testid="pixel-map" />;
 }

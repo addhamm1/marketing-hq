@@ -5,13 +5,18 @@ import { defaultConfig } from "./avatar/config";
 import { SceneBridge } from "./bridge";
 import { loadGameFonts } from "./fonts";
 import { MAP_SCENE_KEY, MapScene } from "./scenes/map-scene";
-import type { MapCharacter, MapSignage, PixelGameOptions } from "./types";
+import type { MapCharacter, MapInteraction, MapPosition, MapSignage, MapTile, PixelGameOptions } from "./types";
 
 /** The running Phaser game behind a `PixelGameController`. Browser only. */
 export interface Engine {
   setCharacters(characters: MapCharacter[]): void;
   setSignage(signage: MapSignage): void;
   setFocus(userId: string | null): void;
+  setPlayer(userId: string | null): void;
+  setPositions(positions: MapPosition[]): void;
+  moveCharacter(userId: string, tile: MapTile): void;
+  playInteraction(interaction: MapInteraction): void;
+  celebrate(userId: string): void;
   setMap(mapKey: string): void;
   getZones(): string[];
   destroy(): void;
@@ -20,13 +25,22 @@ export interface Engine {
 export function startEngine(
   parent: HTMLElement,
   options: PixelGameOptions,
-  initial: { mapKey: string; characters: MapCharacter[]; signage: MapSignage | null; focus: string | null },
+  initial: {
+    mapKey: string;
+    characters: MapCharacter[];
+    signage: MapSignage | null;
+    focus: string | null;
+    player: string | null;
+    positions: MapPosition[];
+  },
 ): Engine {
   const bridge = new SceneBridge(options);
   bridge.mapKey = initial.mapKey;
   bridge.characters = initial.characters;
   bridge.signage = initial.signage;
   bridge.focus = initial.focus;
+  bridge.player = initial.player;
+  bridge.positions = initial.positions;
   let destroyed = false;
 
   // Characters walk about unless the user asked the system for less motion.
@@ -97,6 +111,23 @@ export function startEngine(
     setFocus(userId) {
       bridge.focus = userId;
       bridge.scene?.applyFocus();
+    },
+    setPlayer(userId) {
+      bridge.player = userId;
+      bridge.scene?.applyPlayer();
+    },
+    setPositions(positions) {
+      bridge.positions = positions;
+      bridge.scene?.applyPositions();
+    },
+    moveCharacter(userId, tile) {
+      bridge.scene?.moveCharacter(userId, tile);
+    },
+    playInteraction(interaction: MapInteraction) {
+      bridge.scene?.playInteraction(interaction);
+    },
+    celebrate(userId) {
+      bridge.scene?.celebrate(userId);
     },
     setMap(mapKey) {
       bridge.mapKey = mapKey;
