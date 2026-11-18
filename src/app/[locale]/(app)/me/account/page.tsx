@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/states/states";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AccountForm } from "@/features/auth/account-form";
 import { ChangePasswordForm } from "@/features/auth/change-password-form";
+import { BirthdayCard } from "@/features/launch/birthday-card";
 import { requireAccess } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 
@@ -39,6 +40,7 @@ export default async function AccountPage() {
             />
           </CardContent>
         </Card>
+        <BirthdayCard />
         <Card>
           <CardHeader>
             <CardTitle>{t("security")}</CardTitle>

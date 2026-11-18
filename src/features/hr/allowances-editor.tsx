@@ -3,27 +3,27 @@
 import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { BulkAllowanceDialog } from "@/features/launch/bulk-allowance-dialog";
 import { useMessage } from "@/hooks/use-message";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { bulkSetAllowance, setAllowance } from "./actions";
+import { setAllowance } from "./actions";
 
 type Row = { user_id: string; type_id: string; allowance: number; used: number };
 
-export function AllowancesEditor({ year, types, people, balances }: { year: number; types: { id: string; name: string }[]; people: { id: string; name: string }[]; balances: Row[] }) {
+export function AllowancesEditor({ year, types, people, balances }: { year: number; types: { id: string; key: string; name: string }[]; people: { id: string; name: string }[]; balances: Row[] }) {
   const t = useTranslations("hr");
   const tc = useTranslations("common");
   const message = useMessage();
   const router = useRouter();
   const pathname = usePathname();
   const [typeId, setTypeId] = useState(types[0]?.id ?? "");
-  const [bulk, setBulk] = useState("");
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [, startTransition] = useTransition();
   const get = (userId: string) => balances.find((b) => b.user_id === userId && b.type_id === typeId);
   const years = [year - 1, year, year + 1];
+  const selected = types.find((x) => x.id === typeId);
 
   function save(userId: string) {
     const value = Number(edits[userId]);
@@ -48,17 +48,8 @@ export function AllowancesEditor({ year, types, people, balances }: { year: numb
           <SelectTrigger className="w-44" aria-label={t("type")}><SelectValue /></SelectTrigger>
           <SelectContent>{types.map((x) => <SelectItem key={x.id} value={x.id}>{x.name}</SelectItem>)}</SelectContent>
         </Select>
-        <div className="ms-auto flex items-end gap-2">
-          <Input type="number" min={0} max={365} className="w-24" value={bulk} onChange={(e) => setBulk(e.target.value)} aria-label={t("allowance")} placeholder={t("allowance")} />
-          <Button variant="outline" disabled={!bulk}
-            onClick={() => startTransition(async () => {
-              const r = await bulkSetAllowance({ type_id: typeId, year, allowance: Number(bulk) });
-              if (r.ok) toast.success(t("bulkSaved"));
-              else toast.error(message(r.error));
-              router.refresh();
-            })}>
-            {t("bulkSet")}
-          </Button>
+        <div className="ms-auto">
+          <BulkAllowanceDialog typeId={typeId} typeKey={selected?.key ?? ""} typeName={selected?.name ?? ""} year={year} />
         </div>
       </div>
       <div className="bg-card overflow-x-auto rounded-xl border">

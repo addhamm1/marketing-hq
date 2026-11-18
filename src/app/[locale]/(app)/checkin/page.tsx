@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/states/states";
 import { AutoCheckoutConfirm } from "@/features/checkin/auto-checkout-confirm";
 import { CheckinPanel } from "@/features/checkin/checkin-panel";
 import { requireAccess } from "@/lib/auth/session";
+import { cairoDateString } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 
 export async function generateMetadata() {
@@ -15,7 +16,7 @@ export default async function CheckinPage() {
   const t = await getTranslations("checkin");
   const locale = await getLocale();
   const supabase = await createClient();
-  const [{ data: open }, { data: branches }, { data: wfh }, { data: autoClosed }, { data: assigned }] = await Promise.all([
+  const [{ data: open }, { data: branches }, { data: wfh }, { data: autoClosed }, { data: assigned }, { data: crewOn }] = await Promise.all([
     supabase
       .from("attendance_sessions")
       .select("id, branch_id, method, checked_in_at, is_late, checkin_place")
@@ -33,6 +34,13 @@ export default async function CheckinPage() {
       .order("checked_in_at", { ascending: false })
       .limit(1),
     supabase.from("card_assignees").select("cards(id, title, stage, archived_at)").eq("user_id", access.user_id),
+    supabase
+      .from("shoot_crew")
+      .select("shoots!inner(id, title)")
+      .eq("user_id", access.user_id)
+      .eq("shoots.shoot_on", cairoDateString())
+      .is("shoots.archived_at", null)
+      .in("shoots.status", ["planned", "confirmed"]),
   ]);
   const branchList = (branches ?? []).map((br) => ({ id: br.id, name: locale === "ar" ? br.name_ar : br.name_en, methods: br.checkin_methods }));
   const cards = (assigned ?? [])
@@ -50,6 +58,7 @@ export default async function CheckinPage() {
         homeBranchId={access.home_branch_id}
         wfhToday={!!wfh}
         cards={cards}
+        shoots={(crewOn ?? []).map((c) => c.shoots)}
         canCheckIn={access.is_marketing}
       />
     </div>

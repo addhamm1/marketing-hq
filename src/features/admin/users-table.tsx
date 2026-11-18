@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { EmptyState } from "@/components/states/states";
@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { isMissing, isStaffMember, type StaffField } from "@/features/launch/checks";
+import { Link } from "@/i18n/navigation";
 import { APP_ROLES } from "./schemas";
 import type { AdminUser, OrgOption } from "./queries";
 import { UserFormDialog } from "./user-form-dialog";
@@ -20,13 +22,17 @@ export function UsersTable({
   org,
   isAdmin,
   currentUserId,
+  missing = null,
 }: {
   users: AdminUser[];
   org: Org;
   isAdmin: boolean;
   currentUserId: string;
+  /** From the launch checklist: only staff without this detail. */
+  missing?: StaffField | null;
 }) {
   const t = useTranslations("admin");
+  const tl = useTranslations("launch.userForm");
   const tr = useTranslations("roles");
   const tc = useTranslations("common");
   const locale = useLocale();
@@ -47,6 +53,10 @@ export function UsersTable({
     if (dept !== "all" && u.department_id !== dept) return false;
     if (role !== "all" && !u.roles.some((r) => r.role === role)) return false;
     if (status !== "all" && u.status !== status) return false;
+    if (missing) {
+      const row = { ...u, roles: u.roles.map((r) => r.role) };
+      if (!isStaffMember(row) || !isMissing(row, missing)) return false;
+    }
     return true;
   });
 
@@ -105,6 +115,15 @@ export function UsersTable({
           </Button>
         ) : null}
       </div>
+
+      {missing ? (
+        <p className="bg-muted/60 flex flex-wrap items-center gap-2 rounded-lg px-3 py-2 text-sm">
+          {tl(`missing.${missing}`, { count: filtered.length })}
+          <Link href="/admin/users" className="text-primary-ink ms-auto inline-flex items-center gap-1 underline-offset-4 hover:underline">
+            <X className="size-3.5" aria-hidden /> {tl("showAll")}
+          </Link>
+        </p>
+      ) : null}
 
       {filtered.length === 0 ? (
         <EmptyState title={t("noUsers")} />

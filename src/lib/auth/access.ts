@@ -35,7 +35,8 @@ export function isGuestOnly(access: Access) {
   return access.roles.length > 0 && access.roles.every((r) => r.role === "guest");
 }
 
-const GUEST_PATHS = ["/boards", "/my-work"];
+// Guests reach a shoot from the crew notification; row policies show only their own.
+const GUEST_PATHS = ["/boards", "/my-work", "/shoots"];
 
 export function homePath(access: Access): string {
   if (isGuestOnly(access)) return "/boards";

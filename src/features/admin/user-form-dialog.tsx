@@ -1,8 +1,8 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { Controller, type Control } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { FormField } from "@/components/form/form-field";
 import { SubmitButton } from "@/components/form/submit-button";
 import { useActionForm } from "@/components/form/use-action-form";
@@ -12,49 +12,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { OrgSelect } from "./org-select";
 import type { AdminUser, OrgOption } from "./queries";
 import { APP_ROLES, createAccountSchema, updateUserSchema, type CreateAccountInput } from "./schemas";
 import { SecretDialog } from "./secret-dialog";
+import { UserDetailsFields } from "./user-details-fields";
 import { createAccount, updateUser } from "./users-actions";
 
 type Org = { departments: OrgOption[]; teams: OrgOption[]; branches: OrgOption[] };
 type Values = CreateAccountInput & { user_id?: string };
 const WEEK = [6, 0, 1, 2, 3, 4, 5];
-
-function OrgSelect({
-  control, name, options, id, disabled,
-}: {
-  control: Control<Values>;
-  name: "department_id" | "team_id" | "home_branch_id" | "lead_team_id";
-  options: OrgOption[];
-  id: string;
-  disabled?: boolean;
-}) {
-  const locale = useLocale();
-  const tc = useTranslations("common");
-  return (
-    <Controller
-      control={control}
-      name={name}
-      render={({ field }) => (
-        <Select value={field.value ?? "none"} onValueChange={field.onChange} disabled={disabled}>
-          <SelectTrigger id={id} className="w-full">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="none">{tc("none")}</SelectItem>
-            {options.map((o) => (
-              <SelectItem key={o.id} value={o.id}>
-                {locale === "ar" ? o.name_ar : o.name_en}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      )}
-    />
-  );
-}
 
 export function UserFormDialog({
   mode, user, org, isAdmin, onClose,
@@ -88,6 +55,10 @@ export function UserFormDialog({
       workdays: user?.schedule.workdays ?? [6, 0, 1, 2, 3, 4],
       start_time: user?.schedule.start_time ?? "10:00",
       end_time: user?.schedule.end_time ?? "18:00",
+      phone: user?.phone ?? "",
+      joined_on: user?.joined_on ?? "",
+      birth_month: user?.birth_month ?? null,
+      birth_day: user?.birth_day ?? null,
     },
     successMessage: mode === "create" ? t("accountCreated") : t("userSaved"),
     onSuccess: (data) => {
@@ -134,6 +105,7 @@ export function UserFormDialog({
           <FormField id="title" label={t("jobTitle")} error={errors.title?.message}>
             <Input id="title" disabled={profileLocked} {...form.register("title")} />
           </FormField>
+          <UserDetailsFields form={form} phoneLocked={profileLocked} />
 
           <fieldset className="sm:col-span-2" disabled={profileLocked}>
             <legend className="mb-2 text-sm font-medium">{t("roles")}</legend>

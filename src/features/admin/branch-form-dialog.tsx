@@ -29,6 +29,7 @@ export type BranchRow = {
   latitude: number | null;
   longitude: number | null;
   geofence_radius_m: number;
+  location_confirmed_at: string | null;
 };
 
 export function BranchFormDialog({ branch, onClose }: { branch: BranchRow; onClose: () => void }) {

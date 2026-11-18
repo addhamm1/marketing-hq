@@ -9,16 +9,19 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-export type FieldValues = { place: string; card_id: string | null; note: string };
+export type FieldValues = { place: string; card_id: string | null; note: string; shoot_id: string | null };
 
 /** Field / shooting day: optional place name, card and note. The location is captured on submit. */
-export function FieldForm({ cards, pending, onSubmit }: {
+export function FieldForm({ cards, shoots = [], pending, onSubmit }: {
   cards: { id: string; title: string }[];
+  shoots?: { id: string; title: string }[];
   pending: boolean;
   onSubmit: (v: FieldValues) => void;
 }) {
   const t = useTranslations("checkin");
   const tc = useTranslations("common");
+  const ts = useTranslations("shoots.checkin");
+  const [shootId, setShootId] = useState(shoots.length === 1 ? shoots[0].id : "none");
   const [place, setPlace] = useState("");
   const [cardId, setCardId] = useState("none");
   const [note, setNote] = useState("");
@@ -28,10 +31,22 @@ export function FieldForm({ cards, pending, onSubmit }: {
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
-        onSubmit({ place: place.trim(), card_id: cardId === "none" ? null : cardId, note: note.trim() });
+        onSubmit({ place: place.trim(), card_id: cardId === "none" ? null : cardId, note: note.trim(), shoot_id: shootId === "none" ? null : shootId });
       }}
     >
       <p className="text-muted-foreground text-sm">{t("fieldHint")}</p>
+      {shoots.length ? (
+        <div className="space-y-2">
+          <Label htmlFor="checkin-shoot">{ts("shoot")}</Label>
+          <Select value={shootId} onValueChange={setShootId}>
+            <SelectTrigger id="checkin-shoot" className="w-full"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">{ts("noShoot")}</SelectItem>
+              {shoots.map((s) => <SelectItem key={s.id} value={s.id}>{s.title}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+      ) : null}
       <div className="space-y-2">
         <Label htmlFor="checkin-place">{t("fieldPlace")}</Label>
         <Input id="checkin-place" maxLength={120} placeholder={t("fieldPlacePlaceholder")} value={place} onChange={(e) => setPlace(e.target.value)} />
