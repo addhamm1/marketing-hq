@@ -19,5 +19,5 @@ export default async function MapPage() {
   const selection = mine
     ? (mine.branch_id ?? mine.method)
     : (access.home_branch_id ?? data.branches[0]?.id ?? "field");
-  return <MapView initial={data} defaultSelection={selection} />;
+  return <MapView initial={data} defaultSelection={selection} viewerId={access.user_id} canAct={access.is_marketing} />;
 }

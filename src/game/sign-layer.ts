@@ -56,6 +56,16 @@ export class SignLayer {
     this.redraw();
   }
 
+  /** Is this world point on a visible sign plate? */
+  contains(x: number, y: number): boolean {
+    return this.signs.some(({ def, container, text }) => {
+      if (!container.visible) return false;
+      const halfW = (text.width / 2 + PAD_X + ACCENT_W) * this.scale;
+      const halfH = (text.height / 2 + PAD_Y) * this.scale;
+      return Math.abs(x - def.x) <= halfW && Math.abs(y - def.y) <= halfH;
+    });
+  }
+
   /** Re-measure after web fonts load. */
   refresh(): void {
     this.redraw();

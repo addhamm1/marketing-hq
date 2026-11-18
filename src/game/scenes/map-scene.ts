@@ -5,12 +5,13 @@ import type { MapSceneApi, SceneBridge } from "../bridge";
 import { CameraController } from "../camera";
 import type { SheetInfo } from "../character-view";
 import { CharacterManager } from "../characters";
+import { FloorTaps } from "../floor-taps";
 import { parseNavGrid } from "../life/grid";
 import { buildMap, mapCacheKey, queueMap } from "../map-loader";
 import { SignLayer } from "../sign-layer";
 import { readSigns, textResolution } from "../signage";
 import { ensureSharedTextures, fallbackSheet } from "../textures";
-import type { MapCharacter } from "../types";
+import type { MapCharacter, MapInteraction, MapTile } from "../types";
 import { ZoneLayer, readZones } from "../zones";
 
 export const MAP_SCENE_KEY = "pixel-map";
@@ -29,6 +30,7 @@ export class MapScene extends Phaser.Scene implements MapSceneApi {
   private zoneLayer: ZoneLayer | null = null;
   private characters: CharacterManager | null = null;
   private signs: SignLayer | null = null;
+  private floorTaps: FloorTaps | null = null;
   private lastZoom = 0;
   private zoomSettleAt = 0;
   private labelResolution = 0;
@@ -62,7 +64,12 @@ export class MapScene extends Phaser.Scene implements MapSceneApi {
     this.bridge.zones = zones.map((z) => z.name);
 
     const camera = new CameraController(this, map.widthInPixels, map.heightInPixels);
-    const isGesture = () => camera.wasGesture();
+    // Phaser also hears clicks on page elements above the canvas (the popover, the hint): those are not map taps.
+    const onCanvas = () => {
+      const { downElement, upElement } = this.input.activePointer;
+      return downElement === this.game.canvas && upElement === this.game.canvas;
+    };
+    const isGesture = () => camera.wasGesture() || !onCanvas();
     this.camera = camera;
     this.zoneLayer = new ZoneLayer(this, zones, isGesture, this.bridge.options.onZoneClick);
     this.signs = new SignLayer(this, readSigns(json));
@@ -70,10 +77,21 @@ export class MapScene extends Phaser.Scene implements MapSceneApi {
       sheetFor: (c) => this.sheetFor(c),
       isGesture,
       onClick: this.bridge.options.onCharacterClick,
+      onFloorTap: this.bridge.options.onFloorTap,
+      onPlayerMove: this.bridge.options.onPlayerMove,
     });
+    this.floorTaps = new FloorTaps(
+      this,
+      isGesture,
+      (x, y) => this.signs?.contains(x, y) ?? false,
+      (x, y) => this.characters?.tapFloor(x, y),
+    );
     this.bridge.scene = this;
-    this.applyCharacters(this.bridge.characters);
+    // Motion first: saved positions must survive the switch to reduced motion.
     this.applyMotion();
+    this.applyPositions();
+    this.applyPlayer();
+    this.applyCharacters(this.bridge.characters);
     this.applyFocus();
     this.applySignage();
     this.applyZoom();
@@ -107,6 +125,26 @@ export class MapScene extends Phaser.Scene implements MapSceneApi {
     this.characters?.setFocus(this.bridge.focus);
   }
 
+  applyPlayer(): void {
+    this.characters?.setPlayer(this.bridge.player);
+  }
+
+  applyPositions(): void {
+    this.characters?.setPositions(this.bridge.positions);
+  }
+
+  moveCharacter(userId: string, tile: MapTile): void {
+    this.characters?.moveCharacter(userId, tile);
+  }
+
+  playInteraction(interaction: MapInteraction): void {
+    this.characters?.playInteraction(interaction);
+  }
+
+  celebrate(userId: string): void {
+    this.characters?.celebrate(userId);
+  }
+
   refreshLabels(): void {
     this.characters?.refreshLabels();
     this.signs?.refresh();
@@ -138,6 +176,8 @@ export class MapScene extends Phaser.Scene implements MapSceneApi {
 
   private teardown(): void {
     if (this.bridge.scene === this) this.bridge.scene = null;
+    this.floorTaps?.destroy();
+    this.floorTaps = null;
     this.characters?.destroy();
     this.zoneLayer?.destroy();
     this.signs?.destroy();

@@ -1,5 +1,5 @@
 import type { ManifestAnimation, SpriteManifest } from "./avatar/types";
-import type { MapCharacter, MapSignage, PixelGameOptions } from "./types";
+import type { MapCharacter, MapInteraction, MapPosition, MapSignage, MapTile, PixelGameOptions } from "./types";
 
 /** What the engine needs from the running map scene. */
 export interface MapSceneApi {
@@ -7,6 +7,11 @@ export interface MapSceneApi {
   applySignage(): void;
   applyMotion(): void;
   applyFocus(): void;
+  applyPlayer(): void;
+  applyPositions(): void;
+  moveCharacter(userId: string, tile: MapTile): void;
+  playInteraction(interaction: MapInteraction): void;
+  celebrate(userId: string): void;
   refreshLabels(): void;
 }
 
@@ -27,6 +32,8 @@ export class SceneBridge {
   /** False when the user prefers reduced motion: characters stay at their desks. */
   motion = true;
   focus: string | null = null;
+  player: string | null = null;
+  positions: MapPosition[] = [];
   scene: MapSceneApi | null = null;
 
   constructor(readonly options: PixelGameOptions) {

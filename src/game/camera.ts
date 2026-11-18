@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 
-const DRAG_THRESHOLD = 6; // px before a press becomes a pan
+import { TAP_MAX_MOVE } from "./tap";
+
+const DRAG_THRESHOLD = TAP_MAX_MOVE; // px before a press becomes a pan, so a pan is never a tap
 const MAX_ZOOM_FACTOR = 4; // relative to the fit zoom
 const WHEEL_STEP = 1.0015;
 

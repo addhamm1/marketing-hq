@@ -1,7 +1,17 @@
 import type { Engine } from "./engine";
-import type { MapCharacter, MapSignage, PixelGameController, PixelGameOptions } from "./types";
+import type { MapCharacter, MapPosition, MapSignage, PixelGameController, PixelGameOptions } from "./types";
 
-export type { CharacterStatus, MapCharacter, MapSignage, PixelGameController, PixelGameOptions } from "./types";
+export type {
+  CharacterStatus,
+  MapCharacter,
+  MapInteraction,
+  MapInteractionKind,
+  MapPosition,
+  MapSignage,
+  MapTile,
+  PixelGameController,
+  PixelGameOptions,
+} from "./types";
 
 /**
  * Create the pixel map inside `parent`. Phaser itself is loaded lazily on the
@@ -11,11 +21,20 @@ export type { CharacterStatus, MapCharacter, MapSignage, PixelGameController, Pi
  * Calls made before the engine is ready are remembered and applied once it is.
  */
 export function createPixelGame(parent: HTMLElement, options: PixelGameOptions): PixelGameController {
-  const state: { mapKey: string; characters: MapCharacter[]; signage: MapSignage | null; focus: string | null } = {
+  const state: {
+    mapKey: string;
+    characters: MapCharacter[];
+    signage: MapSignage | null;
+    focus: string | null;
+    player: string | null;
+    positions: MapPosition[];
+  } = {
     mapKey: options.mapKey,
     characters: [],
     signage: null,
     focus: null,
+    player: null,
+    positions: [],
   };
   let engine: Engine | null = null;
   let destroyed = false;
@@ -39,6 +58,23 @@ export function createPixelGame(parent: HTMLElement, options: PixelGameOptions):
     setFocus(userId) {
       state.focus = userId;
       engine?.setFocus(userId);
+    },
+    setPlayer(userId) {
+      state.player = userId;
+      engine?.setPlayer(userId);
+    },
+    setPositions(positions) {
+      state.positions = positions;
+      engine?.setPositions(positions);
+    },
+    moveCharacter(userId, tile) {
+      engine?.moveCharacter(userId, tile);
+    },
+    playInteraction(interaction) {
+      engine?.playInteraction(interaction);
+    },
+    celebrate(userId) {
+      engine?.celebrate(userId);
     },
     setMap(mapKey) {
       if (mapKey === state.mapKey) return;

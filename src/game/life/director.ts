@@ -1,7 +1,8 @@
 import type { CharacterStatus } from "../types";
 import { Agent, type AgentPose } from "./agent";
 import { chatSpots, findPartner } from "./chat";
-import { type NavGrid, tileKey } from "./grid";
+import { CONTROL_RESUME_MS, MEET_HOLD_MS, endHold, extendHold, isHeld, jump, nextStop, routeFor, steer } from "./control";
+import { type NavGrid, type Tile, isWalkable, tileKey } from "./grid";
 import { findPath } from "./path";
 import type { Places, Spot } from "./places";
 import { type ActivityKind, activityDuration, bubbleFor, chooseActivity, propFor } from "./plan";
@@ -46,7 +47,7 @@ export class Director {
       if (agent.status === input.status && !homeMoved) continue;
       agent.status = input.status;
       agent.home = input.home;
-      if (!this.motion) agent.teleportHome(this.grid);
+      if (!this.motion && !isHeld(agent)) agent.teleportHome(this.grid);
       this.interrupt(agent);
     }
     for (const id of [...this.agents.keys()]) if (!seen.has(id)) this.remove(id);
@@ -59,6 +60,11 @@ export class Director {
     for (const agent of this.agents.values()) {
       this.endChat(agent);
       this.release(agent);
+      // Someone who was sent somewhere stays there; everyone else goes home.
+      if (isHeld(agent)) {
+        jump(agent, this.grid, agent.target, this.now, 0);
+        continue;
+      }
       agent.teleportHome(this.grid);
       agent.phase = "do";
       agent.activity = on ? "work" : "wander";
@@ -66,6 +72,79 @@ export class Director {
       agent.bubble = null;
       agent.until = this.now + (on ? between(agent.rng, 500, 4_000) : Infinity);
     }
+  }
+
+  /**
+   * A person sends this character to `tile`. The simulation leaves it alone
+   * until `holdMs` pass without another command. Under reduced motion it
+   * appears there instead of walking. False when the tile can't be reached.
+   */
+  command(id: string, tile: Tile, holdMs = CONTROL_RESUME_MS): boolean {
+    const agent = this.agents.get(id);
+    if (!agent || !isWalkable(this.grid, tile.x, tile.y)) return false;
+    const spot: Spot = { x: tile.x, y: tile.y, face: "down" };
+    if (!this.motion) {
+      this.leaveActivity(agent);
+      jump(agent, this.grid, spot, this.now, holdMs);
+      return true;
+    }
+    const path = routeFor(agent, this.grid, spot);
+    if (!path) return false;
+    this.leaveActivity(agent);
+    steer(agent, path, spot, this.now, holdMs);
+    return true;
+  }
+
+  /** Show a character on its saved tile, without walking there. */
+  place(id: string, tile: Tile, holdMs = CONTROL_RESUME_MS): boolean {
+    const agent = this.agents.get(id);
+    if (!agent || !isWalkable(this.grid, tile.x, tile.y)) return false;
+    this.leaveActivity(agent);
+    jump(agent, this.grid, { x: tile.x, y: tile.y, face: "down" }, this.now, holdMs);
+    return true;
+  }
+
+  /** Stand still for a moment (a dance, a clap), stopping at the next tile when walking. */
+  hold(id: string, ms: number): void {
+    const agent = this.agents.get(id);
+    if (!agent) return;
+    this.leaveActivity(agent);
+    if (agent.phase === "walk") {
+      const stop = nextStop(agent);
+      steer(agent, [stop], { x: stop.x, y: stop.y, face: agent.face }, this.now, ms);
+      return;
+    }
+    agent.phase = "do";
+    extendHold(agent, this.now, ms);
+  }
+
+  /** Two people walk up to each other. False when they can't (reduced motion, no room, not on this map). */
+  meet(a: string, b: string, holdMs = MEET_HOLD_MS): boolean {
+    const first = this.agents.get(a);
+    const second = this.agents.get(b);
+    if (!first || !second || first === second || !this.motion) return false;
+    const [left, right] = nextStop(first).x <= nextStop(second).x ? [first, second] : [second, first];
+    const spots = chatSpots(this.grid, nextStop(left), nextStop(right), new Set(this.reserved.keys()));
+    if (!spots) return false;
+    const leftPath = routeFor(left, this.grid, spots[0]);
+    const rightPath = routeFor(right, this.grid, spots[1]);
+    if (!leftPath || !rightPath) return false;
+    this.leaveActivity(left);
+    this.leaveActivity(right);
+    steer(left, leftPath, spots[0], this.now, holdMs);
+    steer(right, rightPath, spots[1], this.now, holdMs);
+    return true;
+  }
+
+  /** True once the character has stopped walking (or isn't on this map). */
+  arrived(id: string): boolean {
+    return this.agents.get(id)?.phase !== "walk";
+  }
+
+  /** True while a person controls this character. */
+  controlled(id: string): boolean {
+    const agent = this.agents.get(id);
+    return !!agent && isHeld(agent);
   }
 
   /** Freeze one character (its popover is open) or nobody. */
@@ -88,6 +167,8 @@ export class Director {
       if (agent.paused) continue;
       if (agent.phase === "walk") {
         if (agent.advance(this.grid, dt)) this.arrive(agent);
+      } else if (isHeld(agent)) {
+        if (this.now >= agent.heldUntil) endHold(agent, this.now);
       } else if (this.now >= agent.until) {
         if (agent.phase === "wait") this.endChat(agent);
         this.plan(agent);
@@ -120,6 +201,7 @@ export class Director {
   /** Status or desk changed: stop what you're doing (at the next tile when walking) and plan again. */
   private interrupt(agent: Agent): void {
     this.endChat(agent);
+    if (isHeld(agent)) return;
     if (agent.phase === "walk") agent.replan = true;
     else agent.until = this.now;
   }
@@ -179,6 +261,12 @@ export class Director {
   }
 
   private arrive(agent: Agent): void {
+    if (isHeld(agent)) {
+      agent.path = [];
+      agent.phase = "do";
+      agent.face = agent.target.face;
+      return;
+    }
     if (agent.replan) {
       this.plan(agent);
       return;
@@ -232,6 +320,12 @@ export class Director {
     partner.partner = null;
     if (partner.phase === "walk") partner.replan = true;
     else partner.until = this.now;
+  }
+
+  /** Drop whatever the simulation had this character doing. */
+  private leaveActivity(agent: Agent): void {
+    this.endChat(agent);
+    this.release(agent);
   }
 
   private release(agent: Agent): void {

@@ -10,7 +10,7 @@ import { type Rng, between, pick, weighted } from "./rng";
 export type ActivityKind = "work" | "sleep" | "coffee" | "chat" | "dance" | "lounge" | "call" | "meeting" | "shoot" | "wander";
 export type Anim = "idle" | "walk" | "type" | "dance" | "sleep";
 export type Prop = "coffee" | "phone" | "camera";
-export type BubbleKind = "chat" | "laugh" | "coffee" | "idea" | "heart" | "music" | "zzz" | "phone" | "camera";
+export type BubbleKind = "chat" | "laugh" | "coffee" | "idea" | "heart" | "music" | "zzz" | "phone" | "camera" | "wave" | "highFive" | "clap";
 
 /** Relative weights per status. Status wins: focus stays at the desk, meeting goes to the meeting room. */
 export const ACTIVITY_WEIGHTS: Record<CharacterStatus, Partial<Record<ActivityKind, number>>> = {
