@@ -1053,5 +1053,141 @@
       "empty": "{name} is empty.",
       "tooMany": "You can add up to {max} files at a time."
     }
+  },
+  "myDay": {
+    "title": "My day",
+    "greeting": {
+      "morning": "Good morning, {name}",
+      "afternoon": "Good afternoon, {name}",
+      "evening": "Good evening, {name}"
+    },
+    "glance": {
+      "label": "Today at a glance",
+      "overdue": "{count} overdue",
+      "dueToday": "{count} due today",
+      "meetings": "{count, plural, one {# meeting} other {# meetings}}",
+      "approvals": "{count, plural, one {# approval} other {# approvals}}",
+      "gates": "{count, plural, one {# gate} other {# gates}}",
+      "shoots": "{count, plural, one {# shoot} other {# shoots}}",
+      "actions": "{count, plural, one {# action} other {# actions}}"
+    },
+    "checkin": {
+      "in": "Checked in since {time}",
+      "inAt": "Checked in at {place} since {time}",
+      "out": "Checked out at {time}",
+      "none": "You haven't checked in yet",
+      "open": "Check in",
+      "manage": "Manage",
+      "failed": "We couldn't load your check-in."
+    },
+    "sections": {
+      "meetings": "Today's meetings",
+      "cards": "Cards due",
+      "approvals": "Waiting for your approval",
+      "gates": "Your gates this week",
+      "shoots": "Shoots",
+      "actions": "Your meeting actions",
+      "celebrations": "Celebrating today"
+    },
+    "empty": {
+      "meetings": "No more meetings today.",
+      "cards": "Nothing overdue or due today.",
+      "approvals": "Nothing is waiting for your decision.",
+      "gates": "None of your gates are due in the next 7 days.",
+      "shoots": "You're not on a shoot today or tomorrow.",
+      "actions": "No open actions from meetings.",
+      "celebrations": "No birthdays or work anniversaries today."
+    },
+    "more": {
+      "meetings": "All meetings",
+      "cards": "All my work",
+      "approvals": "Open approvals",
+      "gates": "Month plan",
+      "shoots": "All shoots",
+      "celebrations": "Coming up"
+    },
+    "failed": "This section didn't load.",
+    "retry": "Try again",
+    "meeting": {
+      "online": "Online",
+      "noRoom": "No room set",
+      "awaiting": "Waiting for your reply",
+      "tentative": "Tentative",
+      "accept": "Accept",
+      "decline": "Decline",
+      "acceptLabel": "Accept {title}",
+      "declineLabel": "Decline {title}",
+      "accepted": "You're going",
+      "declined": "Meeting declined"
+    },
+    "card": {
+      "overdue": "Overdue, {when}",
+      "due": "Due {time}"
+    },
+    "approval": {
+      "card": "Creative review",
+      "request": "Request"
+    },
+    "gate": {
+      "gateOverdue": "{days, plural, one {# day late} other {# days late}}",
+      "gateToday": "Due today",
+      "gateTomorrow": "Due tomorrow",
+      "gateIn": "In {days} days",
+      "atRisk": "At risk"
+    },
+    "shoot": {
+      "today": "Today, call {time}",
+      "tomorrow": "Tomorrow, call {time}"
+    },
+    "action": {
+      "due": "Due {date}",
+      "overdue": "Overdue, {date}"
+    },
+    "celebration": {
+      "birthday": "{name}'s birthday",
+      "anniversary": "{name}: {years, plural, one {# year} other {# years}} at Espaces",
+      "myBirthday": "Happy birthday, {name}!",
+      "myAnniversary": "Happy work anniversary, {name}! {years, plural, one {# year} other {# years}} at Espaces"
+    },
+    "allClear": {
+      "title": "All clear",
+      "body": "No meetings, deadlines or approvals need you today. A good day to get ahead.",
+      "myWork": "My work",
+      "week": "The team's week"
+    }
+  },
+  "digest": {
+    "subject": "Your day: {date}",
+    "greeting": "Good morning, {name}",
+    "intro": "Here is what's on your plate today.",
+    "more": "and {count} more",
+    "cta": "Open My Day",
+    "footer": "You get this email on working mornings.",
+    "manage": "Change email settings"
+  },
+  "pushSettings": {
+    "title": "Notifications",
+    "deviceTitle": "Phone notifications on this device",
+    "deviceBody": "Get alerts for meetings, approvals and cards, even when the app is closed.",
+    "deviceOn": "This device receives your alerts.",
+    "digestTitle": "Morning email",
+    "digestBody": "A short summary of your day, every working morning.",
+    "hints": {
+      "unconfigured": "Phone notifications aren't available yet. Your team lead will let you know when they are.",
+      "unsupported": "This browser can't receive notifications. Use Chrome on Android, or Safari on iPhone with iOS 16.4 or later.",
+      "denied": "Notifications are blocked for this site. Allow them in your browser or phone settings, then come back to this page.",
+      "iosTitle": "On iPhone, add the app to your Home Screen first",
+      "iosStep1": "Open this page in Safari and tap the Share button.",
+      "iosStep2": "Choose Add to Home Screen, then tap Add.",
+      "iosStep3": "Open Marketing HQ from your Home Screen and come back to this page."
+    },
+    "errors": {
+      "notAllowed": "Notifications weren't allowed. Turn this on again and choose Allow.",
+      "enableFailed": "We couldn't turn on notifications for this device. Please try again.",
+      "disableFailed": "We couldn't turn off notifications for this device. Please try again.",
+      "saveFailed": "We couldn't save that. Please try again.",
+      "loadFailed": "We couldn't check this device. Please try again.",
+      "deviceTaken": "This device is linked to another account. Please try again."
+    }
   }
 }
