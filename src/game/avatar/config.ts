@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-import type { AvatarConfig, LayerKey, ManifestLayer, ManifestOption, SpriteManifest, TintKind } from "./types";
+import { SEASONAL_LAYERS } from "./seasonal";
+import type { AvatarConfig, LayerKey, ManifestLayer, ManifestOption, RegularItems, SpriteManifest, TintKind } from "./types";
 
 /**
  * Pure avatar config helpers (no DOM): validation, defaults, randomising and a
@@ -27,7 +28,26 @@ export const avatarConfigSchema = z.object({
   headwearColor: hexColor.optional(),
   glasses: optionalId,
   accessory: optionalId,
+  accessoryColor: hexColor.optional(),
+  regular: z.object({ top: optionalId, headwear: optionalId, accessory: optionalId }).optional(),
 });
+
+export const LOOK_SLOTS = 3;
+export const LOOK_NAME_MAX = 24;
+
+export const lookNameSchema = z.string().trim().min(1, "validation.required").max(LOOK_NAME_MAX, "validation.tooLong");
+
+export const savedLookSchema = z.object({
+  slot: z.number().int().min(0).max(LOOK_SLOTS - 1),
+  name: lookNameSchema,
+  config: avatarConfigSchema,
+});
+
+/** The whole `avatars.looks` column: at most three looks, one per slot. */
+export const savedLooksSchema = z
+  .array(savedLookSchema)
+  .max(LOOK_SLOTS)
+  .refine((looks) => new Set(looks.map((l) => l.slot)).size === looks.length, "validation.invalid");
 
 const layerKey = z.enum(["body", "bottom", "top", "shoes", "hair", "facial_hair", "headwear", "glasses", "accessory"]);
 const tintKind = z.enum(["skin", "hair", "clothing"]);
@@ -41,6 +61,7 @@ export const manifestSchema: z.ZodType<SpriteManifest> = z.object({
   directions: z.array(z.enum(["down", "left", "right", "up"])),
   animations: z.object({ idle: animation, walk: animation }),
   palettes: z.object({ skin: z.array(hexColor), hair: z.array(hexColor), clothing: z.array(hexColor) }),
+  brandColors: z.array(hexColor).optional(),
   layers: z.array(
     z.object({
       key: layerKey,
@@ -53,6 +74,7 @@ export const manifestSchema: z.ZodType<SpriteManifest> = z.object({
           tintable: z.boolean(),
           overlay: z.string().min(1).optional(),
           hides: z.array(layerKey).optional(),
+          seasonal: z.boolean().optional(),
         }),
       ),
     }),
@@ -71,7 +93,7 @@ export const manifestSchema: z.ZodType<SpriteManifest> = z.object({
   }),
 });
 
-type ColorKey = "skin" | "hairColor" | "topColor" | "bottomColor" | "shoesColor" | "headwearColor";
+type ColorKey = "skin" | "hairColor" | "topColor" | "bottomColor" | "shoesColor" | "headwearColor" | "accessoryColor";
 
 /** Which config field holds the tint colour for each layer. */
 const COLOR_KEY: Partial<Record<LayerKey, ColorKey>> = {
@@ -82,6 +104,7 @@ const COLOR_KEY: Partial<Record<LayerKey, ColorKey>> = {
   bottom: "bottomColor",
   shoes: "shoesColor",
   headwear: "headwearColor",
+  accessory: "accessoryColor",
 };
 
 const COLOR_TINT: Record<ColorKey, TintKind> = {
@@ -91,7 +114,13 @@ const COLOR_TINT: Record<ColorKey, TintKind> = {
   bottomColor: "clothing",
   shoesColor: "clothing",
   headwearColor: "clothing",
+  accessoryColor: "clothing",
 };
+
+/** The config field holding a layer's colour, if the layer takes one. */
+export function layerColorKey(key: LayerKey): ColorKey | null {
+  return COLOR_KEY[key] ?? null;
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -125,7 +154,19 @@ export function validateAgainstManifest(input: unknown, manifest: SpriteManifest
     return manifest.palettes[COLOR_TINT[key]][0] ?? "#888888";
   };
 
+  // Keep the remembered regular item only for layers currently wearing a seasonal one.
+  const savedRegular = isRecord(raw.regular) ? raw.regular : {};
+  const regular: RegularItems = {};
+  for (const key of SEASONAL_LAYERS) {
+    if (!findOption(manifest, key, raw[key])?.seasonal || !(key in savedRegular)) continue;
+    const id = savedRegular[key];
+    const known = findOption(manifest, key, id);
+    if (id === null) regular[key] = null;
+    else if (known && !known.seasonal) regular[key] = known.id;
+  }
+
   return {
+    ...(Object.keys(regular).length ? { regular } : {}),
     body: required("body"),
     skin: color("skin"),
     hair: option("hair"),
@@ -141,6 +182,7 @@ export function validateAgainstManifest(input: unknown, manifest: SpriteManifest
     headwearColor: color("headwearColor"),
     glasses: option("glasses"),
     accessory: option("accessory"),
+    accessoryColor: color("accessoryColor"),
   };
 }
 
@@ -157,12 +199,18 @@ const OPTIONAL_CHANCE: Partial<Record<LayerKey, number>> = {
   accessory: 0.35,
 };
 
-export function randomConfig(manifest: SpriteManifest, rand: () => number = Math.random): AvatarConfig {
+/** A random character. Seasonal items are only drawn when listed in `active`. */
+export function randomConfig(
+  manifest: SpriteManifest,
+  rand: () => number = Math.random,
+  active: ReadonlySet<string> = new Set(),
+): AvatarConfig {
   const pick = <T>(items: readonly T[]): T | undefined => items[Math.min(items.length - 1, Math.floor(rand() * items.length))];
   const raw: Record<string, string | null | undefined> = {};
   for (const layer of manifest.layers) {
     const worn = layer.required || rand() < (OPTIONAL_CHANCE[layer.key] ?? 0.3);
-    raw[layer.key] = worn ? (pick(layer.options)?.id ?? null) : null;
+    const wearable = layer.options.filter((o) => !o.seasonal || active.has(o.id));
+    raw[layer.key] = worn ? (pick(wearable)?.id ?? null) : null;
   }
   for (const key of Object.keys(COLOR_TINT) as ColorKey[]) raw[key] = pick(manifest.palettes[COLOR_TINT[key]]);
   return validateAgainstManifest(raw, manifest);

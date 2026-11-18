@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AvatarImage } from "@/components/ui/avatar";
 import { configHash, validateAgainstManifest } from "@/game/avatar/config";
 import { loadManifest, renderPortrait } from "@/game/avatar/compositor";
+import { wornConfig } from "@/game/avatar/worn";
 import { usePeople } from "./people-context";
 
 /** The user's pixel character as an avatar image (data URL cached by config hash). */
@@ -17,7 +18,7 @@ export function PixelAvatar({ userId }: { userId: string; size: number }) {
     if (!config) return;
     let alive = true;
     loadManifest()
-      .then((m) => renderPortrait(validateAgainstManifest(config, m), m, 64))
+      .then(async (m) => renderPortrait(await wornConfig(validateAgainstManifest(config, m), m), m, 64))
       .then((url) => alive && setSrc(url))
       .catch(() => undefined);
     return () => {

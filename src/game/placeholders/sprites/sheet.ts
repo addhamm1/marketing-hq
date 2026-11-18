@@ -7,7 +7,8 @@ export const DIRECTIONS = ["down", "left", "right", "up"] as const;
 
 /**
  * Render one layer option into a 6x4 sheet (192x128): rows down/left/right/up,
- * columns 0-1 idle, 2-5 walk. The right row is the mirrored left row.
+ * columns 0-1 idle, 2-5 walk. The right row is the left row flipped, painted
+ * with the light on the other side so it still falls from the upper left.
  */
 export function buildSheet(draw: LayerDraw): PixelBuffer {
   const sheet = new PixelBuffer(FRAME * COLUMNS, FRAME * DIRECTIONS.length);
@@ -15,7 +16,7 @@ export function buildSheet(draw: LayerDraw): PixelBuffer {
     const view: View = dir === "right" ? "left" : dir;
     POSES.forEach((pose, col) => {
       const frame = new PixelBuffer(FRAME, FRAME);
-      draw({ buf: frame, view, pose });
+      draw({ buf: frame, view, pose, mirrored: dir === "right" });
       sheet.blit(frame, 0, 0, FRAME, FRAME, col * FRAME, row * FRAME, dir === "right");
     });
   });
