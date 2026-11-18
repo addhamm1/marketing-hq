@@ -1,5 +1,5 @@
 {
- "version": 1,
+ "version": 2,
  "frameWidth": 32,
  "frameHeight": 32,
  "directions": [
@@ -57,9 +57,25 @@
    "#166534",
    "#6b21a8",
    "#be185d",
-   "#d6b98c"
+   "#d6b98c",
+   "#F7D139",
+   "#040707",
+   "#2A2A29",
+   "#EBE6DD",
+   "#2D6372",
+   "#FAA41A",
+   "#D62C27"
   ]
  },
+ "brandColors": [
+  "#F7D139",
+  "#040707",
+  "#2A2A29",
+  "#EBE6DD",
+  "#2D6372",
+  "#FAA41A",
+  "#D62C27"
+ ],
  "layers": [
   {
    "key": "body",
@@ -69,12 +85,14 @@
     {
      "id": "b1",
      "file": "body/b1.png",
-     "tintable": true
+     "tintable": true,
+     "overlay": "body/b1.detail.png"
     },
     {
      "id": "b2",
      "file": "body/b2.png",
-     "tintable": true
+     "tintable": true,
+     "overlay": "body/b2.detail.png"
     }
    ]
   },
@@ -96,6 +114,26 @@
     {
      "id": "shorts",
      "file": "bottom/shorts.png",
+     "tintable": true
+    },
+    {
+     "id": "jeans",
+     "file": "bottom/jeans.png",
+     "tintable": true
+    },
+    {
+     "id": "chinos",
+     "file": "bottom/chinos.png",
+     "tintable": true
+    },
+    {
+     "id": "wide-leg",
+     "file": "bottom/wide-leg.png",
+     "tintable": true
+    },
+    {
+     "id": "long-skirt",
+     "file": "bottom/long-skirt.png",
      "tintable": true
     }
    ]
@@ -124,7 +162,76 @@
     {
      "id": "blazer",
      "file": "top/blazer.png",
+     "tintable": true,
+     "overlay": "top/blazer.detail.png"
+    },
+    {
+     "id": "polo",
+     "file": "top/polo.png",
      "tintable": true
+    },
+    {
+     "id": "sweater",
+     "file": "top/sweater.png",
+     "tintable": true
+    },
+    {
+     "id": "denim-jacket",
+     "file": "top/denim-jacket.png",
+     "tintable": true,
+     "overlay": "top/denim-jacket.detail.png"
+    },
+    {
+     "id": "vest",
+     "file": "top/vest.png",
+     "tintable": true,
+     "overlay": "top/vest.detail.png"
+    },
+    {
+     "id": "long-dress",
+     "file": "top/long-dress.png",
+     "tintable": true,
+     "hides": [
+      "bottom"
+     ]
+    },
+    {
+     "id": "abaya",
+     "file": "top/abaya.png",
+     "tintable": true,
+     "hides": [
+      "bottom"
+     ]
+    },
+    {
+     "id": "winter-sweater",
+     "file": "top/winter-sweater.png",
+     "tintable": false,
+     "seasonal": true
+    },
+    {
+     "id": "ramadan-galabeya",
+     "file": "top/ramadan-galabeya.png",
+     "tintable": false,
+     "hides": [
+      "bottom"
+     ],
+     "seasonal": true
+    },
+    {
+     "id": "eid-kaftan",
+     "file": "top/eid-kaftan.png",
+     "tintable": false,
+     "hides": [
+      "bottom"
+     ],
+     "seasonal": true
+    },
+    {
+     "id": "spring-shirt",
+     "file": "top/spring-shirt.png",
+     "tintable": false,
+     "seasonal": true
     }
    ]
   },
@@ -141,6 +248,21 @@
     {
      "id": "boots",
      "file": "shoes/boots.png",
+     "tintable": true
+    },
+    {
+     "id": "loafers",
+     "file": "shoes/loafers.png",
+     "tintable": true
+    },
+    {
+     "id": "flats",
+     "file": "shoes/flats.png",
+     "tintable": true
+    },
+    {
+     "id": "sandals",
+     "file": "shoes/sandals.png",
      "tintable": true
     }
    ]
@@ -174,6 +296,36 @@
      "id": "buzz",
      "file": "hair/buzz.png",
      "tintable": true
+    },
+    {
+     "id": "wavy-long",
+     "file": "hair/wavy-long.png",
+     "tintable": true
+    },
+    {
+     "id": "ponytail",
+     "file": "hair/ponytail.png",
+     "tintable": true
+    },
+    {
+     "id": "fade",
+     "file": "hair/fade.png",
+     "tintable": true
+    },
+    {
+     "id": "side-part",
+     "file": "hair/side-part.png",
+     "tintable": true
+    },
+    {
+     "id": "afro",
+     "file": "hair/afro.png",
+     "tintable": true
+    },
+    {
+     "id": "braids",
+     "file": "hair/braids.png",
+     "tintable": true
     }
    ]
   },
@@ -190,6 +342,21 @@
     {
      "id": "mustache",
      "file": "facial_hair/mustache.png",
+     "tintable": true
+    },
+    {
+     "id": "stubble",
+     "file": "facial_hair/stubble.png",
+     "tintable": true
+    },
+    {
+     "id": "goatee",
+     "file": "facial_hair/goatee.png",
+     "tintable": true
+    },
+    {
+     "id": "full-beard",
+     "file": "facial_hair/full-beard.png",
      "tintable": true
     }
    ]
@@ -232,6 +399,68 @@
      "hides": [
       "hair"
      ]
+    },
+    {
+     "id": "hijab-draped",
+     "file": "headwear/hijab-draped.png",
+     "tintable": true,
+     "hides": [
+      "hair"
+     ]
+    },
+    {
+     "id": "hijab-layered",
+     "file": "headwear/hijab-layered.png",
+     "tintable": true,
+     "hides": [
+      "hair"
+     ]
+    },
+    {
+     "id": "hijab-shawl",
+     "file": "headwear/hijab-shawl.png",
+     "tintable": true,
+     "hides": [
+      "hair"
+     ]
+    },
+    {
+     "id": "turban-wrap",
+     "file": "headwear/turban-wrap.png",
+     "tintable": true,
+     "hides": [
+      "hair"
+     ]
+    },
+    {
+     "id": "party-hat",
+     "file": "headwear/party-hat.png",
+     "tintable": false,
+     "seasonal": true
+    },
+    {
+     "id": "ramadan-taqiyah",
+     "file": "headwear/ramadan-taqiyah.png",
+     "tintable": false,
+     "seasonal": true
+    },
+    {
+     "id": "eid-tarboush",
+     "file": "headwear/eid-tarboush.png",
+     "tintable": false,
+     "seasonal": true
+    },
+    {
+     "id": "spring-hat",
+     "file": "headwear/spring-hat.png",
+     "tintable": false,
+     "seasonal": true
+    },
+    {
+     "id": "egypt-cap",
+     "file": "headwear/egypt-cap.png",
+     "tintable": false,
+     "seasonal": true
     }
    ]
   },
@@ -249,13 +478,18 @@
      "id": "square",
      "file": "glasses/square.png",
      "tintable": false
+    },
+    {
+     "id": "sunglasses",
+     "file": "glasses/sunglasses.png",
+     "tintable": false
     }
    ]
   },
   {
    "key": "accessory",
    "required": false,
-   "tint": null,
+   "tint": "clothing",
    "options": [
     {
      "id": "headphones",
@@ -266,6 +500,45 @@
      "id": "lanyard",
      "file": "accessory/lanyard.png",
      "tintable": false
+    },
+    {
+     "id": "backpack",
+     "file": "accessory/backpack.png",
+     "tintable": true
+    },
+    {
+     "id": "camera-strap",
+     "file": "accessory/camera-strap.png",
+     "tintable": false
+    },
+    {
+     "id": "scarf",
+     "file": "accessory/scarf.png",
+     "tintable": true
+    },
+    {
+     "id": "winter-scarf",
+     "file": "accessory/winter-scarf.png",
+     "tintable": false,
+     "seasonal": true
+    },
+    {
+     "id": "ramadan-lantern",
+     "file": "accessory/ramadan-lantern.png",
+     "tintable": false,
+     "seasonal": true
+    },
+    {
+     "id": "eid-balloon",
+     "file": "accessory/eid-balloon.png",
+     "tintable": false,
+     "seasonal": true
+    },
+    {
+     "id": "egypt-scarf",
+     "file": "accessory/egypt-scarf.png",
+     "tintable": false,
+     "seasonal": true
     }
    ]
   }

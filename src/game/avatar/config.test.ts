@@ -44,7 +44,7 @@ describe("validateAgainstManifest", () => {
 
   it("falls back to defaults for unknown option ids and bad colours", () => {
     const cleaned = validateAgainstManifest(
-      { body: "b9", skin: "red", hair: "mohawk", top: "shirt", bottom: "jeans", shoes: "boots", glasses: "monocle" },
+      { body: "b9", skin: "red", hair: "mohawk", top: "shirt", bottom: "parachute", shoes: "boots", glasses: "monocle" },
       manifest,
     );
     expect(cleaned.body).toBe("b1");

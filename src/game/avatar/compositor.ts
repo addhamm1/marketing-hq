@@ -1,5 +1,6 @@
 import { configHash, hiddenLayers, layerTint, manifestSchema, selectedOption } from "./config";
-import type { AvatarConfig, SpriteManifest } from "./types";
+import { tintLut } from "./tint";
+import type { AvatarConfig, SpriteManifest, TintKind } from "./types";
 
 /**
  * Browser-only avatar compositor shared by the Phaser map and React (portraits).
@@ -9,7 +10,7 @@ import type { AvatarConfig, SpriteManifest } from "./types";
 
 const SPRITES_BASE = "/sprites/";
 const MANIFEST_URL = "/sprites/manifest.json";
-const PORTRAIT_STORAGE_PREFIX = "pixelhq:portrait:v1:";
+const PORTRAIT_STORAGE_PREFIX = "pixelhq:portrait:v2:";
 
 const images = new Map<string, Promise<HTMLImageElement>>();
 const sheets = new Map<string, Promise<HTMLCanvasElement>>();
@@ -62,18 +63,23 @@ export function loadManifest(): Promise<SpriteManifest> {
   return manifestPromise;
 }
 
-/** Draw `img` tinted by `color` (multiply, then clip to the layer's own alpha). */
-function drawTinted(target: CanvasRenderingContext2D, scratch: HTMLCanvasElement, img: HTMLImageElement, color: string): void {
-  const ctx = context(scratch);
-  ctx.globalCompositeOperation = "source-over";
+/** Draw a grey sprite through the colour's tone ramp, so every fabric keeps its shading. */
+function drawTinted(target: CanvasRenderingContext2D, scratch: HTMLCanvasElement, img: HTMLImageElement, color: string, kind: TintKind): void {
+  const ctx = scratch.getContext("2d", { willReadFrequently: true });
+  if (!ctx) throw new Error("Canvas 2D context is not available");
   ctx.clearRect(0, 0, scratch.width, scratch.height);
   ctx.drawImage(img, 0, 0);
-  ctx.globalCompositeOperation = "multiply";
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, scratch.width, scratch.height);
-  ctx.globalCompositeOperation = "destination-in";
-  ctx.drawImage(img, 0, 0);
-  ctx.globalCompositeOperation = "source-over";
+  const pixels = ctx.getImageData(0, 0, scratch.width, scratch.height);
+  const lut = tintLut(color, kind);
+  const { data } = pixels;
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] === 0) continue;
+    const grey = data[i] * 3;
+    data[i] = lut[grey];
+    data[i + 1] = lut[grey + 1];
+    data[i + 2] = lut[grey + 2];
+  }
+  ctx.putImageData(pixels, 0, 0);
   target.drawImage(scratch, 0, 0);
 }
 
@@ -90,6 +96,7 @@ async function composeSheet(config: AvatarConfig, manifest: SpriteManifest): Pro
   const loaded = await Promise.all(
     parts.map(async ({ layer, option }) => ({
       tint: option.tintable ? layerTint(config, layer) : null,
+      kind: layer.tint ?? "clothing",
       base: await loadImage(SPRITES_BASE + option.file),
       overlay: option.overlay ? await loadImage(SPRITES_BASE + option.overlay) : null,
     })),
@@ -99,7 +106,7 @@ async function composeSheet(config: AvatarConfig, manifest: SpriteManifest): Pro
   const ctx = context(sheet);
   const scratch = createCanvas(width, height);
   for (const part of loaded) {
-    if (part.tint) drawTinted(ctx, scratch, part.base, part.tint);
+    if (part.tint) drawTinted(ctx, scratch, part.base, part.tint, part.kind);
     else ctx.drawImage(part.base, 0, 0);
     if (part.overlay) ctx.drawImage(part.overlay, 0, 0);
   }
@@ -119,6 +126,11 @@ export function renderSheet(config: AvatarConfig, manifest: SpriteManifest): Pro
   promise.catch(() => sheets.delete(key));
   sheets.set(key, promise);
   return promise;
+}
+
+/** A one-off sheet for creator thumbnails: not cached, so browsing outfits does not pile up canvases. */
+export function renderPreviewSheet(config: AvatarConfig, manifest: SpriteManifest): Promise<HTMLCanvasElement> {
+  return composeSheet(config, manifest);
 }
 
 function readStorage(key: string): string | null {

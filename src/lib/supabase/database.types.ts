@@ -143,14 +143,14 @@ isOneToOne: false
                   ]
                 },"avatars": {
                   Row: {
-                    "config": NonNullable<Json>,"updated_at": string,"user_id": string
+                    "config": NonNullable<Json>,"looks": NonNullable<Json>,"updated_at": string,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "config": NonNullable<Json>,"updated_at"?: string,"user_id": string
+                    "config": NonNullable<Json>,"looks"?: NonNullable<Json>,"updated_at"?: string,"user_id": string
                   }
                   Update: {
-                    "config"?: NonNullable<Json>,"updated_at"?: string,"user_id"?: string
+                    "config"?: NonNullable<Json>,"looks"?: NonNullable<Json>,"updated_at"?: string,"user_id"?: string
                   }
                   Relationships: [
                     {

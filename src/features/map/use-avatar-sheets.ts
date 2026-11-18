@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { defaultConfig, validateAgainstManifest } from "@/game/avatar/config";
 import { loadManifest, renderSheet } from "@/game/avatar/compositor";
+import { wornConfig } from "@/game/avatar/worn";
 import type { AvatarConfig } from "@/game/avatar/types";
 
 /** Composed sprite sheets per user (cached by config hash inside the compositor). */
@@ -17,7 +18,7 @@ export function useAvatarSheets(userIds: string[], avatars: Record<string, Avata
         const manifest = await loadManifest();
         const entries = await Promise.all(
           userIds.map(async (id) => {
-            const config = avatars[id] ? validateAgainstManifest(avatars[id], manifest) : defaultConfig(manifest);
+            const config = await wornConfig(avatars[id] ? validateAgainstManifest(avatars[id], manifest) : defaultConfig(manifest), manifest);
             return [id, await renderSheet(config, manifest)] as const;
           }),
         );
