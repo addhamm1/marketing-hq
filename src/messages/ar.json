@@ -1181,5 +1181,124 @@
         "weekdays": "بيتكرر يوم"
       }
     }
+  },
+  "week": {
+    "title": "أسبوع الفريق",
+    "subtitle": "كل واحد هيكون فين، يوم بيوم.",
+    "previousWeek": "الأسبوع اللي فات",
+    "nextWeek": "الأسبوع الجاي",
+    "thisWeek": "الأسبوع ده",
+    "department": "القسم",
+    "team": "الفريق",
+    "allDepartments": "كل الأقسام",
+    "allTeams": "كل الفرق",
+    "person": "الاسم",
+    "today": "النهارده",
+    "you": "أنت",
+    "chooseDay": "اختار يوم",
+    "shootAt": "تصوير: {place}",
+    "kinds": {
+      "branch": "الفرع",
+      "field": "شغل خارجي",
+      "shoot": "تصوير",
+      "home": "من البيت",
+      "away": "مش موجود",
+      "off": "يوم راحة",
+      "unknown": "غير محدد"
+    },
+    "editCell": "تعديل خطة {name} يوم {day}، الحالية: {place}",
+    "emptyTitle": "مفيش حد يظهر هنا",
+    "emptyBody": "جرّب قسم أو فريق تاني.",
+    "copyLastWeek": "انسخ أسبوعي اللي فات",
+    "copied": "{count, plural, zero {مفيش أيام اتنسخت} one {اتنسخ يوم واحد من الأسبوع اللي فات} two {اتنسخ يومين من الأسبوع اللي فات} few {اتنسخ # أيام من الأسبوع اللي فات} many {اتنسخ # يوم من الأسبوع اللي فات} other {اتنسخ # يوم من الأسبوع اللي فات}}",
+    "nothingToCopy": "مفيش حاجة تتنسخ: مفيش أيام جاية فاضية تطابق خطة الأسبوع اللي فات.",
+    "whereLabel": "هتكون فين؟",
+    "wherePerson": "{name} هيكون فين؟",
+    "branchLabel": "الفرع",
+    "branchPlaceholder": "اختار الفرع",
+    "placeLabel": "اسم المكان",
+    "placePlaceholder": "مثلًا: مكتب العميل في الزمالك",
+    "save": "حفظ الخطة",
+    "clear": "رجوع للوضع الافتراضي",
+    "saved": "الخطة اتحفظت",
+    "cleared": "اليوم رجع للوضع الافتراضي",
+    "ctaTitle": "محتاج حاجة من التسويق؟",
+    "ctaBody": "ابعت طلبك وتابع خطواته من البوابة.",
+    "ctaButton": "اطلب من التسويق",
+    "errors": {
+      "pastDay": "مينفعش تعديل الأيام اللي فاتت."
+    }
+  },
+  "tracker": {
+    "progress": "مراحل الطلب",
+    "stepOf": "الخطوة {current} من {total}: {step}",
+    "steps": {
+      "received": "تم الاستلام",
+      "in_review": "قيد المراجعة",
+      "in_production": "قيد التنفيذ",
+      "confirmation": "تأكيدك",
+      "delivered": "تم التسليم"
+    },
+    "returned": "مرتجع",
+    "needsAction": "محتاج إجراء منك",
+    "needsActionCount": "{count, plural, zero {مفيش طلبات محتاجة إجراء منك} one {طلب واحد محتاج إجراء منك} two {طلبين محتاجين إجراء منك} few {# طلبات محتاجة إجراء منك} many {# طلب محتاج إجراء منك} other {# طلب محتاج إجراء منك}}",
+    "showThem": "اعرضها",
+    "filterLabel": "تصفية الطلبات",
+    "filters": {
+      "all": "الكل",
+      "needs_action": "محتاج إجراء",
+      "in_progress": "جاري التنفيذ",
+      "delivered": "تم التسليم"
+    },
+    "empty": {
+      "needs_action": "مفيش حاجة محتاجة إجراء منك دلوقتي",
+      "in_progress": "مفيش طلبات جاري تنفيذها",
+      "delivered": "لسه مفيش طلبات اتسلمت"
+    },
+    "headline": {
+      "resubmit": "فريق التسويق رجّع الطلب. عدّله وابعته تاني.",
+      "confirm": "الشغل جاهز. أكّده أو اطلب تعديلات.",
+      "returned": "فريق التسويق رجّع الطلب لقسمك عشان تفاصيل أكتر.",
+      "confirmation": "في انتظار تأكيد {name} على الشغل.",
+      "received": "فريق التسويق استلم طلبك وهيراجعه قريب.",
+      "in_review": "فريق التسويق بيراجع طلبك وبيخطط للشغل.",
+      "in_production": "الفريق شغال على طلبك.",
+      "delivered": "طلبك اتسلم."
+    },
+    "expected": "التسليم المتوقع",
+    "stepDue": "موعد الخطوة دي",
+    "lastMoved": "آخر تحديث",
+    "deliveredOn": "اتسلم يوم",
+    "notSet": "لسه ما اتحددش",
+    "historyTitle": "اللي حصل لحد دلوقتي",
+    "timeline": {
+      "received": "الطلب اتستلم",
+      "in_review": "فريق التسويق بدأ يراجعه",
+      "in_review_again": "فريق التسويق بيراجعه تاني",
+      "in_production": "الشغل بدأ",
+      "in_production_again": "الشغل رجع تاني",
+      "confirmation": "اتبعت لقسمك للتأكيد",
+      "confirmed": "قسمك أكّد الشغل",
+      "changes_requested": "قسمك طلب تعديلات",
+      "delivered": "اتسلم",
+      "returned": "رجع لقسمك عشان تفاصيل أكتر",
+      "resubmitted": "قسمك عدّله وبعته تاني",
+      "date_changed": "موعد التسليم المتوقع بقى {date}"
+    },
+    "action": {
+      "resubmitTitle": "محتاج إجراء منك: عدّل الطلب ده",
+      "confirmTitle": "محتاج إجراء منك: أكّد الشغل",
+      "confirmBody": "راجع الشغل المسلّم تحت، وبعدين أكّده أو اطلب تعديلات."
+    },
+    "deadline": {
+      "daysLeftTitle": "{days, plural, zero {النهارده آخر يوم لخطة {month}} one {فاضل يوم واحد لإرسال خطة {month}} two {فاضل يومين لإرسال خطة {month}} few {فاضل # أيام لإرسال خطة {month}} many {فاضل # يوم لإرسال خطة {month}} other {فاضل # يوم لإرسال خطة {month}}}",
+      "todayTitle": "النهارده آخر يوم لإرسال خطة {month}",
+      "passedTitle": "ميعاد خطة {month} عدّى",
+      "submittedTitle": "قسمك بعت خطة {month}",
+      "deadlineBody": "آخر ميعاد: {date}.",
+      "passedBody": "آخر ميعاد كان {date}. لسه تقدر تبعتها، بس هتتسجل متأخرة.",
+      "submittedBody": "مفيش حاجة تانية مطلوبة الشهر ده.",
+      "submit": "ابعت الخطة"
+    }
   }
 }

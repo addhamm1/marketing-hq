@@ -1181,5 +1181,124 @@
         "weekdays": "Repeats on"
       }
     }
+  },
+  "week": {
+    "title": "Team week",
+    "subtitle": "Where everyone will be, day by day.",
+    "previousWeek": "Previous week",
+    "nextWeek": "Next week",
+    "thisWeek": "This week",
+    "department": "Department",
+    "team": "Team",
+    "allDepartments": "All departments",
+    "allTeams": "All teams",
+    "person": "Person",
+    "today": "Today",
+    "you": "You",
+    "chooseDay": "Choose a day",
+    "shootAt": "Shoot: {place}",
+    "kinds": {
+      "branch": "Branch",
+      "field": "In the field",
+      "shoot": "Shoot",
+      "home": "From home",
+      "away": "Away",
+      "off": "Off",
+      "unknown": "Not set"
+    },
+    "editCell": "Change plan for {name} on {day}, currently {place}",
+    "emptyTitle": "Nobody to show",
+    "emptyBody": "Try another department or team.",
+    "copyLastWeek": "Copy my last week",
+    "copied": "{count, plural, one {Copied # day from last week} other {Copied # days from last week}}",
+    "nothingToCopy": "Nothing to copy: no upcoming open days match last week's plan.",
+    "whereLabel": "Where will you be?",
+    "wherePerson": "Where will {name} be?",
+    "branchLabel": "Branch",
+    "branchPlaceholder": "Choose a branch",
+    "placeLabel": "Place name",
+    "placePlaceholder": "For example, client office in Zamalek",
+    "save": "Save plan",
+    "clear": "Back to default",
+    "saved": "Plan saved",
+    "cleared": "Back to the default for this day",
+    "ctaTitle": "Need something from marketing?",
+    "ctaBody": "Send your request and follow its progress from your portal.",
+    "ctaButton": "Request from marketing",
+    "errors": {
+      "pastDay": "Past days can't be changed."
+    }
+  },
+  "tracker": {
+    "progress": "Progress",
+    "stepOf": "Step {current} of {total}: {step}",
+    "steps": {
+      "received": "Received",
+      "in_review": "In review",
+      "in_production": "In production",
+      "confirmation": "Your confirmation",
+      "delivered": "Delivered"
+    },
+    "returned": "Returned",
+    "needsAction": "Needs your action",
+    "needsActionCount": "{count, plural, one {# request needs your action} other {# requests need your action}}",
+    "showThem": "Show them",
+    "filterLabel": "Filter requests",
+    "filters": {
+      "all": "All",
+      "needs_action": "Needs action",
+      "in_progress": "In progress",
+      "delivered": "Delivered"
+    },
+    "empty": {
+      "needs_action": "Nothing needs your action right now",
+      "in_progress": "No requests in progress",
+      "delivered": "Nothing delivered yet"
+    },
+    "headline": {
+      "resubmit": "Marketing sent this back. Update it and resubmit.",
+      "confirm": "The work is ready. Please confirm it or ask for changes.",
+      "returned": "Marketing sent this back to your department for more details.",
+      "confirmation": "Waiting for {name} to confirm the work.",
+      "received": "Marketing has your request and will review it soon.",
+      "in_review": "Marketing is reviewing your request and planning the work.",
+      "in_production": "The team is working on your request.",
+      "delivered": "Your request has been delivered."
+    },
+    "expected": "Expected delivery",
+    "stepDue": "This step due",
+    "lastMoved": "Last update",
+    "deliveredOn": "Delivered on",
+    "notSet": "Not set yet",
+    "historyTitle": "What has happened so far",
+    "timeline": {
+      "received": "Request received",
+      "in_review": "Marketing started reviewing it",
+      "in_review_again": "Marketing is reviewing it again",
+      "in_production": "Work started",
+      "in_production_again": "Work resumed",
+      "confirmation": "Sent to your department to confirm",
+      "confirmed": "Your department confirmed the work",
+      "changes_requested": "Your department asked for changes",
+      "delivered": "Delivered",
+      "returned": "Sent back to your department for more details",
+      "resubmitted": "Your department updated it and sent it again",
+      "date_changed": "Expected delivery moved to {date}"
+    },
+    "action": {
+      "resubmitTitle": "Needs your action: update this request",
+      "confirmTitle": "Needs your action: confirm the work",
+      "confirmBody": "Check the delivered work below, then confirm it or ask for changes."
+    },
+    "deadline": {
+      "daysLeftTitle": "{days, plural, one {# day left to send your {month} plan} other {# days left to send your {month} plan}}",
+      "todayTitle": "Today is the last day to send your {month} plan",
+      "passedTitle": "The deadline for your {month} plan has passed",
+      "submittedTitle": "Your department has sent its {month} plan",
+      "deadlineBody": "Deadline: {date}.",
+      "passedBody": "The deadline was {date}. You can still send it, and it will be marked as late.",
+      "submittedBody": "Nothing more is needed for this month.",
+      "submit": "Send plan"
+    }
   }
 }
