@@ -14,6 +14,7 @@ type Input = {
   onlineUrl: string | null;
   agenda: string;
   isUpdate: boolean;
+  isCancelled?: boolean;
 };
 
 function escapeHtml(value: string) {
@@ -22,16 +23,21 @@ function escapeHtml(value: string) {
 
 /** Subject and body of the invitation sent to someone outside the company. */
 export function renderGuestInvite(input: Input) {
-  const { locale, guestName, organizerName, title, startsAt, endsAt, place, onlineUrl, agenda, isUpdate } = input;
+  const { locale, guestName, organizerName, title, startsAt, endsAt, place, onlineUrl, agenda, isUpdate, isCancelled = false } = input;
   const t = createTranslator({ locale, messages: locale === "ar" ? ar : en, namespace: "meetings.email" });
   const when = `${formatLongDay(startsAt, locale)}, ${formatTimeRange(startsAt, endsAt)} (${t("cairoTime")})`;
-  const subject = isUpdate ? t("updatedSubject", { title }) : t("inviteSubject", { title });
-  const intro = isUpdate ? t("updatedBody", { name: organizerName, title }) : t("inviteBody", { name: organizerName, title });
+  const subject = isCancelled ? t("cancelledSubject", { title }) : isUpdate ? t("updatedSubject", { title }) : t("inviteSubject", { title });
+  const intro = isCancelled
+    ? t("cancelledBody", { name: organizerName, title })
+    : isUpdate
+      ? t("updatedBody", { name: organizerName, title })
+      : t("inviteBody", { name: organizerName, title });
+  const closing = isCancelled ? t("cancelledAttached") : t("attached");
 
   const rows: [string, string][] = [[t("when"), when]];
   if (place) rows.push([t("where"), place]);
-  if (onlineUrl) rows.push([t("online"), onlineUrl]);
-  if (agenda) rows.push([t("agenda"), agenda]);
+  if (onlineUrl && !isCancelled) rows.push([t("online"), onlineUrl]);
+  if (agenda && !isCancelled) rows.push([t("agenda"), agenda]);
 
   const dir = locale === "ar" ? "rtl" : "ltr";
   const rowHtml = rows
@@ -45,11 +51,11 @@ export function renderGuestInvite(input: Input) {
     <p style="margin:0 0 12px">${escapeHtml(t("greeting", { name: guestName }))}</p>
     <p style="margin:0 0 20px">${escapeHtml(intro)}</p>
     ${rowHtml}
-    <p style="margin:8px 0 0">${escapeHtml(t("attached"))}</p>
+    <p style="margin:8px 0 0">${escapeHtml(closing)}</p>
   </td></tr>
   <tr><td style="padding:20px 28px 24px;font-size:12px;color:#6b7a85">${escapeHtml(t("footer"))}</td></tr>
   </table></td></tr></table></body></html>`;
 
-  const text = [t("greeting", { name: guestName }), intro, ...rows.map(([label, value]) => `${label}: ${value}`), t("attached")].join("\n\n");
+  const text = [t("greeting", { name: guestName }), intro, ...rows.map(([label, value]) => `${label}: ${value}`), closing].join("\n\n");
   return { subject, html, text };
 }

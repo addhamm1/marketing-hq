@@ -1768,7 +1768,10 @@
       "agenda": "Agenda",
       "cairoTime": "Cairo time",
       "attached": "The calendar file is attached, so you can add this to your calendar.",
-      "footer": "Sent by Espaces on behalf of the meeting organiser."
+      "footer": "Sent by Espaces on behalf of the meeting organiser.",
+      "cancelledSubject": "Cancelled: {title}",
+      "cancelledBody": "{name} from Espaces has cancelled “{title}”, or it no longer includes you.",
+      "cancelledAttached": "The attached calendar file removes this meeting from your calendar."
     }
   },
   "shoots": {

@@ -79,3 +79,67 @@ export async function sendGuestInvites(client: SupabaseClient<Database>, meeting
   if (result.failed) console.warn(`[meeting invite] kind=meeting_guest_invite failed=${result.failed}`);
   return result;
 }
+
+/**
+ * Tells guests who already received an invitation that the meeting is off for them,
+ * with a calendar file that removes it. Used when a meeting is cancelled or a guest is removed.
+ */
+export async function sendGuestCancellations(
+  client: SupabaseClient<Database>,
+  meetingId: string,
+  guests: { name: string; email: string }[],
+  locale: "en" | "ar",
+) {
+  if (!guests.length) return 0;
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    console.info(`[email preview] kind=meeting_guest_cancel recipients=${guests.length}`);
+    return 0;
+  }
+  const { data: meeting } = await client
+    .from("meetings")
+    .select("id, title, agenda, starts_at, ends_at, location_text, online_url, organizer_id, created_at, updated_at, meeting_rooms(name_en, name_ar)")
+    .eq("id", meetingId)
+    .maybeSingle();
+  if (!meeting) return 0;
+
+  const { data: organizer } = meeting.organizer_id
+    ? await client.rpc("public_profiles").eq("id", meeting.organizer_id).maybeSingle()
+    : { data: null };
+  const organizerName = organizer?.display_name ?? "Espaces";
+  const resend = new Resend(key);
+  const from = process.env.EMAIL_FROM ?? "Marketing HQ <marketinghq@e-spaces.co>";
+  let sent = 0;
+
+  for (const guest of guests) {
+    const email = renderGuestInvite({
+      locale,
+      guestName: guest.name,
+      organizerName,
+      title: meeting.title,
+      startsAt: meeting.starts_at,
+      endsAt: meeting.ends_at,
+      place: meetingPlace(meeting, locale),
+      onlineUrl: meeting.online_url,
+      agenda: meeting.agenda,
+      isUpdate: false,
+      isCancelled: true,
+    });
+    const ics = meetingIcs(meeting, organizerName, guest, locale, "CANCEL");
+    try {
+      const { error } = await resend.emails.send({
+        from,
+        to: guest.email,
+        subject: email.subject,
+        html: email.html,
+        text: email.text,
+        attachments: [{ filename: "cancel.ics", content: Buffer.from(ics, "utf8").toString("base64"), contentType: "text/calendar; charset=utf-8; method=CANCEL" }],
+      });
+      if (error) throw new Error("send refused");
+      sent++;
+    } catch {
+      console.warn("[meeting invite] kind=meeting_guest_cancel failed=1");
+    }
+  }
+  return sent;
+}

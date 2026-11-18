@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "@/features/auth/actions";
+import { forgetThisDevice } from "@/features/push/forget-device";
 import { Link } from "@/i18n/navigation";
 
 export function initials(name: string) {
@@ -76,7 +77,7 @@ export function UserMenu({ name, email, showCharacter, switchTo, avatar }: Props
           </DropdownMenuItem>
         ) : null}
         <DropdownMenuSeparator />
-        <form action={signOut}>
+        <form action={async () => { await forgetThisDevice(); await signOut(); }}>
           <DropdownMenuItem asChild>
             <button type="submit" className="w-full">
               <LogOut aria-hidden /> {ta("signOut")}

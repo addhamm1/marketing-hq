@@ -16,6 +16,8 @@ export type IcsEvent = {
   url?: string | null;
   organizer: IcsPerson;
   attendees?: IcsPerson[];
+  /** CANCEL removes the event from the guest's calendar. Defaults to REQUEST. */
+  method?: "REQUEST" | "CANCEL";
 };
 
 const CRLF = "\r\n";
@@ -83,7 +85,7 @@ export function buildIcs(event: IcsEvent): string {
     "VERSION:2.0",
     "PRODID:-//Espaces//Marketing HQ//EN",
     "CALSCALE:GREGORIAN",
-    "METHOD:REQUEST",
+    `METHOD:${event.method ?? "REQUEST"}`,
     "BEGIN:VEVENT",
     `UID:${bare(event.uid)}`,
     `SEQUENCE:${Math.max(0, Math.floor(event.sequence))}`,
@@ -96,7 +98,7 @@ export function buildIcs(event: IcsEvent): string {
     event.url ? `URL:${bare(event.url)}` : null,
     person("ORGANIZER", "", event.organizer),
     ...(event.attendees ?? []).map((a) => person("ATTENDEE", ";ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=FALSE", a)),
-    "STATUS:CONFIRMED",
+    `STATUS:${event.method === "CANCEL" ? "CANCELLED" : "CONFIRMED"}`,
     "TRANSP:OPAQUE",
     "END:VEVENT",
     "END:VCALENDAR",

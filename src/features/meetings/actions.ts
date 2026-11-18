@@ -8,7 +8,7 @@ import { actionAccess } from "@/lib/auth/session";
 import type { Database } from "@/lib/supabase/database.types";
 import { createClient } from "@/lib/supabase/server";
 import { meetingFailure } from "./errors";
-import { sendGuestInvites } from "./guest-invites";
+import { sendGuestCancellations, sendGuestInvites } from "./guest-invites";
 import { idSchema, meetingSchema, notesSchema, respondSchema } from "./schemas";
 import { meetingRange } from "./time";
 import type { SaveMeetingResult } from "./types";
@@ -36,7 +36,10 @@ export async function saveMeeting(input: unknown): Promise<ActionResult<SaveMeet
   const roomId = d.room_id || null;
 
   let moved = false;
+  let invitedBefore: { name: string; email: string }[] = [];
   if (d.id) {
+    const { data: guests } = await supabase.from("meeting_guests").select("name, email").eq("meeting_id", d.id).not("invited_at", "is", null);
+    invitedBefore = guests ?? [];
     const { data: before } = await supabase.from("meetings").select("starts_at, ends_at, room_id, status, series_id").eq("id", d.id).maybeSingle();
     if (!before) return fail("meetings.errors.not_found");
     if (before.status !== "scheduled") return fail("meetings.errors.closed");
@@ -63,6 +66,8 @@ export async function saveMeeting(input: unknown): Promise<ActionResult<SaveMeet
   });
   if (error || !id) return meetingFailure(error);
 
+  const kept = new Set(d.guests.map((g) => g.email.trim().toLowerCase()));
+  await sendGuestCancellations(supabase, id, invitedBefore.filter((g) => !kept.has(g.email.toLowerCase())), access.locale);
   const invites = await sendGuestInvites(supabase, id, { moved, locale: access.locale });
   refresh();
   return ok({ id, ...invites });
@@ -86,8 +91,10 @@ export async function cancelMeeting(input: unknown): Promise<ActionResult> {
   if (!access) return fail("common.notAllowed");
   const supabase = await createClient();
   if (await isFixedForPortal(supabase, access, parsed.data.id)) return fail("common.notAllowed");
+  const { data: guests } = await supabase.from("meeting_guests").select("name, email").eq("meeting_id", parsed.data.id).not("invited_at", "is", null);
   const { error } = await supabase.rpc("cancel_meeting", { p_id: parsed.data.id });
   if (error) return meetingFailure(error);
+  await sendGuestCancellations(supabase, parsed.data.id, guests ?? [], access.locale);
   refresh();
   return ok();
 }

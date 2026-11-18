@@ -32,8 +32,9 @@ export function meetingSequence(createdAt: string, updatedAt: string) {
   return Math.max(0, Math.floor((Date.parse(updatedAt) - Date.parse(createdAt)) / 1000));
 }
 
-export function meetingIcs(meeting: IcsMeeting, organizerName: string, attendee: IcsPerson, locale: "en" | "ar") {
+export function meetingIcs(meeting: IcsMeeting, organizerName: string, attendee: IcsPerson, locale: "en" | "ar", method: "REQUEST" | "CANCEL" = "REQUEST") {
   return buildIcs({
+    method,
     uid: meetingUid(meeting.id),
     sequence: meetingSequence(meeting.created_at, meeting.updated_at),
     stamp: meeting.updated_at,

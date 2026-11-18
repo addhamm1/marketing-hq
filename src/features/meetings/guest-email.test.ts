@@ -27,6 +27,13 @@ describe("renderGuestInvite", () => {
     expect(renderGuestInvite({ ...input, isUpdate: true }).subject).toBe("New time or place: Launch plan");
   });
 
+  it("says when a meeting is off and drops the joining details", () => {
+    const { subject, text } = renderGuestInvite({ ...input, isCancelled: true });
+    expect(subject).toBe("Cancelled: Launch plan");
+    expect(text).not.toContain("meet.example.com");
+    expect(text).not.toContain("Budget");
+  });
+
   it("escapes what people typed", () => {
     const { html } = renderGuestInvite({ ...input, title: "<script>alert(1)</script>", agenda: '"><img src=x>', guestName: "<b>Sara</b>" });
     expect(html).not.toContain("<script>");
