@@ -20,6 +20,18 @@
     {
       "path": "/api/cron/post-reminders",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/meetings",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/push",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/digest",
+      "schedule": "0 3-7 * * *"
     }
   ]
 }

@@ -11,17 +11,19 @@ export type Location = z.infer<typeof locationSchema>;
 
 export const checkInSchema = z.discriminatedUnion("method", [
   z.object({ method: z.literal("gps"), location: locationSchema }),
-  z.object({ method: z.literal("wifi"), branch_id: z.uuid(), location: locationSchema.nullable().optional() }),
+  z.object({ method: z.literal("wifi"), branch_id: z.uuid(), location: locationSchema }),
   z.object({
     method: z.literal("field"),
     location: locationSchema,
     place: z.string().trim().max(120, "validation.tooLong").optional(),
     card_id: z.uuid().nullable().optional(),
     note: z.string().trim().max(300, "validation.tooLong").optional(),
+    shoot_id: z.uuid().nullable().optional(),
   }),
-  z.object({ method: z.literal("home") }),
+  z.object({ method: z.literal("home"), location: locationSchema }),
 ]);
 
 export type CheckInInput = z.input<typeof checkInSchema>;
 
-export const checkOutSchema = z.object({ location: locationSchema.nullable().optional() }).optional();
+/** Every check-out needs a location reading. */
+export const checkOutSchema = z.object({ location: locationSchema });

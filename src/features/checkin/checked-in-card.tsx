@@ -1,15 +1,15 @@
 "use client";
 
-import { Building2, Home, Loader2, LogOut, MapPinned } from "lucide-react";
+import { Building2, Home, Loader2, LogOut, MapPinned, MapPinOff } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useMessage } from "@/hooks/use-message";
 import { useRouter } from "@/i18n/navigation";
 import { formatCairo } from "@/lib/dates";
 import { checkOut } from "./actions";
-import { geolocate } from "./geolocate";
+import { geolocate, type GeoErrorKind } from "./geolocate";
 
 export type OpenSession = {
   id: string;
@@ -20,12 +20,13 @@ export type OpenSession = {
   checkin_place: string | null;
 };
 
-/** The open session, with check-out. Check-out tries for a location but never waits on it for long. */
+/** The open session, with check-out. Checking out needs location access. */
 export function CheckedInCard({ open, branchName }: { open: OpenSession; branchName: string }) {
   const t = useTranslations("checkin");
   const message = useMessage();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [geoError, setGeoError] = useState<GeoErrorKind | null>(null);
   const time = formatCairo(open.checked_in_at, "HH:mm");
   const Icon = open.method === "home" ? Home : open.method === "field" ? MapPinned : Building2;
 
@@ -40,12 +41,12 @@ export function CheckedInCard({ open, branchName }: { open: OpenSession; branchN
 
   function out() {
     startTransition(async () => {
-      // Home sessions never record a location.
-      const geo = open.method === "home" ? null : await geolocate({ timeout: 8_000, strict: false, maximumAge: 120_000 });
-      const location = geo?.ok ? geo.location : null;
-      const r = await checkOut({ location });
+      const geo = await geolocate({ strict: false, maximumAge: 60_000 });
+      if (!geo.ok) return setGeoError(geo.kind);
+      setGeoError(null);
+      const r = await checkOut({ location: geo.location });
       if (r.ok) {
-        toast.success(location || open.method === "home" ? t("checkedOut") : t("checkedOutNoLocation"));
+        toast.success(t("checkedOut"));
         router.refresh();
       } else toast.error(message(r.error, r.params));
     });
@@ -58,6 +59,16 @@ export function CheckedInCard({ open, branchName }: { open: OpenSession; branchN
       </div>
       <p className="text-lg font-medium">{label}</p>
       {open.is_late ? <p className="text-muted-foreground text-sm">{t("late")}</p> : null}
+      {geoError ? (
+        <div role="alert" className="bg-muted/60 flex items-start gap-3 rounded-xl p-3 text-start text-sm">
+          <MapPinOff className="text-muted-foreground mt-0.5 size-5 shrink-0" aria-hidden />
+          <div>
+            <p className="font-medium">{t("locationNeededTitle")}</p>
+            <p className="text-muted-foreground">{t(`geo.${geoError}`, { accuracy: 0 })}</p>
+            {geoError === "denied" ? <p className="text-muted-foreground mt-1 text-xs">{t("geo.deniedHelp")}</p> : null}
+          </div>
+        </div>
+      ) : null}
       <Button size="lg" variant="outline" className="h-14 w-full text-base" disabled={pending} onClick={out}>
         {pending ? <Loader2 className="animate-spin" aria-hidden /> : <LogOut aria-hidden />}
         {pending ? t("checkingOut") : t("checkOut")}

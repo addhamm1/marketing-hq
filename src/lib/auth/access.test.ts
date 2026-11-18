@@ -51,7 +51,7 @@ describe("decideRoute", () => {
   });
 
   it("keeps team-only users out of the portal", () => {
-    expect(decideRoute("/portal", true, base)).toEqual({ kind: "redirect", to: "/map" });
+    expect(decideRoute("/portal", true, base)).toEqual({ kind: "redirect", to: "/my-day" });
   });
 
   it("limits guests to boards and my work", () => {
@@ -62,11 +62,11 @@ describe("decideRoute", () => {
   it("shows no-access to users without roles", () => {
     expect(decideRoute("/map", true, noRole)).toEqual({ kind: "redirect", to: "/no-access" });
     expect(decideRoute("/no-access", true, noRole)).toEqual({ kind: "allow" });
-    expect(decideRoute("/no-access", true, base)).toEqual({ kind: "redirect", to: "/map" });
+    expect(decideRoute("/no-access", true, base)).toEqual({ kind: "redirect", to: "/my-day" });
   });
 
   it("redirects signed-in users away from sign-in and root", () => {
-    expect(decideRoute("/sign-in", true, base)).toEqual({ kind: "redirect", to: "/map" });
+    expect(decideRoute("/sign-in", true, base)).toEqual({ kind: "redirect", to: "/my-day" });
     expect(decideRoute("/", true, portal)).toEqual({ kind: "redirect", to: "/portal" });
   });
 });

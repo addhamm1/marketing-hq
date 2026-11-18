@@ -69,3 +69,6 @@ from public.profiles p
 cross join public.request_types t
 cross join (values (2026), (2027)) as y(year)
 where t.is_leave and p.email like '%@e-spaces.co';
+
+-- Local tests use the strict geofence at the home branch (production branches start unconfirmed, D-18).
+update public.branches set location_confirmed_at = now() where slug = 'hq';

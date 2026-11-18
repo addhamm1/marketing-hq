@@ -9,9 +9,11 @@ import { MAX_ACCURACY_M, nearestBranch } from "@/lib/geo";
 import { clientIp, matchCidr } from "@/lib/ip";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { checkInSchema, checkOutSchema, type Location } from "./schemas";
+import { checkInSchema, checkOutSchema } from "./schemas";
 
-const ERRORS = ["method_not_allowed", "no_wfh_today", "location_required", "low_accuracy", "invalid_location"];
+const ERRORS = ["method_not_allowed", "no_wfh_today", "location_required", "low_accuracy", "invalid_location", "shoot_not_found"];
+/** A branch nobody has confirmed on the map yet uses a wide geofence (same rule as branch_geofence_m in SQL). */
+const UNCONFIRMED_RADIUS_M = 1500;
 
 function checkInError(message: string | undefined) {
   const m = message ?? "";
@@ -20,9 +22,6 @@ function checkInError(message: string | undefined) {
   for (const k of ERRORS) if (m.includes(k)) return fail(`checkin.errors.${k}`);
   return fail("common.unknownError");
 }
-
-const locArgs = (l: Location | null | undefined) =>
-  l ? { p_lat: l.lat, p_lng: l.lng, p_accuracy_m: l.accuracy } : {};
 
 /** Result data: the branch name for a branch check-in, so the UI can say where. */
 export type CheckInData = { branch: string | null };
@@ -50,11 +49,15 @@ export async function checkIn(input: unknown): Promise<ActionResult<CheckInData>
     }
     const { data: branches } = await admin
       .from("branches")
-      .select("id, name_en, name_ar, latitude, longitude, geofence_radius_m")
+      .select("id, name_en, name_ar, latitude, longitude, geofence_radius_m, location_confirmed_at")
       .eq("is_active", true)
       .contains("checkin_methods", ["gps"])
       .not("latitude", "is", null);
-    const near = nearestBranch({ ...v.location, accuracyM: v.location.accuracy }, branches ?? []);
+    const fenced = (branches ?? []).map((b) => ({
+      ...b,
+      geofence_radius_m: b.location_confirmed_at ? b.geofence_radius_m : Math.max(b.geofence_radius_m, UNCONFIRMED_RADIUS_M),
+    }));
+    const near = nearestBranch({ ...v.location, accuracyM: v.location.accuracy }, fenced);
     if (near.kind === "none") return fail("checkin.errors.no_branches");
     const name = locale === "ar" ? near.branch.name_ar : near.branch.name_en;
     if (near.kind === "outside") {
@@ -78,24 +81,27 @@ export async function checkIn(input: unknown): Promise<ActionResult<CheckInData>
     p_method: v.method,
     p_verify: verify as never,
     ...(branchId ? { p_branch_id: branchId } : {}),
-    ...(v.method === "home" ? {} : locArgs(v.location)),
+    p_lat: v.location.lat,
+    p_lng: v.location.lng,
+    p_accuracy_m: v.location.accuracy,
     ...(v.method === "field"
-      ? { p_card_id: v.card_id ?? undefined, p_note: v.note || undefined, p_place: v.place || undefined }
+      ? { p_card_id: v.card_id ?? undefined, p_note: v.note || undefined, p_place: v.place || undefined, p_shoot_id: v.shoot_id ?? undefined }
       : {}),
   });
   return error ? checkInError(error.message) : ok({ branch: branchName });
 }
 
-/** Check-out; the location is best effort and never blocks it. */
-export async function checkOut(input?: unknown): Promise<ActionResult> {
+/** Check-out needs a location, like check-in. */
+export async function checkOut(input: unknown): Promise<ActionResult> {
   const parsed = checkOutSchema.safeParse(input);
-  const location = parsed.success ? (parsed.data?.location ?? null) : null;
+  if (!parsed.success) return fail("checkin.errors.location_required");
   if (!(await actionAccess())) return fail("common.notAllowed");
+  const { lat, lng, accuracy } = parsed.data.location;
   const supabase = await createClient();
-  const { error } = location
-    ? await supabase.rpc("check_out", { p_lat: location.lat, p_lng: location.lng, p_accuracy_m: location.accuracy })
-    : await supabase.rpc("check_out");
-  return error ? fail(error.message.includes("not_checked_in") ? "checkin.errors.not_checked_in" : "common.unknownError") : ok();
+  const { error } = await supabase.rpc("check_out", { p_lat: lat, p_lng: lng, p_accuracy_m: accuracy });
+  if (!error) return ok();
+  if (error.message.includes("not_checked_in")) return fail("checkin.errors.not_checked_in");
+  return fail(error.message.includes("location_required") ? "checkin.errors.location_required" : "common.unknownError");
 }
 
 export async function confirmAutoCheckout(input: unknown): Promise<ActionResult> {

@@ -3,7 +3,7 @@ import { signIn } from "./helpers";
 
 test("a member signs in and sees the team shell", async ({ page }) => {
   await signIn(page, "member@test.local");
-  await expect(page).toHaveURL(/\/en\/map/);
+  await expect(page).toHaveURL(/\/en\/my-day/);
   await expect(page.getByRole("link", { name: "Boards" }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: "Admin" })).toHaveCount(0);
 });

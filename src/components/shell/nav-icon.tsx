@@ -1,11 +1,20 @@
 import {
-  BarChart3, CalendarDays, CalendarRange, FileInput, FilePlus2, Files, FileText, Inbox,
-  KanbanSquare, ListTodo, Map, Settings, Stamp, Users,
+  BarChart3, CalendarClock, CalendarDays, CalendarRange, Clapperboard, FileInput, FilePlus2, Files, FileText, Inbox,
+  KanbanSquare, ListTodo, Map, MapPinned, Milestone, PartyPopper, Settings, Stamp, Sun, Users,
 } from "lucide-react";
 import type { NavKey } from "@/lib/nav";
 
 const ICONS: Record<NavKey, typeof Map> = {
+  myDay: Sun,
   map: Map,
+  meetings: CalendarClock,
+  gates: Milestone,
+  shoots: Clapperboard,
+  week: MapPinned,
+  celebrations: PartyPopper,
+  portalWeek: MapPinned,
+  portalMeetings: CalendarClock,
+  portalCelebrations: PartyPopper,
   boards: KanbanSquare,
   myWork: ListTodo,
   approvals: Stamp,

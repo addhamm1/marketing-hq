@@ -20,7 +20,7 @@ async function checkIn(userId: string, method: "wifi" | "qr" | "field" | "home",
     p_user_id: userId,
     p_method: method,
     ...(method === "wifi" || method === "qr" ? { p_branch_id: BRANCH_HQ } : {}),
-    ...(method === "field" ? at(HQ.lat + 0.1, HQ.lng) : {}),
+    ...(method === "field" ? at(HQ.lat + 0.1, HQ.lng) : at(HQ.lat, HQ.lng)),
     p_verify: { test: true },
     ...(when ? { p_now: when } : {}),
   });
@@ -82,14 +82,37 @@ describe("check-in", () => {
     expect(r.error).toBeNull();
     const { data: s } = await svc.from("attendance_sessions").select("branch_id, checkin_lat, checkin_accuracy_m, checkin_place").eq("id", r.data!).single();
     expect(s).toEqual({ branch_id: null, checkin_lat: 30.0444, checkin_accuracy_m: 35, checkin_place: "Client office – Zayed" });
-    expect((await (await as("member")).rpc("check_out")).error).toBeNull();
+    expect((await (await as("member")).rpc("check_out", { p_lat: 30.0444, p_lng: 31.2357, p_accuracy_m: 20 })).error).toBeNull();
     const { data } = await svc.from("attendance_sessions").select("id").eq("user_id", U.member).is("checked_out_at", null);
     expect(data).toEqual([]);
   });
 
-  it("field check-in requires a location", async () => {
-    const r = await svc.rpc("check_in", { p_user_id: U.member, p_method: "field", p_place: "Studio" });
-    expect(r.error?.message).toContain("location_required");
+  it("every check-in method requires a location", async () => {
+    for (const method of ["field", "home", "wifi", "gps"] as const) {
+      const r = await svc.rpc("check_in", { p_user_id: U.member, p_method: method, p_branch_id: BRANCH_HQ });
+      expect(r.error?.message, method).toContain("location_required");
+    }
+  });
+
+  it("check-out requires a location and records it", async () => {
+    expect((await checkIn(U.member, "wifi")).error).toBeNull();
+    const member = await as("member");
+    const refused = await member.rpc("check_out", { p_lat: null as never, p_lng: null as never, p_accuracy_m: null as never });
+    expect(refused.error?.message).toContain("location_required");
+    expect((await member.rpc("check_out", at(HQ.lat, HQ.lng, 15))).error).toBeNull();
+    const { data } = await svc.from("attendance_sessions").select("checkout_lat, checkout_accuracy_m")
+      .eq("user_id", U.member).order("checked_in_at", { ascending: false }).limit(1).single();
+    expect(data).toEqual({ checkout_lat: HQ.lat, checkout_accuracy_m: 15 });
+  });
+
+  it("a branch nobody has confirmed uses a wide geofence", async () => {
+    await svc.from("branches").update({ location_confirmed_at: null }).eq("id", BRANCH_HQ);
+    try {
+      // About 500 m north of hq: refused once the point is confirmed, accepted before.
+      expect((await gps(U.member, HQ.lat + 0.0045, HQ.lng)).error).toBeNull();
+    } finally {
+      await svc.from("branches").update({ location_confirmed_at: new Date().toISOString() }).eq("id", BRANCH_HQ);
+    }
   });
 
   it("the retired QR method is refused", async () => {

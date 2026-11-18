@@ -165,4 +165,7 @@ insert into public.holidays (day, name_en, name_ar, is_half_day) values
 insert into public.desks (branch_id, zone_name)
 select '30000000-0000-4000-8000-000000000001', 'desk-' || g.n from generate_series(1, 16) as g(n);
 
+-- Workflow defaults: meeting actions board, meeting rooms.
+\ir seed/09_workflow.sql
+
 commit;

@@ -71,6 +71,19 @@ export function CheckinPanel({ open, branches, homeBranchId, wfhToday, cards, ca
     });
   }
 
+  /** Home and Wi-Fi check-ins need a reading too, but not a precise one. */
+  function withLocation(build: (location: Location) => CheckInInput) {
+    startTransition(async () => {
+      let location = phase.k === "outside" ? phase.location : null;
+      if (!location) {
+        const geo = await locate(false);
+        if (!geo.ok) return setPhase({ k: "geoError", kind: geo.kind, accuracy: geo.accuracy });
+        location = geo.location;
+      }
+      await submit(build(location));
+    });
+  }
+
   function field(v: FieldValues) {
     startTransition(async () => {
       let location = phase.k === "outside" ? phase.location : null;
@@ -85,7 +98,12 @@ export function CheckinPanel({ open, branches, homeBranchId, wfhToday, cards, ca
 
   const status =
     phase.k === "geoError" ? (
-      <Notice icon={MapPinOff} text={t(`geo.${phase.kind}`, { accuracy: phase.accuracy ?? 0 })} />
+      <Notice
+        icon={MapPinOff}
+        title={t("locationNeededTitle")}
+        text={t(`geo.${phase.kind}`, { accuracy: phase.accuracy ?? 0 })}
+        help={phase.kind === "denied" ? t("geo.deniedHelp") : undefined}
+      />
     ) : phase.k === "outside" ? (
       <Notice icon={MapPinOff} title={t("outsideTitle")} text={t("outside", { distance: distanceText(phase.distance), branch: phase.branch })} />
     ) : phase.k === "error" ? (
@@ -114,21 +132,22 @@ export function CheckinPanel({ open, branches, homeBranchId, wfhToday, cards, ca
           pending={busy}
           initial={phase.k === "outside" ? "field" : null}
           onField={field}
-          onHome={() => startTransition(() => submit({ method: "home" }))}
-          onWifi={(branch_id) => startTransition(() => submit({ method: "wifi", branch_id, location: phase.k === "outside" ? phase.location : null }))}
+          onHome={() => withLocation((location) => ({ method: "home", location }))}
+          onWifi={(branch_id) => withLocation((location) => ({ method: "wifi", branch_id, location }))}
         />
       </section>
     </div>
   );
 }
 
-function Notice({ icon: Icon, title, text }: { icon: typeof AlertCircle; title?: string; text: string }) {
+function Notice({ icon: Icon, title, text, help }: { icon: typeof AlertCircle; title?: string; text: string; help?: string }) {
   return (
     <div role="alert" className="bg-muted/60 flex items-start gap-3 rounded-xl p-3 text-start text-sm">
       <Icon className="text-muted-foreground mt-0.5 size-5 shrink-0" aria-hidden />
       <div>
         {title ? <p className="font-medium">{title}</p> : null}
         <p className="text-muted-foreground">{text}</p>
+        {help ? <p className="text-muted-foreground mt-1 text-xs">{help}</p> : null}
       </div>
     </div>
   );

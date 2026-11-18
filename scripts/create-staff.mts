@@ -74,6 +74,10 @@ for (const [slug, email] of Object.entries(roster.default_approvers)) {
   if (person) await admin.from("departments").update({ default_approver_id: person.id }).eq("slug", slug);
 }
 
+// Default owners for the monthly gates and fixed meetings (never replaces a chosen owner).
+const { error: ownersError } = await admin.rpc("workflow_assign_default_owners");
+if (ownersError) console.error(`error  default owners not set (${ownersError.message})`);
+
 if (created.length) {
   console.log("\nTemporary passwords (shown once; hand each over privately):");
   for (const c of created) console.log(`  ${c.email.padEnd(32)} ${c.password}`);

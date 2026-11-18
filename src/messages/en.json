@@ -118,7 +118,16 @@
     "portalHome": "My requests",
     "portalNew": "New request",
     "portalApprovals": "Approvals",
-    "portalFiles": "Files"
+    "portalFiles": "Files",
+    "myDay": "My day",
+    "meetings": "Meetings",
+    "gates": "Monthly gates",
+    "shoots": "Shoot days",
+    "week": "Team week",
+    "celebrations": "Celebrations",
+    "portalWeek": "Team week",
+    "portalMeetings": "Meetings",
+    "portalCelebrations": "Celebrations"
   },
   "shell": {
     "notifications": "Notifications",
@@ -572,7 +581,24 @@
     "post_decided": "Your post was {approved, select, true {approved} other {sent back}}",
     "auto_checkout": "You were checked out automatically. Please confirm your real time.",
     "fallback": "You have a new notification",
-    "markRead": "Mark as read"
+    "markRead": "Mark as read",
+    "meeting_invite": "You're invited to “{title}”",
+    "meeting_updated": "“{title}” has a new time or room",
+    "meeting_cancelled": "“{title}” was cancelled",
+    "meeting_soon": "“{title}” starts in 15 minutes",
+    "meeting_declined": "Someone declined “{title}”",
+    "meeting_action_assigned": "New action from a meeting: “{title}”",
+    "gate_due_soon": "“{title}” is due soon",
+    "gate_overdue": "“{title}” is overdue",
+    "shoot_crew_added": "You're on the crew for “{title}”",
+    "shoot_tomorrow": "“{title}” shoots tomorrow",
+    "kudos": "{title} sent you kudos",
+    "happy_birthday": "Happy birthday, {title}!",
+    "happy_anniversary": "Happy work anniversary, {title}!",
+    "celebration_birthday": "It's {title}'s birthday today",
+    "celebration_anniversary": "It's {title}'s work anniversary today",
+    "map_invite": "{title} invited you over on the map",
+    "strategic_reminder": "Strategic requests for next month are due by {title}"
   },
   "email": {
     "greeting": "Hi {name},",
@@ -635,16 +661,16 @@
       "out_of_range_short": "You're outside the branch check-in area.",
       "low_accuracy": "Your location is too rough. Turn on precise location and try again.",
       "low_accuracy_m": "Your location is too rough (±{accuracy} m). Turn on precise location and try again.",
-      "location_required": "This check-in needs your location. Allow location access and try again.",
+      "location_required": "Allow location access to check in or out.",
       "invalid_location": "That location doesn't look right. Try again.",
-      "no_branches": "No branch has location check-in set up yet. Use office Wi-Fi or ask an admin."
+      "no_branches": "No branch has location check-in set up yet. Use office Wi-Fi or ask an admin.",
+      "shoot_not_found": "That shoot is no longer available."
     },
     "checkedInFieldAt": "Field day at {place} since {time}",
     "checkedInAtBranch": "You're at {branch}. Checked in.",
-    "checkedOutNoLocation": "Checked out (location wasn't available).",
     "locating": "Finding your location…",
     "checkingOut": "Checking out…",
-    "checkInHint": "We use your location once to find the branch you're at. It's saved with your check-in and visible to you, your team lead and HR.",
+    "checkInHint": "Your location is recorded when you check in and check out.",
     "notAtBranch": "Not at a branch?",
     "tryAgain": "Try again",
     "fieldTitle": "Field / shooting day",
@@ -660,12 +686,14 @@
     "meters": "{n} m",
     "kilometers": "{n} km",
     "geo": {
-      "denied": "Location access is off. Allow location for this site in your browser settings, then try again.",
+      "denied": "Location access is off, so you can't check in or out yet.",
       "unavailable": "We couldn't get your location. Turn on location services or move near a window, then try again.",
       "timeout": "Finding your location took too long. Try again.",
       "low_accuracy": "Your location is too rough (±{accuracy} m). Turn on precise location or step outside, then try again.",
-      "unsupported": "This browser can't share your location. Use office Wi-Fi check-in instead."
-    }
+      "unsupported": "This browser can't share your location. Open Marketing HQ in Chrome or Safari to check in or out.",
+      "deniedHelp": "iPhone: Settings, Privacy & Security, Location Services, then allow your browser. Android: tap the icon next to the address, then Permissions, then allow Location."
+    },
+    "locationNeededTitle": "Location access is needed"
   },
   "map": {
     "title": "Map",

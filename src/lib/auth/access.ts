@@ -39,7 +39,7 @@ const GUEST_PATHS = ["/boards", "/my-work"];
 
 export function homePath(access: Access): string {
   if (isGuestOnly(access)) return "/boards";
-  if (access.is_team_app) return "/map";
+  if (access.is_team_app) return "/my-day";
   if (access.is_portal) return "/portal";
   return "/no-access";
 }
@@ -87,7 +87,11 @@ export function decideRoute(path: string, signedIn: boolean, access: Access | nu
   if (matches(path, "/portal")) {
     return access.is_portal ? { kind: "allow" } : { kind: "redirect", to: home };
   }
-  if (!access.is_team_app) return { kind: "redirect", to: home };
+  if (!access.is_team_app) {
+    // Links in notifications point at the shared pages; portal users have their own copies.
+    const shared = ["/meetings", "/celebrations", "/week"].find((p) => matches(path, p));
+    return { kind: "redirect", to: shared ? `/portal${path}` : home };
+  }
   if (isGuestOnly(access) && !GUEST_PATHS.some((p) => matches(path, p))) {
     return { kind: "redirect", to: home };
   }
