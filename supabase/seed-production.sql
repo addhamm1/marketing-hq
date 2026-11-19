@@ -24,6 +24,18 @@ insert into public.teams (id, department_id, slug, name_en, name_ar, color) valu
   ('20000000-0000-4000-8000-000000000003', '10000000-0000-4000-8000-000000000001', 'performance', 'Performance', 'الأداء', '#10B981'),
   ('20000000-0000-4000-8000-000000000004', '10000000-0000-4000-8000-000000000001', 'community', 'Digital Community Management', 'إدارة المجتمع الرقمي', '#3B82F6');
 
+insert into public.settings (key, value) values
+  ('lateness_grace_minutes', '15'),
+  ('wip_limit', '6'),
+  ('monthly_post_target', '12'),                       -- DECISION: D-15
+  ('strategic_deadline_day', '25'),
+  ('stage_targets_hours', '{"request":0,"performance_input":24,"intake":8,"brief_schedule":16,"production":40,"creative_review":8,"confirmation":24,"ready_to_publish":24,"published":0}'), -- DECISION: D-13
+  ('verticals', '["Virtual Offices","Offices","Daily Reservation","Cocafe","Documents and Proposals"]'),
+  ('formats', '["static","carousel","reel","long video","story","copy only","landing page","print","presentation or proposal"]'),
+  ('platforms', '["facebook","instagram","linkedin","tiktok","snapchat","google_ads","website","print","internal"]'),
+  ('post_platforms', '["facebook","instagram","linkedin","tiktok","snapchat"]')
+on conflict (key) do nothing;
+
 -- DECISION: D-02 (placeholder home branch "hq" until the real branch is named)
 insert into public.branches (id, slug, name_en, name_ar, area, map_key, public_ips) values
   ('30000000-0000-4000-8000-000000000001', 'hq', 'Marketing HQ', 'مقر التسويق', 'Heliopolis', 'hq', '{}'),
