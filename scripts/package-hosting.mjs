@@ -8,15 +8,19 @@
 // any unzip tool works. Secrets are never included: server-only values are entered in cPanel.
 // --local-test packages against this computer's database, only to try the package here.
 import { execSync } from "node:child_process";
-import { cpSync, existsSync, readdirSync, readFileSync, rmSync, statSync } from "node:fs";
+import { appendFileSync, cpSync, existsSync, readdirSync, readFileSync, rmSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const run = (cmd, cwd = ".") => execSync(cmd, { stdio: "inherit", cwd });
 const read = (cmd) => execSync(cmd).toString().trim();
+class PackageError extends Error {}
 const fail = (msg) => {
-  console.error(`\n✗ ${msg}`);
-  process.exit(1);
+  throw new PackageError(msg);
 };
+process.on("uncaughtException", (e) => {
+  console.error(e instanceof PackageError ? `\n✗ ${e.message}` : e);
+  process.exit(1);
+});
 
 const localTest = process.argv.includes("--local-test");
 const envFile = ".env.production.local";
@@ -46,7 +50,9 @@ run("git worktree prune");
 run(`git worktree add --detach "${work}" HEAD`);
 try {
   cpSync(envFile, join(work, envFile));
-  run("pnpm install --frozen-lockfile --prefer-offline --config.node-linker=hoisted", work);
+  // A flat node_modules (no symlinks), only in this throwaway copy.
+  appendFileSync(join(work, "pnpm-workspace.yaml"), "\nnodeLinker: hoisted\n");
+  run("pnpm install --frozen-lockfile --prefer-offline", work);
   run("pnpm build", work);
 
   const out = join(work, ".next/standalone");
