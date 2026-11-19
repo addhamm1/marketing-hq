@@ -51,3 +51,6 @@ next-env.d.ts
 /dist
 /.hosting-build
 .env.production.local
+
+# Netlify CLI link state
+.netlify
