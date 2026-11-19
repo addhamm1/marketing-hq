@@ -111,13 +111,16 @@ Access tiers (DECISIONS D-20): **super_admin** only for Adham Mostafa and Omnia 
 | Omnia Magdy | Acting Managing Partner, Head of Sales | sales |  | super_admin | omnia@e-spaces.co |
 | Roaa Reda | Traffic Manager | marketing | traffic | traffic_manager | roaa@e-spaces.co |
 | Ibrahem Seif | Creative and Content Director | marketing | creative | member | ibrahem@e-spaces.co |
-| Mahmoud Hussein | Designer | marketing | creative | member | mahmoud.hussein@e-spaces.co |
+| Mahmoud Hussein | Designer | marketing | creative | member | mahmoud@e-spaces.co |
 | Hatem Sapet | Videographer | marketing | creative | member | hatem@e-spaces.co |
 | Basil Nabil | Intern Content Creator | marketing | creative | member | basil@e-spaces.co |
 | Omar Afify | Head of Performance and Media Buying | marketing | performance | member | omar.afify@e-spaces.co |
-| Yasmin Shaarawy | Creative | marketing | creative | member | yasmin@e-spaces.co |
+| Yasmin Shaarawy | Creative | marketing | creative | member | yasmine@e-spaces.co |
 | Omar Mansy | Performance | marketing | performance | member | omar.mansy@e-spaces.co |
-| Ahmed Gad | Performance | marketing | performance | member | ahmed.gad@e-spaces.co |
+| Ahmed Gad | Performance | marketing | performance | member | gad@e-spaces.co |
+| Mariam | Reel Creator | marketing | creative | member | mariam@e-spaces.co |
+| Sherif | Marketing Director | marketing |  | member | sherif@e-spaces.co |
+| Mostafa | Marketing | marketing |  | member | mostafa@e-spaces.co |
 | Ahmed Yassin | CEO and Founder | management |  | requester | ahmed.yassin@e-spaces.co |
 | Asmaa Hossam | Sales Team Lead | sales |  | requester, final_approver | asmaa@e-spaces.co |
 | Hadeer Mohamed | Head of Daily Reservation Sales | daily-reservation |  | requester | hadeer@e-spaces.co |
@@ -127,7 +130,7 @@ Access tiers (DECISIONS D-20): **super_admin** only for Adham Mostafa and Omnia 
 | Omar Abd al-Aziz | Head of Logistics | logistics |  | requester | omar.abdelaziz@e-spaces.co |
 | Mohamed Mohy | Head of Operations | operations |  | requester | mohy@e-spaces.co |
 
-Community Management lead, the new Junior Designer and the Reel Creator are added to `staff.json` when hired or named.
+Community Management lead and the new Junior Designer are added to `staff.json` when hired or named. Surnames for Mariam, Sherif and Mostafa, and Mostafa's title, are still to come.
 
 ## Test users (local and staging only)
 

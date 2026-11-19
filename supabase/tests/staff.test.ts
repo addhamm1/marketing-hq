@@ -29,7 +29,7 @@ const P = {
   omnia: "omnia@e-spaces.co",
   roaa: "roaa@e-spaces.co",
   ibrahem: "ibrahem@e-spaces.co",
-  mahmoud: "mahmoud.hussein@e-spaces.co",
+  mahmoud: "mahmoud@e-spaces.co",
   hatem: "hatem@e-spaces.co",
   basil: "basil@e-spaces.co",
   asmaa: "asmaa@e-spaces.co",

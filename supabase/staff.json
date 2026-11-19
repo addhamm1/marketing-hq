@@ -1,5 +1,5 @@
 {
-  "_note": "Real Espaces staff. Source for scripts/create-staff.mts (staging/production) and mirrored in supabase/seed/08_espaces_people.sql (local). Emails follow name@e-spaces.co; confirm each address before creating production accounts (DECISIONS D-19). Access tiers (D-20): super_admin = Adham, Omnia; traffic_manager (less access) = Roaa; everyone else is a regular employee (member in marketing, requester elsewhere). final_approver is a workflow duty (delivery confirmation), not extra access.",
+  "_note": "Real Espaces staff. Source for scripts/create-staff.mts (staging/production) and mirrored in supabase/seed/08_espaces_people.sql (local). Marketing emails confirmed by Adham on 2026-11-19 (D-19); other departments still follow name@e-spaces.co until confirmed. Access tiers (D-20): super_admin = Adham, Omnia; traffic_manager (less access) = Roaa; everyone else is a regular employee (member in marketing, requester elsewhere). final_approver is a workflow duty (delivery confirmation), not extra access.",
   "default_approvers": {
     "sales": "asmaa@e-spaces.co",
     "daily-reservation": "asmaa@e-spaces.co",
@@ -47,7 +47,7 @@
       "title": "Creative and Content Director"
     },
     {
-      "email": "mahmoud.hussein@e-spaces.co",
+      "email": "mahmoud@e-spaces.co",
       "full_name": "Mahmoud Hussein",
       "department": "marketing",
       "team": "creative",
@@ -87,7 +87,7 @@
       "title": "Head of Performance and Media Buying"
     },
     {
-      "email": "yasmin@e-spaces.co",
+      "email": "yasmine@e-spaces.co",
       "full_name": "Yasmin Shaarawy",
       "department": "marketing",
       "team": "creative",
@@ -107,7 +107,7 @@
       "title": "Performance"
     },
     {
-      "email": "ahmed.gad@e-spaces.co",
+      "email": "gad@e-spaces.co",
       "full_name": "Ahmed Gad",
       "department": "marketing",
       "team": "performance",
@@ -115,6 +115,36 @@
         "member"
       ],
       "title": "Performance"
+    },
+    {
+      "email": "mariam@e-spaces.co",
+      "full_name": "Mariam",
+      "department": "marketing",
+      "team": "creative",
+      "roles": [
+        "member"
+      ],
+      "title": "Reel Creator"
+    },
+    {
+      "email": "sherif@e-spaces.co",
+      "full_name": "Sherif",
+      "department": "marketing",
+      "team": null,
+      "roles": [
+        "member"
+      ],
+      "title": "Marketing Director"
+    },
+    {
+      "email": "mostafa@e-spaces.co",
+      "full_name": "Mostafa",
+      "department": "marketing",
+      "team": null,
+      "roles": [
+        "member"
+      ],
+      "title": "Marketing"
     },
     {
       "email": "ahmed.yassin@e-spaces.co",

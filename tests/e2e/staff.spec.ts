@@ -10,7 +10,7 @@ for (const who of [
   { email: "adham@e-spaces.co", admin: true },
   { email: "omnia@e-spaces.co", admin: true },
   { email: "roaa@e-spaces.co", admin: false },
-  { email: "mahmoud.hussein@e-spaces.co", admin: false },
+  { email: "mahmoud@e-spaces.co", admin: false },
 ]) {
   test(`${who.email} gets the team app ${who.admin ? "with" : "without"} Admin`, async ({ page }) => {
     await signIn(page, who.email);
