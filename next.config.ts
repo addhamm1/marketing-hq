@@ -6,6 +6,11 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 // Every route is per-user (session cookie), so Cache Components stays off.
 const nextConfig: NextConfig = {
+  // A self-contained server (server.js) for Node.js hosting such as cPanel on Hosting.com.
+  output: "standalone",
+  // No server-side image processing: no native image library on shared hosting, and no
+  // image optimisation endpoint to attack. The only images are small logos and sprites.
+  images: { unoptimized: true },
   // Dev logs would otherwise print server action arguments (passwords included).
   logging: { serverFunctions: false },
   turbopack: {

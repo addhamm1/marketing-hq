@@ -4,9 +4,26 @@
     {
       "name": "pixel-hq",
       "runtimeExecutable": "/Users/adhammostafa/.local/bin/pnpm",
-      "runtimeArgs": ["dev"],
+      "runtimeArgs": [
+        "dev"
+      ],
       "port": 3000,
-      "env": { "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0" }
+      "env": {
+        "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0"
+      }
+    },
+    {
+      "name": "hosting-package-test",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "dist/test/server.js"
+      ],
+      "port": 3200,
+      "env": {
+        "PORT": "3200",
+        "HOSTNAME": "127.0.0.1",
+        "NODE_ENV": "production"
+      }
     }
   ]
 }
