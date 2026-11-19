@@ -8,7 +8,7 @@
 // any unzip tool works. Secrets are never included: server-only values are entered in cPanel.
 // --local-test packages against this computer's database, only to try the package here.
 import { execSync } from "node:child_process";
-import { appendFileSync, cpSync, existsSync, readdirSync, readFileSync, rmSync, statSync } from "node:fs";
+import { appendFileSync, cpSync, existsSync, readdirSync, readFileSync, realpathSync, rmSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const run = (cmd, cwd = ".") => execSync(cmd, { stdio: "inherit", cwd });
@@ -61,6 +61,12 @@ try {
   cpSync(join(work, "public"), join(out, "public"), { recursive: true });
   for (const f of readdirSync(out)) if (f.startsWith(".env")) rmSync(join(out, f));
 
+  // Next links a few server packages under .next/node_modules; replace each link with a real copy.
+  for (const link of read(`find "${out}" -type l`).split("\n").filter(Boolean)) {
+    const target = realpathSync(link);
+    rmSync(link);
+    cpSync(target, link, { recursive: true, dereference: true });
+  }
   const links = read(`find "${out}" -type l | head -5`);
   if (links) fail(`The package still contains symlinks:\n${links}`);
   const natives = [];
