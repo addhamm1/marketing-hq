@@ -1,5 +1,7 @@
 # Deployment
 
+Two ways to host the website, both with Supabase for the database: **Hosting.com** (cPanel Node.js app, see `docs/DEPLOY_HOSTING_COM.md`) or **Vercel** (below). Scheduled jobs run in Supabase Cron (`supabase/production-cron.sql`) for either host; on Vercel, remove the `crons` from `vercel.json` so jobs do not run twice.
+
 Two Supabase projects in Frankfurt (staging for previews and CI, production for the live app) and one Vercel project. Nothing connects to social networks, ads platforms, Google or Trello.
 
 ## 1. Supabase (do this for staging, then production)
