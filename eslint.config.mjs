@@ -15,6 +15,9 @@ const eslintConfig = defineConfig([
     // Default ignores of eslint-config-next:
     ".next/**",
     ".claude/**",
+    // Hosting packages and their build copy (scripts/package-hosting.mjs).
+    "dist/**",
+    ".hosting-build/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
