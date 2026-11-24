@@ -29,8 +29,15 @@ node scripts/perf-check.mjs http://localhost:3100   # against `pnpm start -p 310
 
 ## Docs
 
+Start here if you are new to the project or integrating it with another system:
+
+- `docs/TECHNICAL_GUIDE.md`: architecture, data model, security model, every function and job, configuration, operations
+- `docs/ERP_INTEGRATION.md`: how to connect Marketing HQ with the company ERP, with data contracts and a plan
+
+Then:
+
 - `CLAUDE.md`: conventions and rules for working on the code
 - `docs/PRODUCT_SPEC.md`, `docs/DATA_MODEL.md`, `docs/BUILD_PLAN.md`, `docs/DECISIONS.md`, `docs/SEED_DATA.md`
-- `docs/DEPLOYMENT.md`: staging and production setup
+- `docs/DEPLOYMENT.md`, `docs/DEPLOY_HOSTING_COM.md`, `docs/DEPLOY_FREE_TEST.md`: hosting options (Vercel, cPanel or VPS, free test)
 - `docs/USER_GUIDE.md`, `docs/PILOT_CHECKLIST.md`: for the pilot
 - `docs/PROGRESS.md`: what was built each day
