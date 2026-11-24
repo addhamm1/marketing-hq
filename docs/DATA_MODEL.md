@@ -112,7 +112,7 @@ A chain is an ordered array of step definitions:
 ]
 ```
 
-Resolvers: `team_lead_of_requester`, `role:<app_role>`, `user:<uuid>`, `card_reviewer`, `card_approver`.
+Resolvers: `team_lead_of_requester`, `role:<app_role>`, `user:<uuid>`. Card review and confirmation steps use the card's `reviewer_id` and `approver_id` directly (`_create_card_step`); `card_reviewer` and `card_approver` are not request-chain resolvers, so never put them in a request type's chain.
 
 Resolution rules, applied in this order when the request or card step is created:
 
@@ -301,8 +301,8 @@ Migrations `20261118*`. Every table has row-level security and access tests in `
 | People | `profiles.birth_month`, `birth_day` (never a year), `joined_on`, `celebrate`; `kudos`; `seasonal_events` | Own birthday and `celebrate` writable; `joined_on` through `admin_update_profile`. Kudos: staff read and send as themselves, author or super_admin deletes. Seasons: super_admin writes |
 | Meetings | `meeting_rooms`, `meeting_series`, `meeting_series_members`, `meetings`, `meeting_attendees`, `meeting_guests`, `meeting_actions` | Writes through `save_meeting`, `respond_meeting`, `cancel_meeting`, `save_meeting_notes`, `save_meeting_series`, `archive_meeting_series`, `meeting_action_to_card`. Marketing reads non-private meetings; others only meetings they are in. `meeting_busy` shows when, never what |
 | Gates | `gate_tracks`, `gate_templates`, `gate_items`, `gate_item_cards`, `gate_item_exclusions` | Staff read. super_admin and traffic_manager edit; the owner sets status. A deleted or moved occurrence is recorded in `gate_item_exclusions` and is not rebuilt |
-| Shoots | `shoots`, `shoot_crew`, `shoot_shots`, `shoot_equipment`, `shoot_cards` | Marketing and crew read. Producer, crew, team leads, traffic and super_admin edit. Guests on a crew reach `/shoots` |
-| Team week | `week_plan_entries`; `team_week(from, to, department)` | People write their own plan from today onward; traffic and super_admin write any day. `team_week` returns a place only: no coordinates, leave type or reason, and colleagues cannot tell leave from a planned away day. The API caps rows at 1,000, so large ranges are paged |
+| Shoots | `shoots`, `shoot_crew`, `shoot_shots`, `shoot_equipment`, `shoot_cards` | Marketing and crew read. Producer, crew, team leads, traffic and super_admin edit. Guests on a crew reach `/shoots`. A field check-in with `shoot_id` sets presence to `shoot`; checking out of it (by hand or automatically) sets it back to `available` |
+| Team week | `week_plan_entries`; `team_week(from, to, department)` | People write their own plan from today onward; traffic and super_admin write any day. `team_week` returns a place only: no coordinates, leave type or reason, and colleagues cannot tell leave from a planned away day. A check-in to a shoot shows as the shoot; with several check-ins on one day the latest one wins. The API caps rows at 1,000, so large ranges are paged |
 | Notifications | `push_subscriptions`, `notification_preferences`, `notifications.pushed_at`, `cron_log` | Subscriptions and preferences are private to their owner. `cron_log` has no client access; `claim_once` is service role only. `digest_hour` works between 06:00 and 09:00 Cairo all year |
 | Map | `map_positions`, `map_interactions` | Moves and interactions go through `map_move` and `map_interact`, which send the realtime events. Browsers never broadcast |
 

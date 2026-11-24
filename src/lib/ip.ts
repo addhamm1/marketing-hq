@@ -66,9 +66,23 @@ export function matchCidr(ip: string, cidrs: readonly string[]): string | null {
   return cidrs.find((c) => ipInCidr(ip, c)) ?? null;
 }
 
-/** First address in x-forwarded-for (Vercel sets it), falling back to x-real-ip. */
-export function clientIp(headers: Headers): string | null {
+type Env = Record<string, string | undefined>;
+
+const firstOf = (value: string | null) => value?.split(",")[0]?.trim() || null;
+
+/**
+ * The visitor's address for Wi-Fi check-in, taken only from a value the hosting
+ * platform sets, because anything a browser sends can be faked:
+ * - CLIENT_IP_HEADER names the trusted header explicitly (for example
+ *   `x-nf-client-connection-ip` on Netlify, `cf-connecting-ip` behind Cloudflare);
+ * - on Vercel (VERCEL is set), the first x-forwarded-for entry, which Vercel overwrites;
+ * - anywhere else, the last x-forwarded-for entry, appended by the nearest proxy.
+ */
+export function clientIp(headers: Headers, env: Env = process.env): string | null {
+  const named = env.CLIENT_IP_HEADER?.trim().toLowerCase();
+  if (named) return firstOf(headers.get(named));
   const xff = headers.get("x-forwarded-for");
-  if (xff) return xff.split(",")[0]!.trim();
-  return headers.get("x-real-ip");
+  if (env.VERCEL) return firstOf(xff) ?? headers.get("x-real-ip");
+  const last = xff?.split(",").map((part) => part.trim()).filter(Boolean).at(-1);
+  return last ?? headers.get("x-real-ip");
 }

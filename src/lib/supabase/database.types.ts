@@ -1753,6 +1753,9 @@ isOneToOne: false
 "_creative_lead":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
+"_cron_call_app":
+{ Args: { "p_path": string }; Returns: number
+                           },
 "_distance_m":
 { Args: { "p_lat1": number,"p_lat2": number,"p_lng1": number,"p_lng2": number }; Returns: number
                            },

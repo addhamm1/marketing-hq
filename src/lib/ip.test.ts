@@ -25,7 +25,13 @@ describe("CIDR matching", () => {
     expect(matchCidr("8.8.8.8", ["10.0.0.0/8"])).toBeNull();
   });
 
-  it("reads the first forwarded address", () => {
-    expect(clientIp(new Headers({ "x-forwarded-for": "41.1.1.1, 10.0.0.1" }))).toBe("41.1.1.1");
+  it("trusts only the address the platform sets", () => {
+    const h = new Headers({ "x-forwarded-for": "6.6.6.6, 41.1.1.1", "x-nf-client-connection-ip": "41.2.2.2" });
+    // A visitor can send their own x-forwarded-for; elsewhere the nearest proxy appends the real one last.
+    expect(clientIp(h, {})).toBe("41.1.1.1");
+    expect(clientIp(h, { VERCEL: "1" })).toBe("6.6.6.6");
+    expect(clientIp(h, { CLIENT_IP_HEADER: "X-NF-Client-Connection-IP" })).toBe("41.2.2.2");
+    expect(clientIp(h, { CLIENT_IP_HEADER: "cf-connecting-ip" })).toBeNull();
+    expect(clientIp(new Headers({ "x-real-ip": "41.3.3.3" }), {})).toBe("41.3.3.3");
   });
 });

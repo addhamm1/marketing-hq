@@ -1,6 +1,6 @@
 # Deployment
 
-Two ways to host the website, both with Supabase for the database: **Hosting.com** (cPanel Node.js app, see `docs/DEPLOY_HOSTING_COM.md`) or **Vercel** (below). Scheduled jobs run in Supabase Cron (`supabase/production-cron.sql`) for either host; on Vercel, remove the `crons` from `vercel.json` so jobs do not run twice.
+Two ways to host the website, both with Supabase for the database: **Hosting.com** (cPanel Node.js app, see `docs/DEPLOY_HOSTING_COM.md`) or **Vercel** (below). Scheduled jobs run in Supabase Cron (`supabase/production-cron.sql`) for either host; `vercel.json` therefore declares no cron jobs, so nothing runs twice.
 
 Two Supabase projects in Frankfurt (staging for previews and CI, production for the live app) and one Vercel project. Nothing connects to social networks, ads platforms, Google or Trello.
 
@@ -46,8 +46,7 @@ Two Supabase projects in Frankfurt (staging for previews and CI, production for 
    | `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Phone notifications. Generate once with `pnpm dlx web-push generate-vapid-keys`; the subject is the app URL |
    | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | Sentry project (optional) |
 
-3. Cron jobs are declared in `vercel.json` (UTC; the code works out Cairo time itself):
-   `due-soon` hourly, `daily` 03:30, `emails` every 10 minutes, `auto-checkout` hourly at :05, `post-reminders`, `meetings` and `push` every 5 minutes, `digest` hourly from 03:00 to 07:00. Sub-hourly schedules need Vercel Pro.
+3. Scheduled jobs run in Supabase Cron, not on Vercel: after the first deploy, run `supabase/production-cron.sql` in the SQL editor with the app URL and `CRON_SECRET` (UTC schedules; the code works out Cairo time itself). Its `hq-push`, `hq-emails` and `hq-digest` jobs call the app's `/api/cron/*` routes with the secret.
 4. Add the production domain (a subdomain of e-spaces.co).
 
 ## 3. GitHub Actions

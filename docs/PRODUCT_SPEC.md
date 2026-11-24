@@ -112,22 +112,22 @@ One engine powers leaves, special requests, creative review and confirmation.
 - Branch switcher at the top; default is the user's home branch, or the branch they are checked in at.
 - Characters of checked-in users stand at their assigned desk (or a free desk). Name tag in team colour, status bubble above the head.
 - Tap or click a character: popover with name, role, status, checked-in time, current card (the most recently moved card where they are an assignee in `production`), and buttons "View profile" and "Request meeting" (P1, disabled).
-- Free walking with arrow keys or tap-to-move is P1. In v1 characters sit at desks and play an idle animation.
+- Tap-to-move and interactions (wave, high five, coffee, chat, dance, clap) arrived in W-16; see section 14.
 - Camera: fit the map to the screen; pinch and wheel zoom; drag to pan on mobile.
 
 ### Check-in
 - `/checkin` shows the user's state and a big Check in or Check out button.
 - Methods (branch setting decides which are allowed for branch check-in):
   - `gps` (default): tapping Check in asks the browser for one high-accuracy reading (`getCurrentPosition`, 15-second timeout). The server picks the nearest active branch that has coordinates and allows `gps`, and accepts the check-in when the distance is at most `geofence_radius_m` (default 150, admin-editable) plus the reported accuracy capped at 100 m; readings worse than 200 m are refused. `check_in` repeats the same haversine check in SQL. Success says "You're at <branch>". Out of range shows the distance to the nearest branch and offers Field day, Work from home (only with approved WFH today) or Wi-Fi. Clear messages for permission denied, position unavailable, timeout and low accuracy.
-  - `wifi` (fallback): server compares the request IP (`x-forwarded-for` first value on Vercel) with the branch's `public_ips` list (CIDR allowed). A location is recorded too when the browser provided one.
+  - `wifi` (fallback when the location is too rough): server compares the request IP with the branch's `public_ips` list (CIDR allowed). A location reading is still required and recorded.
   - `field` (field or shooting day): requires the current location (any accuracy is recorded); optional place name (for example "Client office – Zayed", up to 120 characters), card and short note; shown on the Field map, and the place name shows in the map popover and on the person's profile.
-  - `home`: allowed only on a day with an approved `work_from_home` request; shown on the Home map.
+  - `home`: allowed only on a day with an approved `work_from_home` request; a location reading is required and recorded (D-23); shown on the Home map.
 - Only one open session per user. Checking in at a different branch closes nothing automatically; the user must check out first (show a clear message).
 - Auto check-out: an hourly cron (Vercel Cron runs in UTC, and Egypt changes clocks for summer time, so never hardcode a Cairo hour in the schedule) works out the current Cairo time in the handler; from 23:00 Cairo it closes every open session that started on that Cairo day or earlier, at `greatest(scheduled end time, checked_in_at)` and sets `auto_closed = true`. Next login shows "You were checked out automatically, please confirm your real time"; the user's correction is saved as an `attendance_edits` row.
 - Lateness: arrival after schedule start plus grace (admin setting, default 15 minutes) marks the session `late`. Lateness is never shown publicly.
-- Check-out also asks for one location reading (best effort, 8 seconds at most) and never blocks check-out.
+- Check-out also requires one location reading (D-03, 2026-11-18); without location access the person cannot check out, and the screen explains how to allow it. Only the automatic night-time check-out closes a session without a location.
 - The retired `qr` method stays in the enum for old sessions only; new QR check-ins are refused.
-- Privacy: location is read only at the moment of check-in and check-out, never tracked in between, and never stored for `home` sessions. The coordinates, accuracy and distance are visible only to the person, their team lead, hr, super_admin and leadership (the same people who see attendance). Everyone else sees only branch, method and the field place name (`who_is_in()` never returns coordinates). The HR export includes method, place and a plain "lat,lng" column; nothing links to an outside map service.
+- Privacy: location is read only at the moment of check-in and check-out and never tracked in between. The coordinates, accuracy and distance are visible only to the person, their team lead, hr, super_admin and leadership (the same people who see attendance). Everyone else sees only branch, method and the field place name (`who_is_in()` never returns coordinates). The HR export includes method, place and a plain "lat,lng" column; nothing links to an outside map service.
 
 ### Presence and status
 - Statuses: `available`, `focus`, `meeting`, `shoot`, `break`, `away`. Set from the top bar or the map. Stored on the profile; broadcast live.
@@ -217,7 +217,7 @@ Users (create account with a one-time temporary password, reset password, deacti
 
 - Mobile first, installable as a web app (manifest and icons; offline support not required).
 - Arabic and English everywhere, right-to-left for Arabic, user's choice saved on the profile.
-- The map runs smoothly on a mid-range Android phone: cap at 30 frames per second when idle, small textures, no per-frame React re-renders.
+- The map runs smoothly on a mid-range Android phone: 60 frames per second normally and 30 when the person prefers reduced motion, small textures, no per-frame React re-renders.
 - Board with 300 cards stays responsive.
 - Live updates arrive in under 2 seconds.
 - Sign-in with email and password only; accounts created by admins; passwords at least 10 characters; Supabase Auth rate limits stay on. Test users exist in local and staging only.

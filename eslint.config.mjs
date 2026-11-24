@@ -18,6 +18,8 @@ const eslintConfig = defineConfig([
     // Hosting packages and their build copy (scripts/package-hosting.mjs).
     "dist/**",
     ".hosting-build/**",
+    // Local Netlify build output (netlify-cli), ignored by git as well.
+    ".netlify/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

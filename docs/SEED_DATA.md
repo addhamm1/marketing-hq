@@ -14,6 +14,7 @@ Seed these in `supabase/seed.sql` for local development and in a separate produc
 | hr | Human Resources | الموارد البشرية | false |
 | finance | Finance | المالية | false |
 | logistics | Logistics | اللوجستيات | false |
+| management | Management | الإدارة | false |
 
 ## Marketing teams
 
